@@ -40,7 +40,7 @@ RUN apk add --no-cache libc6-compat
 
 COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile --store-dir /pnpm/store
+    pnpm install --no-frozen-lockfile --store-dir /pnpm/store
 
 
 # ---- builder: compile the Next.js app ----
