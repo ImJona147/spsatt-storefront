@@ -118,6 +118,7 @@ ENV HOSTNAME=0.0.0.0
 
 RUN addgroup --system --gid 1001 nodejs \
  && adduser --system --uid 1001 nextjs
+RUN echo "API=[$SPREE_API_URL] SITE=[$NEXT_PUBLIC_SITE_URL] COUNTRY=[$NEXT_PUBLIC_DEFAULT_COUNTRY]"
 
 # Static assets and the standalone server bundle.
 # The standalone output ships its own minimal node_modules.
