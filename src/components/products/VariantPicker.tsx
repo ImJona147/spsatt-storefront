@@ -136,11 +136,11 @@ export function VariantPicker({
         return (
           <div key={optionType.id}>
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-foreground">
                 {optionType.label}
               </span>
               {selectedValue && (
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-muted-foreground">
                   {getOptionValueDetails(optionType.id, selectedValue)?.label ||
                     selectedValue}
                 </span>
@@ -170,7 +170,7 @@ export function VariantPicker({
                       title={optionValue?.label || value}
                       className={`
                         w-10 h-10 rounded-lg border transition-all relative overflow-hidden
-                        ${isSelected ? "border-gray-900 ring-2 ring-primary ring-offset-2" : "border-gray-200"}
+                        ${isSelected ? "border-primary ring-2 ring-primary ring-offset-2 ring-offset-background" : "border-border"}
                         ${!isAvailable ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}
                         ${!isPurchasable && isAvailable ? "opacity-50" : ""}
                       `}
@@ -187,7 +187,7 @@ export function VariantPicker({
                     >
                       {!isPurchasable && isAvailable && (
                         <span className="absolute inset-0 flex items-center justify-center">
-                          <span className="w-full h-0.5 bg-gray-400 rotate-45 absolute" />
+                          <span className="w-full h-0.5 bg-muted-foreground rotate-45 absolute" />
                         </span>
                       )}
                     </button>
@@ -223,7 +223,7 @@ export function VariantPicker({
                     >
                       {optionValue?.label || value}
                       {!isPurchasable && isAvailable && (
-                        <span className="ml-1 text-xs text-gray-400">
+                        <span className="ml-1 text-xs text-muted-foreground">
                           {t("outOfStockVariant")}
                         </span>
                       )}

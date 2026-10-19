@@ -109,7 +109,7 @@ function MediaGalleryInner({
 
   if (images.length === 0) {
     return (
-      <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
+      <div className="relative aspect-square bg-muted rounded-xl overflow-hidden">
         <ProductImage
           src={null}
           alt={productName}
@@ -134,7 +134,7 @@ function MediaGalleryInner({
       {/* Main Image */}
       <button
         type="button"
-        className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden cursor-zoom-in w-full touch-pan-y"
+        className="relative aspect-square bg-muted rounded-xl overflow-hidden cursor-zoom-in w-full touch-pan-y"
         onClick={() => {
           if (suppressClickRef.current) {
             suppressClickRef.current = false;
@@ -182,10 +182,10 @@ function MediaGalleryInner({
                 type="button"
                 key={image.id}
                 onClick={() => selectImage(index)}
-                className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-colors bg-gray-100 ${
+                className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-colors bg-muted ${
                   index === safeIndex
-                    ? "border-gray-600"
-                    : "border-transparent hover:border-gray-300"
+                    ? "border-primary"
+                    : "border-transparent hover:border-border"
                 }`}
               >
                 <ProductImage

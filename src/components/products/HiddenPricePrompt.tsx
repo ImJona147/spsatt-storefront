@@ -26,7 +26,7 @@ export function HiddenPricePrompt({ className }: { className?: string }) {
         // stretched-link overlay (ProductCard).
         "relative z-10",
         className ??
-          "inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 underline underline-offset-4 hover:text-slate-900",
+          "inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground underline underline-offset-4 hover:text-foreground",
       )}
     >
       <Lock className="h-3.5 w-3.5" />

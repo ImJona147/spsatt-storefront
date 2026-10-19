@@ -4,13 +4,13 @@ import type {
   ProductFiltersResponse,
   ProductListParams,
 } from "@spree/sdk";
-import { Search } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { type ReactElement, Suspense } from "react";
 import { InfiniteProductList } from "@/components/products/InfiniteProductList";
 import { ListingAnalytics } from "@/components/products/ListingAnalytics";
 import { ListingFilterBar } from "@/components/products/ListingFilterBar";
 import { ProductListingSkeleton } from "@/components/products/ProductListingSkeleton";
+import { EmptyIllustration } from "@/components/ui/empty-illustration";
 import { PRODUCT_CARD_FIELDS } from "@/lib/data/cached";
 import {
   type ListingSearchParams,
@@ -183,14 +183,11 @@ async function ProductListingInner({
         </>
       ) : (
         <div className="text-center py-12">
-          <Search
-            className="mx-auto h-12 w-12 text-gray-400"
-            strokeWidth={1.5}
-          />
-          <h3 className="mt-4 text-lg font-medium text-gray-900">
+          <EmptyIllustration />
+          <h3 className="mt-4 text-lg font-medium text-foreground">
             {t("noProductsFound")}
           </h3>
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 text-muted-foreground">
             {emptyMessage ?? t("tryAdjustingFilters")}
           </p>
         </div>

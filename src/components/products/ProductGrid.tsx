@@ -1,4 +1,5 @@
 import type { Product } from "@spree/sdk";
+import { EmptyIllustration } from "@/components/ui/empty-illustration";
 import { ProductCard } from "./ProductCard";
 
 interface ProductGridProps {
@@ -26,7 +27,8 @@ export function ProductGrid({
   if (products.length === 0 && emptyMessage) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">{emptyMessage}</p>
+        <EmptyIllustration />
+        <p className="mt-4 text-muted-foreground">{emptyMessage}</p>
       </div>
     );
   }
