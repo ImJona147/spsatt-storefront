@@ -182,7 +182,7 @@ export function VariantPicker({
                             }
                           : optionValue?.color_code
                             ? { backgroundColor: optionValue.color_code }
-                            : { backgroundColor: "#e5e7eb" }
+                            : { backgroundColor: "var(--muted)" }
                       }
                     >
                       {!isPurchasable && isAvailable && (

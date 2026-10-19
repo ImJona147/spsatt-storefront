@@ -45,17 +45,21 @@ export function ProductCustomFields({
   }
 
   return (
-    <div className="mt-8 border-t pt-8">
-      <h2 className="text-lg font-medium text-foreground mb-4">
+    <div className="mt-6 border-t border-border pt-6">
+      <h2 className="flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-primary">
+        <span aria-hidden className="h-px w-8 bg-primary" />
         {t("properties")}
       </h2>
-      <dl className="space-y-3">
+      <dl className="mt-4">
         {customFields.map((field) => (
-          <div key={field.id} className="flex">
-            <dt className="w-32 shrink-0 text-muted-foreground text-sm">
+          <div
+            key={field.id}
+            className="flex gap-4 border-t border-border py-2.5 first:border-t-0 first:pt-0"
+          >
+            <dt className="w-28 shrink-0 pt-0.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {field.label}
             </dt>
-            <dd className="text-foreground text-sm min-w-0">
+            <dd className="min-w-0 text-sm font-medium text-foreground">
               {renderValue(field, t)}
             </dd>
           </div>

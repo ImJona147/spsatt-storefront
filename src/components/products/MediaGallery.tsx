@@ -129,77 +129,94 @@ function MediaGalleryInner({
   const mainImageUrl = getMainImageUrl(selectedImage);
   const showMainImage = mainImageUrl && mainImageErrorUrl !== mainImageUrl;
 
-  return (
-    <div className="flex flex-col gap-4">
-      {/* Main Image */}
-      <button
-        type="button"
-        className="relative aspect-square bg-muted rounded-xl overflow-hidden cursor-zoom-in w-full touch-pan-y"
-        onClick={() => {
-          if (suppressClickRef.current) {
-            suppressClickRef.current = false;
-            return;
-          }
-          if (showMainImage) setIsZoomed(true);
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        aria-label={t("openImageZoom")}
-        disabled={!showMainImage}
-      >
-        <ProductImage
-          key={safeIndex}
-          src={mainImageUrl}
-          alt={selectedImage?.alt || productName}
-          fill
-          className="object-cover"
-          fetchPriority="high"
-          loading="eager"
-          priority
-          quality={85}
-          sizes="(max-width: 768px) 100vw, 50vw"
-          placeholder="blur"
-          blurDataURL={BLUR_PLACEHOLDER}
-          iconClassName="w-24 h-24"
-          onError={() => mainImageUrl && setMainImageErrorUrl(mainImageUrl)}
-        />
-        {/* Zoom hint */}
-        {showMainImage && (
-          <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm text-gray-600 flex items-center gap-1.5">
-            <ZoomIn className="w-4 h-4" />
-            {t("clickToZoom")}
-          </div>
-        )}
-      </button>
+  const thumbnails = (
+    <>
+      {images.map((image, index) => {
+        const thumbUrl = getThumbImageUrl(image);
+        return (
+          <button
+            type="button"
+            key={image.id}
+            onClick={() => selectImage(index)}
+            aria-label={`${productName} ${index + 1}`}
+            aria-current={index === safeIndex}
+            className={`relative w-16 h-16 lg:w-[4.5rem] lg:h-[4.5rem] flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors bg-muted ${
+              index === safeIndex
+                ? "border-primary"
+                : "border-transparent hover:border-border"
+            }`}
+          >
+            <ProductImage
+              src={thumbUrl}
+              alt={image.alt || `${productName} ${index + 1}`}
+              fill
+              className="object-cover"
+              sizes="72px"
+            />
+          </button>
+        );
+      })}
+    </>
+  );
 
-      {/* Thumbnails */}
+  return (
+    <div className="flex flex-col-reverse gap-3 lg:flex-row lg:items-start lg:gap-4">
+      {/* Thumbnail rail: horizontal strip on mobile, vertical column on desktop */}
       {images.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {images.map((image, index) => {
-            const thumbUrl = getThumbImageUrl(image);
-            return (
-              <button
-                type="button"
-                key={image.id}
-                onClick={() => selectImage(index)}
-                className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-colors bg-muted ${
-                  index === safeIndex
-                    ? "border-primary"
-                    : "border-transparent hover:border-border"
-                }`}
-              >
-                <ProductImage
-                  src={thumbUrl}
-                  alt={image.alt || `${productName} ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="80px"
-                />
-              </button>
-            );
-          })}
+        <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:pb-0 lg:overflow-visible">
+          {thumbnails}
         </div>
       )}
+
+      {/* Main image, framed on a washed surface so it reads as an object,
+          not a banner swallowing the column */}
+      <div className="relative min-w-0 flex-1">
+        <button
+          type="button"
+          className="relative aspect-square bg-muted rounded-xl overflow-hidden cursor-zoom-in w-full touch-pan-y"
+          onClick={() => {
+            if (suppressClickRef.current) {
+              suppressClickRef.current = false;
+              return;
+            }
+            if (showMainImage) setIsZoomed(true);
+          }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          aria-label={t("openImageZoom")}
+          disabled={!showMainImage}
+        >
+          <ProductImage
+            key={safeIndex}
+            src={mainImageUrl}
+            alt={selectedImage?.alt || productName}
+            fill
+            className="object-cover"
+            fetchPriority="high"
+            loading="eager"
+            priority
+            quality={85}
+            sizes="(max-width: 1024px) 100vw, 40vw"
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER}
+            iconClassName="w-24 h-24"
+            onError={() => mainImageUrl && setMainImageErrorUrl(mainImageUrl)}
+          />
+        </button>
+
+        {/* Counter + zoom affordance in one quiet corner chip */}
+        {showMainImage && (
+          <div className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-2">
+            <span className="bg-background/85 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-medium tabular-nums text-muted-foreground">
+              {safeIndex + 1}/{images.length}
+            </span>
+            <span className="hidden sm:flex bg-background/85 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-medium text-muted-foreground items-center gap-1.5">
+              <ZoomIn className="size-3.5" aria-hidden="true" />
+              {t("clickToZoom")}
+            </span>
+          </div>
+        )}
+      </div>
 
       {/* Lightbox (lazy) */}
       {isZoomed && showMainImage && (
