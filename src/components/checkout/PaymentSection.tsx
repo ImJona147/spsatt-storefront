@@ -171,6 +171,7 @@ export function PaymentSection({
     | null
   >(null);
   const initRef = useRef(false);
+  const initDoneRef = useRef(false);
   const sessionRequestIdRef = useRef(0);
   const completionInFlightRef = useRef(false);
 
@@ -261,33 +262,37 @@ export function PaymentSection({
     initRef.current = true;
 
     const init = async () => {
-      setLoading(true);
+      try {
+        setLoading(true);
 
-      let initialCardId: string | null = null;
+        let initialCardId: string | null = null;
 
-      if (isAuthenticated) {
-        try {
-          const result = await getCreditCards();
-          const gatewayCards = result.data.filter(
-            (card) => card.gateway_payment_profile_id,
-          );
-          setSavedCards(gatewayCards);
+        if (isAuthenticated) {
+          try {
+            const result = await getCreditCards();
+            const gatewayCards = result.data.filter(
+              (card) => card.gateway_payment_profile_id,
+            );
+            setSavedCards(gatewayCards);
 
-          if (gatewayCards.length > 0) {
-            const defaultCard =
-              gatewayCards.find((c) => c.default) || gatewayCards[0];
-            initialCardId = defaultCard.gateway_payment_profile_id;
-            setSelectedCardId(initialCardId);
+            if (gatewayCards.length > 0) {
+              const defaultCard =
+                gatewayCards.find((c) => c.default) || gatewayCards[0];
+              initialCardId = defaultCard.gateway_payment_profile_id;
+              setSelectedCardId(initialCardId);
+            }
+          } catch {
+            // Cards failed to load — proceed without saved cards
           }
-        } catch {
-          // Cards failed to load — proceed without saved cards
         }
+
+        selectedCardRef.current = initialCardId;
+        lastTotalRef.current = cart.total;
+
+        await createSession(initialCardId, selectedMethod);
+      } finally {
+        initDoneRef.current = true;
       }
-
-      selectedCardRef.current = initialCardId;
-      lastTotalRef.current = cart.total;
-
-      await createSession(initialCardId, selectedMethod);
     };
 
     init();
@@ -306,7 +311,9 @@ export function PaymentSection({
   // whatever the customer already typed — e.g. when a shipping-rate save
   // lands while they enter card details.
   useEffect(() => {
-    if (!initRef.current) return;
+    // lastTotalRef stays null while init fetches saved cards; acting before
+    // init finishes fires a duplicate createSession without the card.
+    if (!initDoneRef.current) return;
     if (!isSessionBased || !selectedMethod) return;
     if (lastTotalRef.current === cart.total) return;
 
@@ -392,30 +399,34 @@ export function PaymentSection({
       if (!initRef.current) {
         initRef.current = true;
         const init = async () => {
-          setLoading(true);
-          let cardId: string | null = null;
+          try {
+            setLoading(true);
+            let cardId: string | null = null;
 
-          if (isAuthenticated) {
-            try {
-              const result = await getCreditCards();
-              const gatewayCards = result.data.filter(
-                (card) => card.gateway_payment_profile_id,
-              );
-              setSavedCards(gatewayCards);
-              if (gatewayCards.length > 0) {
-                const defaultCard =
-                  gatewayCards.find((c) => c.default) || gatewayCards[0];
-                cardId = defaultCard.gateway_payment_profile_id;
-                setSelectedCardId(cardId);
+            if (isAuthenticated) {
+              try {
+                const result = await getCreditCards();
+                const gatewayCards = result.data.filter(
+                  (card) => card.gateway_payment_profile_id,
+                );
+                setSavedCards(gatewayCards);
+                if (gatewayCards.length > 0) {
+                  const defaultCard =
+                    gatewayCards.find((c) => c.default) || gatewayCards[0];
+                  cardId = defaultCard.gateway_payment_profile_id;
+                  setSelectedCardId(cardId);
+                }
+              } catch {
+                // proceed without saved cards
               }
-            } catch {
-              // proceed without saved cards
             }
-          }
 
-          selectedCardRef.current = cardId;
-          lastTotalRef.current = cart.total;
-          await createSession(cardId, newMethod);
+            selectedCardRef.current = cardId;
+            lastTotalRef.current = cart.total;
+            await createSession(cardId, newMethod);
+          } finally {
+            initDoneRef.current = true;
+          }
         };
         init();
       } else {
