@@ -1,5 +1,5 @@
-import { ensureProtocol, getStoreName, getStoreUrl } from "@/lib/store";
 import type { Category, Media, Product } from "@spree/sdk";
+import { ensureProtocol, getStoreName, getStoreUrl } from "@/lib/store";
 
 /**
  * Default social image path (stored in public/).
