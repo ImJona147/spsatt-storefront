@@ -1,0 +1,391 @@
+{
+  "components": [
+    {
+      "css": ".ds-btn-primary { background: oklch(0.4258 0.1189 270.0203); color: oklch(1 0 0); font-family: Inter, system-ui, sans-serif; font-size: 1rem; font-weight: 500; padding: 12px 24px; border: none; border-radius: 0.6rem; cursor: pointer; transition: filter 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { filter: brightness(1.08); } .ds-btn-primary:focus-visible { outline: 2px solid oklch(0.4258 0.1189 270.0203); outline-offset: 2px; }",
+      "description": "Acción principal de la pantalla: variante primary de shadcn (bg-primary, texto primary-foreground, radio 0.6rem).",
+      "html": "<button class=\"ds-btn-primary\">Ver catálogo</button>",
+      "kind": "button",
+      "name": "Primary Button",
+      "refersTo": "button-primary"
+    },
+    {
+      "css": ".ds-btn-outline { background: transparent; color: oklch(0.2303 0.0125 264.2926); border: 1px solid oklch(0.9288 0.0126 255.5078); font-family: Inter, system-ui, sans-serif; font-size: 1rem; font-weight: 500; padding: 12px 24px; border-radius: 0.6rem; cursor: pointer; transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-outline:hover { background: oklch(0.9611 0.007 268.5473); } .ds-btn-outline:focus-visible { outline: 2px solid oklch(0.4258 0.1189 270.0203); outline-offset: 2px; }",
+      "description": "Acción secundaria: variante outline de shadcn (borde 1px, hover en Lavado).",
+      "html": "<button class=\"ds-btn-outline\">Cotiza ya: 294 942 3064</button>",
+      "kind": "button",
+      "name": "Outline Button",
+      "refersTo": "button-secondary"
+    },
+    {
+      "css": ".ds-input-wrap { display: flex; flex-direction: column; gap: 6px; font-family: Inter, system-ui, sans-serif; } .ds-input-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(0.5544 0.0407 257.4166); } .ds-input { background: oklch(0.9851 0 0); color: oklch(0.2303 0.0125 264.2926); border: 1px solid oklch(0.9288 0.0126 255.5078); border-radius: 0.6rem; padding: 10px 14px; font-size: 1rem; font-family: inherit; transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-input:hover { border-color: oklch(0.85 0.012 256); } .ds-input:focus-visible { outline: none; border-color: oklch(0.4258 0.1189 270.0203); box-shadow: 0 0 0 2px oklch(0.4258 0.1189 270.0203) / 0.25; } .ds-input::placeholder { color: oklch(0.70 0.02 257); }",
+      "description": "Campo de formulario con foco azul visible, sin glow.",
+      "html": "<label class=\"ds-input-wrap\"><span class=\"ds-input-label\">Correo</span><input class=\"ds-input\" type=\"email\" placeholder=\"tu@empresa.mx\" /></label>",
+      "kind": "input",
+      "name": "Input Field",
+      "refersTo": "input"
+    },
+    {
+      "css": ".ds-card { background: oklch(1 0 0); color: oklch(0.2303 0.0125 264.2926); border: 1px solid oklch(0.9288 0.0126 255.5078); border-radius: 0.6rem; padding: 24px; display: flex; flex-direction: column; gap: 8px; font-family: Inter, system-ui, sans-serif; box-shadow: 0 2px 8px 0 hsl(0 0% 0% / 0.03), 0 1px 2px -1px hsl(0 0% 0% / 0.03); transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), border-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-card:hover { box-shadow: 0 4px 12px 0 hsl(0 0% 0% / 0.12), 0 1px 2px -1px hsl(0 0% 0% / 0.08); border-color: oklch(0.4258 0.1189 270.0203); } .ds-card-title { font-size: 1.125rem; font-weight: 600; } .ds-card-meta { font-size: 0.875rem; color: oklch(0.5544 0.0407 257.4166); }",
+      "description": "Superficie de producto o contenido: plana en reposo, eleva en hover.",
+      "html": "<div class=\"ds-card\"><span class=\"ds-card-title\">Letrero de neón LED</span><span class=\"ds-card-meta\">Fabricación a medida</span></div>",
+      "kind": "card",
+      "name": "Card",
+      "refersTo": "card"
+    },
+    {
+      "css": ".ds-eyebrow { display: inline-flex; align-items: center; gap: 12px; font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(0.4258 0.1189 270.0203); } .ds-eyebrow-line { display: inline-block; width: 32px; height: 2px; background: oklch(0.4258 0.1189 270.0203); }",
+      "description": "Label de sección con línea corta en color primary. Uno por sección como máximo.",
+      "html": "<span class=\"ds-eyebrow\"><span class=\"ds-eyebrow-line\" aria-hidden=\"true\"></span>ARTÍCULOS PUBLICITARIOS</span>",
+      "kind": "custom",
+      "name": "Eyebrow",
+      "refersTo": "eyebrow"
+    },
+    {
+      "css": ".ds-se { max-width: 42rem; } .ds-se-eyebrow { display: flex; align-items: center; gap: 12px; font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(0.4258 0.1189 270.0203); } .ds-se-line { display: block; width: 32px; height: 1px; background: oklch(0.4258 0.1189 270.0203); } .ds-se-title { margin-top: 16px; font-family: Inter, system-ui, sans-serif; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2; color: oklch(0.2303 0.0125 264.2926); text-wrap: balance; } @media (min-width: 640px) { .ds-se-title { font-size: 1.875rem; } } @media (min-width: 1024px) { .ds-se-title { font-size: 2.25rem; } } .ds-se-lead { margin-top: 16px; font-size: 1rem; line-height: 1.75; color: oklch(0.2303 0.0125 264.2926 / 0.7); }",
+      "description": "Entrada canónica de sección: hairline + eyebrow en mayúsculas (label) y H2 sans bold 24→30→36px con lead opcional en foreground/70. Idéntica en cada sección del landing.",
+      "html": "<div class=\"ds-se\"><p class=\"ds-se-eyebrow\"><span class=\"ds-se-line\" aria-hidden=\"true\"></span>TRABAJOS</p><h2 class=\"ds-se-title\">Trabajos recientes</h2><p class=\"ds-se-lead\">Letras, neón, impresión y piezas a la medida.</p></div>",
+      "kind": "custom",
+      "name": "Section Heading",
+      "refersTo": "section-heading"
+    },
+    {
+      "css": ".ds-hero { background: oklch(0.9851 0 0); padding: 48px 0; font-family: Inter, system-ui, sans-serif; } .ds-hero-eyebrow { display: flex; align-items: center; gap: 12px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: oklch(0.4258 0.1189 270.0203); } .ds-hero-eyebrow-line { display: block; width: 32px; height: 1px; background: oklch(0.4258 0.1189 270.0203); } .ds-hero-title { margin-top: 20px; font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: clamp(2.5rem, 5.5vw, 4rem); line-height: 1.06; letter-spacing: -0.015em; color: oklch(0.2303 0.0125 264.2926); text-wrap: balance; } .ds-hero-lead { margin-top: 20px; font-size: 1.125rem; line-height: 1.625; color: oklch(0.2303 0.0125 264.2926 / 0.9); } .ds-hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; } .ds-hero-cta button { display: inline-flex; align-items: center; gap: 8px; font-family: Inter, system-ui, sans-serif; font-size: 1rem; font-weight: 500; padding: 12px 24px; border-radius: 0.6rem; cursor: pointer; } .ds-hero-cta .ds-btn-primary { background: oklch(0.4258 0.1189 270.0203); color: oklch(1 0 0); border: none; transition: filter 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-hero-cta .ds-btn-primary:hover { filter: brightness(1.08); } .ds-hero-cta .ds-btn-outline { background: transparent; color: oklch(0.2303 0.0125 264.2926); border: 1px solid oklch(0.9288 0.0126 255.5078); transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-hero-cta .ds-btn-outline:hover { background: oklch(0.9611 0.0070 268.5473); } .ds-hero-services { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-top: 36px; padding-top: 24px; border-top: 1px solid oklch(0.2303 0.0125 264.2926 / 0.15); list-style: none; font-family: Fraunces, Georgia, serif; font-size: 1.125rem; font-weight: 500; color: oklch(0.2303 0.0125 264.2926 / 0.9); } .ds-hero-services li { display: flex; align-items: baseline; gap: 12px; } .ds-hero-services .slash { font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 400; color: oklch(0.4258 0.1189 270.0203); }",
+      "description": "Hero editorial: H1 Fraunces clamp(2.5rem–4rem), lead, CTA primario + WhatsApp y tira de servicios con '/' en Fraunces, visible en todos los breakpoints. La foto de fondo (img_background.webp) va detrás con wash de tokens y también en móvil; la única imagen retirada del móvil fue la banda de portafolio.",
+      "html": "<section class=\"ds-hero\"><p class=\"ds-hero-eyebrow\"><span class=\"ds-hero-eyebrow-line\" aria-hidden=\"true\"></span>SOLUCIONES PUBLICITARIAS DESDE SAN ANDRÉS TUXTLA</p><h1 class=\"ds-hero-title\">Publicidad que hace visible tu negocio.</h1><p class=\"ds-hero-lead\">Diseñamos y fabricamos artículos publicitarios, impresos, mobiliario y anuncios para marcas, negocios y eventos en Los Tuxtlas.</p><div class=\"ds-hero-cta\"><button class=\"ds-btn-primary\">Ver catálogo</button><button class=\"ds-btn-outline\">Cotizar por WhatsApp</button></div><ul class=\"ds-hero-services\"><li>MDF</li><li><span class=\"slash\" aria-hidden=\"true\">/</span>Acrílico</li><li><span class=\"slash\" aria-hidden=\"true\">/</span>Neón</li><li><span class=\"slash\" aria-hidden=\"true\">/</span>Láser</li><li><span class=\"slash\" aria-hidden=\"true\">/</span>Impresión 3D</li><li><span class=\"slash\" aria-hidden=\"true\">/</span>Sublimación</li></ul></section>",
+      "kind": "custom",
+      "name": "Hero",
+      "refersTo": "hero"
+    },
+    {
+      "css": ".ds-bento { position: relative; display: block; overflow: hidden; background: oklch(1 0 0); border: 1px solid oklch(0.9288 0.0126 255.5078); border-radius: 0.75rem; text-decoration: none; color: oklch(1 0 0); } .ds-bento:focus-visible { outline: 2px solid oklch(0.4258 0.1189 270.0203); outline-offset: 2px; } .ds-bento-media { position: absolute; inset: 0; background: linear-gradient(160deg, oklch(0.77 0.07 267), oklch(0.53 0.12 267)); transform: scale(1); transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-bento:hover .ds-bento-media, .ds-bento:focus-visible .ds-bento-media { transform: scale(1.05); } .ds-bento-veil { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.25), transparent); } .ds-bento-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px; font-family: Inter, system-ui, sans-serif; } .ds-bento-title { display: block; font-size: 1rem; font-weight: 600; } .ds-bento-link { display: flex; align-items: center; gap: 4px; margin-top: 4px; font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,0.75); transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-bento:hover .ds-bento-link { color: oklch(1 0 0); } @media (min-width: 768px) { .ds-bento-copy { padding: 16px; } .ds-bento-title { font-size: 1.125rem; } }",
+      "description": "Tile del bento del portafolio: rounded-xl + borde 1px, velo degradado negro, título sans blanco y 'Ver trabajos →'. La imagen escala 1.05 en hover igual que las cards de producto (300ms, anulado con motion-reduce).",
+      "html": "<a class=\"ds-bento\" href=\"#\"><span class=\"ds-bento-media\" aria-hidden=\"true\"></span><span class=\"ds-bento-veil\" aria-hidden=\"true\"></span><span class=\"ds-bento-copy\"><span class=\"ds-bento-title\">Letras y letreros</span><span class=\"ds-bento-link\">Ver trabajos <svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></span></span></a>",
+      "kind": "card",
+      "name": "Bento Portfolio Tile",
+      "refersTo": "bento-tile"
+    },
+    {
+      "name": "Password Checklist",
+      "kind": "custom",
+      "refersTo": "password-checklist",
+      "description": "Requisitos de contraseña en vivo para registro (patrón 'ayuda antes del error'): lista siempre visible bajo el campo, cada regla se marca con un check primary al cumplirse y queda en muted-foreground mientras no. Reglas: mínimo 8 caracteres, una mayúscula, una minúscula, un número, un símbolo. El botón de envío se habilita solo cuando las 5 reglas se cumplen y la confirmación coincide; el indicador de coincidencia ('Las contraseñas coinciden') aparece bajo Confirmar con el mismo patrón check/círculo y aria-live. Reutilizable en reset-password. La página de registro usa layout 2 columnas como los 404 (ilustración register.svg con glow a la derecha en desktop, oculta en móvil) y h1 Fraunces. Ritmo compacto para laptops 1366×768: py-6 sm:py-8, space-y-3, sin doble margen (el Field ya aplica gap-2).",
+      "html": "<ul aria-label=\"Requisitos de la contraseña\" class=\"space-y-1\"><li class=\"flex items-center gap-2 text-[0.8125rem] leading-tight text-foreground\"><svg class=\"size-4 shrink-0 text-primary\" …/>Al menos 8 caracteres</li><li class=\"flex items-center gap-2 text-[0.8125rem] leading-tight text-muted-foreground\"><svg class=\"size-4 shrink-0 text-muted-foreground\" …/>Un símbolo (!@#$%)</li></ul>",
+      "css": ".ds-pw-list { display: flex; flex-direction: column; gap: 0.25rem; } .ds-pw-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; line-height: 1.25; transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-pw-item[data-met=true] { color: oklch(0.2303 0.0125 264.2926); } .ds-pw-item[data-met=false] { color: oklch(0.5544 0.0407 257.4166); } .ds-pw-item[data-met=true] .ds-pw-icon { color: oklch(0.4258 0.1189 270.0203); } .ds-pw-item[data-met=false] .ds-pw-icon { color: oklch(0.5544 0.0407 257.4166); } .ds-pw-icon { width: 1rem; height: 1rem; flex-shrink: 0; }"
+    },
+    {
+      "name": "Auth Split",
+      "kind": "page",
+      "refersTo": "auth-split",
+      "description": "Patrón compartido de login, registro, olvido y restablecimiento de contraseña: layout 2 columnas en desktop (md:grid-cols-2, max-w-5xl, min-h-[60svh], items-center), formulario max-w-md a la izquierda, ilustración a la derecha con glow bg-primary/10 blur-3xl (hidden md:flex, aria-hidden). h1 Fraunces text-3xl sm:text-4xl, lead muted-foreground, ritmo compacto py-6 sm:py-8 + space-y-3 para 1366×768. Login y restablecer usan login.svg; registro register.svg + checklist de contraseña; olvido questions.svg. Restablecer reutiliza PasswordChecklist + indicador de coincidencia, estados inválido/éxito en la misma grilla (icono primary en bg-primary/10, no verde fijo). Placeholders específicos (gerencia@tuempresa.mx, Laura, Hernández). Eye toggle con aria-label. Dashboard autenticado en la misma ruta usa tokens. Documentado en DESIGN.md § Auth Split.",
+      "html": "<div class=\"flex min-h-[60svh] items-center\"><section class=\"mx-auto grid w-full max-w-5xl gap-8 px-4 py-6 sm:px-6 sm:py-8 md:grid-cols-2 md:items-center md:gap-10 lg:gap-14\"><div class=\"mx-auto w-full max-w-md\"><h1 class=\"font-display text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl\">Iniciar sesión</h1><p class=\"mt-2.5 text-sm leading-relaxed text-muted-foreground sm:text-base\">…</p><form class=\"mt-5 space-y-3\">…</form></div><div aria-hidden class=\"relative hidden items-center justify-center md:flex\"><div class=\"absolute inset-4 rounded-full bg-primary/10 blur-3xl\"></div><img src=\"/illustrations/login.svg\" class=\"relative h-auto w-52 text-primary sm:w-64 lg:w-80\" alt=\"\" /></div></section></div>",
+      "css": ".ds-auth-grid { display: grid; min-height: 60svh; align-items: center; gap: 2rem; max-width: 64rem; margin-inline: auto; padding: 1.5rem 1rem; } @media (min-width: 640px) { .ds-auth-grid { padding: 2rem 1.5rem; } } @media (min-width: 768px) { .ds-auth-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; } } .ds-auth-title { font-family: Fraunces, Georgia, serif; font-size: 1.875rem; font-weight: 600; letter-spacing: -0.025em; } @media (min-width: 640px) { .ds-auth-title { font-size: 2.25rem; } } .ds-auth-glow { position: absolute; inset: 1rem; border-radius: 9999px; background: oklch(0.4258 0.1189 270.0203 / 0.1); filter: blur(3rem); } .ds-auth-art { position: relative; width: 13rem; color: oklch(0.4258 0.1189 270.0203); } @media (min-width: 640px) { .ds-auth-art { width: 16rem; } } @media (min-width: 1024px) { .ds-auth-art { width: 20rem; } }"
+    },
+    {
+      "name": "404 Page",
+      "kind": "page",
+      "refersTo": "not-found",
+      "description": "Patrón 404 premium en dos variantes con layout 2 columnas en desktop (md:grid-cols-2) y apilado en móvil. General: ilustración not-found.svg a la izquierda (md:order-first) con glow radial bg-primary/10 blur-3xl detrás, texto a la derecha con h1 Fraunces tracking-tight (text-4xl sm:text-5xl), lead, CTA primary 'Volver al inicio' + outline 'Ver catálogo', hairline border-t y ghost link de WhatsApp con icono text-primary. Productos: espejo (texto izq / arte der con product-404.svg recoloreado a #3b6697), buscador real <search> que navega a products?q=, outline 'Ver todos los productos' y quick links Inicio/Contacto bajo hairline. Ambas variantes con min-h-[68svh], DOM texto-primero para accesibilidad. Chrome (header/footer) presente en TODOS los 404 vía middleware.ts: las URLs unmatched hacen rewrite interno a un sentinel /{cc}/{ll}/pagina-no-encontrada preservando la URL visible; el sentinel envuelve SignalNotFound (notFound() con Suspense padre para evitar el issue 'Could not validate instant' de Next 16.3) bajo el boundary del storefront que sí hereda header/footer. RootNotFound (app/not-found.tsx) queda como red de seguridad autocontenida SIN ThemeProvider (la mutación de next-themes en <html> causaba hydration mismatch).",
+      "html": "<main class=\"mx-auto grid min-h-[68svh] w-full max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:gap-16\"><div class=\"relative flex items-center justify-center\"><div class=\"absolute inset-0 -z-10 rounded-full bg-primary/10 blur-3xl\" aria-hidden=\"true\"></div><img src=\"/illustrations/not-found.svg\" alt=\"\" class=\"h-auto w-full max-w-sm\" /></div><div class=\"flex flex-col items-start text-left\"><h1 class=\"font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl\">Esta página no existe</h1><p class=\"mt-4 max-w-md text-base text-muted-foreground sm:text-lg\">…</p><div class=\"mt-8 flex flex-wrap gap-3\"><button class=\"inline-flex items-center rounded-[0.6rem] bg-primary px-6 py-3 font-medium text-primary-foreground\">Volver al inicio</button><button class=\"inline-flex items-center rounded-[0.6rem] border border-border px-6 py-3 font-medium text-foreground\">Ver catálogo</button></div><div class=\"mt-10 flex w-full items-center border-t border-border pt-6\"><a href=\"https://wa.me/…\" class=\"inline-flex items-center gap-2 text-sm text-foreground hover:underline\"><svg class=\"size-4 text-primary\" …/>Escríbenos por WhatsApp</a></div></div></main>",
+      "css": ".ds-404-grid { display: grid; min-height: 68svh; align-items: center; gap: 2.5rem; } @media (min-width: 768px) { .ds-404-grid { grid-template-columns: 1fr 1fr; gap: 4rem; } } .ds-404-glow { position: absolute; inset: 0; z-index: -10; border-radius: 9999px; background: oklch(0.4258 0.1189 270.0203 / 0.1); filter: blur(3rem); } .ds-404-title { font-family: Fraunces, Georgia, serif; font-size: 2.25rem; font-weight: 600; letter-spacing: -0.025em; color: oklch(0.2303 0.0125 264.2926); } @media (min-width: 640px) { .ds-404-title { font-size: 3rem; } } .ds-404-lead { margin-top: 1rem; color: oklch(0.5544 0.0407 257.4166); } .ds-404-ghost { display: flex; width: 100%; align-items: center; gap: 0.5rem; border-top: 1px solid oklch(0.9288 0.0126 255.5078); padding-top: 1.5rem; margin-top: 2.5rem; font-size: 0.875rem; color: oklch(0.2303 0.0125 264.2926); } .ds-404-ghost svg { color: oklch(0.4258 0.1189 270.0203); }"
+    },
+    {
+      "name": "Account Shell",
+      "kind": "page",
+      "refersTo": "account-shell",
+      "description": "Shell de la cuenta autenticada (AccountShell): container flex-1 px-4 py-5 sm:py-6, fila flex-col lg:flex-row gap-5/8 con aside sticky lg:top-20 lg:w-56. Card bg-card border: nombre + email truncate en el header (sin avatar grande), nav en grid-cols-2 en móvil (min-h-11, 6 items siempre visibles, sin scroll) y vertical min-h-9 en desktop. Activo bg-primary/12 text-primary + aria-current. Logout ghost al fondo. Resumen (overview): h1 Inter text-xl sm:text-2xl 'Resumen de la cuenta' (sin saludo display Fraunces), grid 1/2 columnas de SectionLink densos (icono en bg-primary/10 size-9, título + descripción truncate) y card de info cuenta al pie. Rutas autenticadas (orders, addresses, credit-cards, gift-cards, profile, order detail) usan el mismo ritmo: h1 Inter text-xl sm:text-2xl + lead muted, headers mb-5, empty states px-6 py-8 con EmptyIllustration w-32 o icono size-12. Fraunces queda solo en el flujo público (Auth Split: login, registro, forgot, reset). Header sin next/dynamic para MobileMenu/RegionPreferences (import directo). Status badges opacidad + dark variantes.",
+      "html": "<div class=\"container mx-auto flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8\"><div class=\"flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8\"><aside class=\"lg:sticky lg:top-20 lg:w-56 lg:shrink-0\"><div class=\"rounded-xl border bg-card\"><div class=\"border-b px-4 py-3\"><p class=\"truncate text-sm font-medium text-foreground\">Laura Hernández</p><p class=\"mt-0.5 truncate text-xs text-muted-foreground\">…</p></div><nav class=\"lg:hidden\"><ul class=\"grid grid-cols-2 gap-1 p-2\">…</ul></nav><nav class=\"hidden p-2 lg:block\"><ul class=\"space-y-0.5\">…</ul></nav><div class=\"border-t p-2\">…logout…</div></div></aside><main class=\"min-w-0 flex-1\"><h1 class=\"text-xl font-semibold tracking-tight text-foreground sm:text-2xl\">Resumen de la cuenta</h1>…</main></div></div>",
+      "css": ".ds-account-nav-mobile { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; padding: 0.5rem; } .ds-account-nav-item { display: flex; min-height: 2.75rem; align-items: center; gap: 0.5rem; border-radius: 0.5rem; padding: 0.625rem 0.75rem; font-size: 0.875rem; } .ds-account-aside { position: sticky; top: 5rem; } @media (max-width: 1023px) { .ds-account-aside { position: static; } } .ds-section-link { display: flex; align-items: center; gap: 0.75rem; border-radius: 0.75rem; padding: 0.75rem 1rem; } .ds-section-icon { display: flex; width: 2.25rem; height: 2.25rem; align-items: center; justify-content: center; border-radius: 0.5rem; background: oklch(0.4258 0.1189 270.0203 / 0.1); color: oklch(0.4258 0.1189 270.0203); } .ds-empty { border-radius: 0.75rem; border: 1px solid oklch(0.9288 0.0126 255.5078); padding: 2rem 1.5rem; text-align: center; }"
+    }
+  ],
+  "extensions": {
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ],
+    "colorMeta": {
+      "background": {
+        "canonical": "oklch(0.9851 0 0)",
+        "displayName": "Papel",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(0.15 0 0)",
+          "oklch(0.25 0 0)",
+          "oklch(0.35 0 0)",
+          "oklch(0.45 0 0)",
+          "oklch(0.60 0 0)",
+          "oklch(0.75 0 0)",
+          "oklch(0.90 0 0)",
+          "oklch(0.985 0 0)"
+        ]
+      },
+      "background-dark": {
+        "canonical": "oklch(0.1509 0.0109 276.1744)",
+        "displayName": "Papel Modo Oscuro",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(0.1509 0.0109 276)",
+          "oklch(0.20 0.01 276)",
+          "oklch(0.28 0.01 276)",
+          "oklch(0.38 0.02 276)",
+          "oklch(0.50 0.02 276)",
+          "oklch(0.64 0.02 276)",
+          "oklch(0.80 0.01 276)",
+          "oklch(0.94 0.01 276)"
+        ]
+      },
+      "border": {
+        "canonical": "oklch(0.9288 0.0126 255.5078)",
+        "displayName": "Borde",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(0.22 0.01 256)",
+          "oklch(0.32 0.01 256)",
+          "oklch(0.44 0.01 256)",
+          "oklch(0.58 0.01 256)",
+          "oklch(0.70 0.01 256)",
+          "oklch(0.80 0.01 256)",
+          "oklch(0.87 0.01 256)",
+          "oklch(0.9288 0.0126 255.5)"
+        ]
+      },
+      "card": {
+        "canonical": "oklch(1 0 0)",
+        "displayName": "Card",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(0.15 0 0)",
+          "oklch(0.25 0 0)",
+          "oklch(0.35 0 0)",
+          "oklch(0.45 0 0)",
+          "oklch(0.60 0 0)",
+          "oklch(0.75 0 0)",
+          "oklch(0.90 0 0)",
+          "oklch(1 0 0)"
+        ]
+      },
+      "destructive": {
+        "canonical": "oklch(0.5858 0.2220 17.5846)",
+        "displayName": "Rojo Alerta",
+        "role": "semantic",
+        "tonalRamp": [
+          "oklch(0.22 0.08 18)",
+          "oklch(0.32 0.12 18)",
+          "oklch(0.42 0.17 18)",
+          "oklch(0.5858 0.222 17.6)",
+          "oklch(0.66 0.20 18)",
+          "oklch(0.75 0.16 18)",
+          "oklch(0.85 0.11 18)",
+          "oklch(0.93 0.06 18)"
+        ]
+      },
+      "foreground": {
+        "canonical": "oklch(0.2303 0.0125 264.2926)",
+        "displayName": "Tinta",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(0.15 0.01 264)",
+          "oklch(0.23 0.01 264)",
+          "oklch(0.33 0.02 264)",
+          "oklch(0.44 0.02 264)",
+          "oklch(0.55 0.03 264)",
+          "oklch(0.68 0.03 264)",
+          "oklch(0.82 0.02 264)",
+          "oklch(0.94 0.01 264)"
+        ]
+      },
+      "foreground-dark": {
+        "canonical": "oklch(0.9842 0.0034 247.8575)",
+        "displayName": "Tinta Modo Oscuro",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(0.18 0.003 248)",
+          "oklch(0.28 0.003 248)",
+          "oklch(0.40 0.004 248)",
+          "oklch(0.52 0.004 248)",
+          "oklch(0.66 0.004 248)",
+          "oklch(0.80 0.004 248)",
+          "oklch(0.92 0.003 248)",
+          "oklch(0.984 0.003 248)"
+        ]
+      },
+      "muted-foreground": {
+        "canonical": "oklch(0.5544 0.0407 257.4166)",
+        "displayName": "Gris Humo",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(0.20 0.02 257)",
+          "oklch(0.28 0.03 257)",
+          "oklch(0.37 0.03 257)",
+          "oklch(0.46 0.04 257)",
+          "oklch(0.5544 0.0407 257)",
+          "oklch(0.66 0.04 257)",
+          "oklch(0.78 0.03 257)",
+          "oklch(0.90 0.02 257)"
+        ]
+      },
+      "primary": {
+        "canonical": "oklch(0.4258 0.1189 270.0203)",
+        "displayName": "Azul Real SPSATT",
+        "role": "primary",
+        "tonalRamp": [
+          "oklch(0.18 0.05 267)",
+          "oklch(0.25 0.07 267)",
+          "oklch(0.32 0.09 267)",
+          "oklch(0.42 0.12 267)",
+          "oklch(0.53 0.12 267)",
+          "oklch(0.65 0.10 267)",
+          "oklch(0.77 0.07 267)",
+          "oklch(0.90 0.04 267)"
+        ]
+      },
+      "primary-dark": {
+        "canonical": "oklch(0.5521 0.1610 270.1361)",
+        "displayName": "Azul Real Modo Oscuro",
+        "role": "primary",
+        "tonalRamp": [
+          "oklch(0.16 0.05 267)",
+          "oklch(0.22 0.06 267)",
+          "oklch(0.29 0.08 267)",
+          "oklch(0.38 0.11 267)",
+          "oklch(0.48 0.11 267)",
+          "oklch(0.59 0.10 267)",
+          "oklch(0.71 0.07 267)",
+          "oklch(0.85 0.04 267)"
+        ]
+      },
+      "secondary": {
+        "canonical": "oklch(0.9611 0.0070 268.5473)",
+        "displayName": "Lavado",
+        "role": "neutral",
+        "tonalRamp": [
+          "oklch(0.20 0.01 269)",
+          "oklch(0.28 0.01 269)",
+          "oklch(0.38 0.02 269)",
+          "oklch(0.50 0.02 269)",
+          "oklch(0.65 0.02 269)",
+          "oklch(0.78 0.01 269)",
+          "oklch(0.90 0.01 269)",
+          "oklch(0.961 0.007 269)"
+        ]
+      }
+    },
+    "motion": [
+      {
+        "name": "ease-standard",
+        "purpose": "Easing por defecto de transiciones de estado (hover, foco, drawer).",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)"
+      },
+      {
+        "name": "duration-fast",
+        "purpose": "Duración de hover y foco en controles.",
+        "value": "150ms"
+      },
+      {
+        "name": "duration-hover",
+        "purpose": "Escalado de imágenes en hover (scale 1.05): tiles del bento y cards de producto. Anulado con motion-reduce.",
+        "value": "300ms"
+      },
+      {
+        "name": "marquee",
+        "purpose": "Marcaquee de logos de clientes: se pausa en hover y se apaga con prefers-reduced-motion.",
+        "value": "marquee 40s linear infinite"
+      },
+      {
+        "name": "autoplay-carousel",
+        "purpose": "Carrusel de destacados: avance lento, se pausa al hover del ratón y se desactiva con prefers-reduced-motion.",
+        "value": "delay 5000ms, speed 600ms"
+      }
+    ],
+    "shadows": [
+      {
+        "name": "descanso",
+        "purpose": "Tarjetas en reposo: casi imperceptible, la jerarquía la da el tono.",
+        "value": "0 2px 8px 0 hsl(0 0% 0% / 0.03), 0 1px 2px -1px hsl(0 0% 0% / 0.03)"
+      },
+      {
+        "name": "hover",
+        "purpose": "Solo al interactuar o en overlays (drawer, diálogo). The Grounded Rule.",
+        "value": "0 4px 12px 0 hsl(0 0% 0% / 0.12), 0 1px 2px -1px hsl(0 0% 0% / 0.08)"
+      }
+    ],
+    "typographyMeta": {
+      "body": {
+        "displayName": "Cuerpo Inter",
+        "purpose": "Todo el texto transaccional: copy de producto, formularios, precios, navegación."
+      },
+      "display": {
+        "displayName": "Display Fraunces",
+        "purpose": "H1 del hero, tira de servicios con separadores '/', H1 de las páginas 404 (general y productos) y H1 del flujo de cuenta público (Auth Split: login, registro, forgot, reset). Cuenta autenticada, portafolio y secciones del landing van en Inter (decisión del usuario)."
+      },
+      "label": {
+        "displayName": "Label Inter",
+        "purpose": "Eyebrows de sección y etiquetas de campo: mayúsculas con tracking 0.1em."
+      }
+    }
+  },
+  "generatedAt": "2026-10-18T02:20:58Z",
+  "narrative": {
+    "donts": [
+      "Don't usar el oro en UI: botones, acentos, líneas y ornamentos quedaron revocados; el oro es solo del logotipo y la portada.",
+      "Don't poner bg-white, text-gray-* ni hex sueltos que rompan el modo oscuro: solo tokens shadcn.",
+      "Don't convertir todo en píldora ni agregar glow, glassmorphism o sombras grandes: la personalidad es robusta, no brillante.",
+      "Don't introducir la tipografía Geist ni el azul del starter (#0077ff): este documento sustituye a esos valores.",
+      "Don't inventar números, testimonios ni logos de clientes que no existan en el backend o en public/ (los logos de public/bussines/ solo si son clientes reales confirmados)."
+    ],
+    "dos": [
+      "Do usar los tokens semánticos shadcn (background, foreground, primary, muted, border) en todo componente; el modo oscuro se resuelve solo.",
+      "Do usar el botón primary (bg-primary con texto primary-foreground) para la acción principal de la pantalla.",
+      "Do usar Fraunces en itálica una sola vez por pantalla, para el eslogan o el titular de mayor peso emocional.",
+      "Do resolver profundidad con tono y borde de 1px; sombra solo en hover, drawer o diálogo.",
+      "Do mantener el toggle claro/oscuro en el topbar, junto a región, búsqueda y cuenta.",
+      "Do verificar contraste AA en cada modo (texto sobre primary siempre en primary-foreground)."
+    ],
+    "keyCharacteristics": [
+      "Primary del tema IMPORTANTE.MD como color de acción y superficie de marca (header, footer).",
+      "Serif itálica (Fraunces) para display y eslogan; Inter para todo lo transaccional.",
+      "Componentes robustos: relleno generoso, bordes finos, radio suave y constante (0.6rem).",
+      "Profundidad por capas sutiles: tono sobre tono, sombra mínima, elevación en hover.",
+      "Todo color sale de tokens semánticos shadcn: nada de bg-white ni text-gray-* en componentes."
+    ],
+    "northStar": "Las Ideas, Hechas",
+    "overview": "La promesa de SPSATT es que una idea se vuelve una pieza física. El sistema la traduce con el tema shadcn comprometido en IMPORTANTE.MD: azul profundo (primary) para acciones y superficies de marca, neutros claros u oscuros que el modo oscuro resuelve solo.\n\nLa voz tipográfica nace de la portada de Facebook real de SPSATT: titulares en serif itálica que llevan el eslogan \"Donde las ideas se hacen realidad\", apoyados por Inter, que hace el trabajo diario de comercio: precios, formularios, navegación. La personalidad de los componentes es robusta y segura: superficies sólidas, esquinas suaves, bordes finos, sin fragilidad.\n\nEl oro de la identidad (degradado #FFF0B8 a #E9C35A a #B8861F) se revocó para UI por decisión del usuario: queda solo en el arte del logotipo y en la portada original, nunca en botones, acentos ni ornamentos.\n\nDeuda honesta: home, chrome y las páginas de la cuenta (públicas y autenticadas) ya usan tokens del tema; quedan rincones demo (checkout y el footer en modo oscuro) fuera del alcance actual.\n\nDial: ENERGY 2 / RHYTHM 2 / MOTION 1",
+    "rules": [
+      {
+        "name": "The Token Rule",
+        "section": "colors",
+        "body": "Todo color de UI proviene de los tokens semánticos del tema shadcn (IMPORTANTE.MD). Prohibido bg-white, text-gray-*, hex sueltos ni oro: cualquier valor fijo rompe el modo oscuro o se pelea con el tema."
+      },
+      {
+        "name": "The Dark Mode Rule",
+        "section": "colors",
+        "body": "El modo oscuro es igual de canónico que el claro: la clase .dark resuelve los tokens y next-themes (attribute class) con el toggle del topbar controla el estado. Ningún componente puede asumir fondo claro."
+      },
+      {
+        "name": "The Italic Tagline Rule",
+        "section": "typography",
+        "body": "El eslogan en serif itálica aparece una sola vez por pantalla, en el hero o su equivalente. Si está en todos lados, no es una voz, es un patrón."
+      },
+      {
+        "name": "The Grounded Rule",
+        "section": "elevation",
+        "body": "En reposo todo descansa sobre el suelo (tono + borde). La sombra aparece solo como respuesta a estado (hover, apertura, foco). Si dos elementos flotan a la vez, la jerarquía se rompió."
+      }
+    ]
+  },
+  "schemaVersion": 2,
+  "title": "Design System: SPSATT"
+}

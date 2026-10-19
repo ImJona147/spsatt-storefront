@@ -1,11 +1,5 @@
 "use client";
 
-import { ArrowLeft, ChevronDown, ShoppingBag } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
 import {
   CheckoutProvider,
   CheckoutSummary,
@@ -14,6 +8,12 @@ import {
 import { POLICY_LINKS } from "@/lib/constants/policies";
 import { getStoreName } from "@/lib/store";
 import { extractBasePath } from "@/lib/utils/path";
+import { ArrowLeft, ChevronDown, ShoppingBag } from "lucide-react";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 const storeName = getStoreName();
 
@@ -26,7 +26,7 @@ function CheckoutHeader() {
     <header className="flex items-center justify-between h-16">
       <Link href={basePath || "/"} className="flex items-center space-x-2">
         <Image
-          src="/spree.png"
+          src="/spsatt.svg"
           alt={storeName}
           width={90}
           height={32}
