@@ -16,23 +16,23 @@
 // outside the project simply does not resolve. `file:` copies it into
 // node_modules, where all three of those settings can see it.
 
-const SDK_PACKAGE = '@spree/sdk'
+const SDK_PACKAGE = "@spree/sdk";
 
 /**
  * @param {{ dependencies?: Record<string, string>, devDependencies?: Record<string, string> }} pkg
  */
 function readPackage(pkg) {
-  const sdkPath = process.env.SPREE_SDK_PATH
+  const sdkPath = process.env.SPREE_SDK_PATH;
 
-  if (!sdkPath) return pkg
+  if (!sdkPath) return pkg;
 
-  for (const field of ['dependencies', 'devDependencies']) {
+  for (const field of ["dependencies", "devDependencies"]) {
     if (pkg[field]?.[SDK_PACKAGE]) {
-      pkg[field][SDK_PACKAGE] = `file:${sdkPath}`
+      pkg[field][SDK_PACKAGE] = `file:${sdkPath}`;
     }
   }
 
-  return pkg
+  return pkg;
 }
 
-module.exports = { hooks: { readPackage } }
+module.exports = { hooks: { readPackage } };

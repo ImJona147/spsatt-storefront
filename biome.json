@@ -1,9 +1,4 @@
 {
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  },
   "files": {
     "ignoreUnknown": false,
     "includes": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json"]
@@ -13,42 +8,47 @@
     "indentStyle": "space",
     "indentWidth": 2
   },
+  "javascript": {
+    "formatter": {}
+  },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "a11y": {
+        "noLabelWithoutControl": "off",
+        "noNoninteractiveElementToInteractiveRole": "off",
+        "noStaticElementInteractions": "off",
+        "noSvgWithoutTitle": "off",
+        "useButtonType": "off",
+        "useKeyWithClickEvents": "off"
+      },
       "correctness": {
+        "noUnusedFunctionParameters": "off",
         "noUnusedImports": "warn",
         "noUnusedVariables": "warn",
-        "noUnusedFunctionParameters": "off",
         "useExhaustiveDependencies": "warn"
+      },
+      "performance": {
+        "noImgElement": "warn"
+      },
+      "recommended": true,
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
       },
       "style": {
         "noNonNullAssertion": "off",
         "useTemplate": "warn"
       },
       "suspicious": {
-        "noExplicitAny": "off",
         "noArrayIndexKey": "off",
+        "noExplicitAny": "off",
         "noImplicitAnyLet": "off"
-      },
-      "a11y": {
-        "useButtonType": "off",
-        "noSvgWithoutTitle": "off",
-        "noLabelWithoutControl": "off",
-        "noStaticElementInteractions": "off",
-        "noNoninteractiveElementToInteractiveRole": "off",
-        "useKeyWithClickEvents": "off"
-      },
-      "security": {
-        "noDangerouslySetInnerHtml": "off"
-      },
-      "performance": {
-        "noImgElement": "warn"
       }
     }
   },
-  "javascript": {
-    "formatter": {}
+  "vcs": {
+    "clientKind": "git",
+    "enabled": true,
+    "useIgnoreFile": true
   }
 }

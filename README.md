@@ -31,11 +31,11 @@ A production-ready, headless ecommerce storefront for [Spree Commerce](https://s
 The live demo at [demo.spreecommerce.org](https://demo.spreecommerce.org) scores 98/100 on desktop and 88/100 on mobile for Performance on Google's Lighthouse audit, with five language versions served from the same deployment.
 
 | Lighthouse metric | Mobile | Desktop |
-|-------------------|--------|---------|
-| Performance | 88 | 98 |
-| Accessibility | 100 | 100 |
-| Best Practices | 100 | 100 |
-| SEO | 100 | 100 |
+| ----------------- | ------ | ------- |
+| Performance       | 88     | 98      |
+| Accessibility     | 100    | 100     |
+| Best Practices    | 100    | 100     |
+| SEO               | 100    | 100     |
 
 No external performance plugins. No edge-side rendering hacks. The architecture is Next.js 16 App Router with React 19 Server Components, server-side data fetching via `@spree/sdk`, and Tailwind CSS 4.
 
@@ -43,32 +43,32 @@ No external performance plugins. No edge-side rendering hacks. The architecture 
 
 ## Features
 
-| Feature | Details |
-|---------|---------|
-| **Product Catalog** | Browse, search, filter products by categories, and use faceted navigation. Optional [Meilisearch integration](https://spreecommerce.org/docs/integrations/search/meilisearch) available |
-| **Product Details** | View product information with variant selection and media |
-| **Shopping Cart** | Add, update, and remove items with server-side state |
-| **One-page Checkout** | Guest visitors and signed-in users supported, multi-shipments supported natively, Coupon Codes, Gift Cards, Store Credit |
-| **Stripe/Adyen/PayPal payments** | native Stripe/Adyen/Paypal payment support with their SDKs, PCI-Compliant, 3DS-Secure, use Credit Cards, Apple Pay, Google Pay, Klarna, Affirm, SEPA payments |
-| **Customer Account** | Full account management: Profile management, Order history with detailed order view, Address book (create, edit, delete), Gift Cards and Store Credit, Saved payment methods |
-| **Wholesale portal** | Storefront gating, per-customer pricing and product availability, account approval workflows |
-| **Multi-Region Support** | Country, currency, and language switching via URL segments, powered by [Spree Markets](https://spreecommerce.org/docs/developer/core-concepts/markets) |
-| **Responsive Design** | Mobile-first Tailwind CSS styling |
-| **Google Tag Manager** and **Google Analytics 4 Ecommerce events** | tracking supported natively |
-| **Store Policies** | Policy pages fetched from Spree API, with consent checkboxes on registration and guest checkout |
-| **SEO-ready** | meta tags, JSON-LD, OpenGraph — all built in |
-| **Error Tracking** | Sentry integration for both server-side and client-side error monitoring with source maps |
+| Feature                                                            | Details                                                                                                                                                                                 |
+| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Product Catalog**                                                | Browse, search, filter products by categories, and use faceted navigation. Optional [Meilisearch integration](https://spreecommerce.org/docs/integrations/search/meilisearch) available |
+| **Product Details**                                                | View product information with variant selection and media                                                                                                                               |
+| **Shopping Cart**                                                  | Add, update, and remove items with server-side state                                                                                                                                    |
+| **One-page Checkout**                                              | Guest visitors and signed-in users supported, multi-shipments supported natively, Coupon Codes, Gift Cards, Store Credit                                                                |
+| **Stripe/Adyen/PayPal payments**                                   | native Stripe/Adyen/Paypal payment support with their SDKs, PCI-Compliant, 3DS-Secure, use Credit Cards, Apple Pay, Google Pay, Klarna, Affirm, SEPA payments                           |
+| **Customer Account**                                               | Full account management: Profile management, Order history with detailed order view, Address book (create, edit, delete), Gift Cards and Store Credit, Saved payment methods            |
+| **Wholesale portal**                                               | Storefront gating, per-customer pricing and product availability, account approval workflows                                                                                            |
+| **Multi-Region Support**                                           | Country, currency, and language switching via URL segments, powered by [Spree Markets](https://spreecommerce.org/docs/developer/core-concepts/markets)                                  |
+| **Responsive Design**                                              | Mobile-first Tailwind CSS styling                                                                                                                                                       |
+| **Google Tag Manager** and **Google Analytics 4 Ecommerce events** | tracking supported natively                                                                                                                                                             |
+| **Store Policies**                                                 | Policy pages fetched from Spree API, with consent checkboxes on registration and guest checkout                                                                                         |
+| **SEO-ready**                                                      | meta tags, JSON-LD, OpenGraph — all built in                                                                                                                                            |
+| **Error Tracking**                                                 | Sentry integration for both server-side and client-side error monitoring with source maps                                                                                               |
 
 ## Technology
 
-| Technology | Role |
-|------------|------|
-| **Next.js 16** | App Router, Server Actions, Turbopack |
-| **React 19** | Latest React with improved Server Components |
-| **Tailwind CSS 4** | Utility-first styling |
-| **TypeScript** | Full type safety |
-| **Sentry** | Error tracking and performance monitoring with source maps |
-| [@spree/sdk](https://spreecommerce.org/docs/developer/sdk/quickstart) | Official Spree Commerce SDK |
+| Technology                                                            | Role                                                       |
+| --------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Next.js 16**                                                        | App Router, Server Actions, Turbopack                      |
+| **React 19**                                                          | Latest React with improved Server Components               |
+| **Tailwind CSS 4**                                                    | Utility-first styling                                      |
+| **TypeScript**                                                        | Full type safety                                           |
+| **Sentry**                                                            | Error tracking and performance monitoring with source maps |
+| [@spree/sdk](https://spreecommerce.org/docs/developer/sdk/quickstart) | Official Spree Commerce SDK                                |
 
 ## Architecture
 
@@ -107,22 +107,22 @@ The storefront lands in `apps/storefront/`.
 
 1. Install dependencies:
 
-    ```bash
-    pnpm install
-    ```
+   ```bash
+   pnpm install
+   ```
 
 2. Copy the environment file and configure:
 
-    ```bash
-    cp .env.local.example .env.local
-    ```
+   ```bash
+   cp .env.local.example .env.local
+   ```
 
 3. Update `.env.local` with your Spree API credentials:
 
-    ```env
-    SPREE_API_URL=http://localhost:3000
-    SPREE_PUBLISHABLE_KEY=your_publishable_api_key_here
-    ```
+   ```env
+   SPREE_API_URL=http://localhost:3000
+   SPREE_PUBLISHABLE_KEY=your_publishable_api_key_here
+   ```
 
 > Note: These are server-side only variables (no `NEXT_PUBLIC_` prefix needed).
 

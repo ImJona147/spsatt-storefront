@@ -36,6 +36,7 @@ React 19 provides better patterns for many cases where `useEffect` was previousl
 #### Don't Use useEffect For:
 
 **1. Transforming data for rendering**
+
 ```typescript
 // ❌ Bad - useEffect for derived state
 const [fullName, setFullName] = useState("");
@@ -49,11 +50,12 @@ const fullName = `${firstName} ${lastName}`;
 // ✅ Good - useMemo for expensive calculations
 const sortedProducts = useMemo(
   () => products.sort((a, b) => a.price - b.price),
-  [products]
+  [products],
 );
 ```
 
 **2. Resetting state when props change**
+
 ```typescript
 // ❌ Bad - useEffect to reset state
 useEffect(() => {
@@ -70,6 +72,7 @@ const [selectedVariant, setSelectedVariant] = useState(() => {
 ```
 
 **3. Fetching data in response to user events**
+
 ```typescript
 // ❌ Bad - useEffect triggered by state
 const [query, setQuery] = useState("");
@@ -89,6 +92,7 @@ const [results, searchAction] = useActionState(searchProducts, []);
 ```
 
 **4. Initializing the application**
+
 ```typescript
 // ❌ Bad - useEffect for one-time init
 useEffect(() => {
@@ -132,6 +136,7 @@ export default async function ProductsPage() {
 ```
 
 Only add `"use client"` when you need:
+
 - Event handlers (onClick, onChange, etc.)
 - useState, useReducer, useEffect, useContext
 - Browser-only APIs
@@ -345,7 +350,9 @@ interface MetadataProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: MetadataProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: MetadataProps): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProduct(slug);
 
@@ -439,11 +446,13 @@ export async function setCartToken(token: string) {
 ### Use Context Sparingly
 
 Only use Context for truly global state that many components need:
+
 - `CartContext` - Cart state and actions
 - `AuthContext` - Authentication state
 - `StoreContext` - Current store, locale, currency
 
 For component-local state, prefer:
+
 1. `useState` for simple state
 2. URL search params for filter/sort state (shareable, bookmarkable)
 3. Server state via Server Components
@@ -505,6 +514,7 @@ interface ProductCardProps {
 ### Strict Type Checking
 
 The project uses strict TypeScript. Always:
+
 - Define explicit return types for functions
 - Use `satisfies` for type checking object literals
 - Avoid `any`, use `unknown` if type is truly unknown
