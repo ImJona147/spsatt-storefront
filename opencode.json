@@ -1,0 +1,27 @@
+{
+  "$schema": "https://opencode.ai",
+  "mcp": {
+    "shadcn": {
+      "command": ["pnpx", "shadcn@latest", "mcp"],
+      "enabled": true,
+      "type": "local"
+    },
+    "spree-docs": {
+      "enabled": true,
+      "type": "http",
+      "url": "https://spreecommerce.org/docs/mcp"
+    },
+    "storyset": {
+      "command": [
+        "/home/imjona/Documentos/mcp-storyset/.venv/bin/python3",
+        "-m",
+        "mcp_storyset"
+      ],
+      "enabled": true,
+      "environment": {
+        "STORYSET_DOWNLOAD_DIR": "/home/imjona/Descargas/storyset"
+      },
+      "type": "local"
+    }
+  }
+}
