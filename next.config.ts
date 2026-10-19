@@ -58,6 +58,17 @@ const nextConfig: NextConfig = {
   },
   turbopack: {
     root: __dirname,
+    rules: {
+      "*.svg": {
+        loaders: [
+          {
+            loader: "@svgr/webpack",
+            options: { icon: true },
+          },
+        ],
+        as: "*.js",
+      },
+    },
   },
   cacheComponents: true,
   cacheLife: {
