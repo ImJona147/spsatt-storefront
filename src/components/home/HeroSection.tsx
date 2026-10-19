@@ -1,7 +1,13 @@
+import { Store } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
-import { getStoreName } from "@/lib/store";
+import { WhatsappIcon } from "@/components/ui/svgs/whatsappIcon";
+import {
+  BUSINESS_WHATSAPP_MESSAGE,
+  buildWhatsAppUrl,
+} from "@/lib/constants/business";
 
 interface HeroSectionProps {
   basePath: string;
@@ -13,43 +19,67 @@ export async function HeroSection({ basePath, locale }: HeroSectionProps) {
     locale: locale as Locale,
     namespace: "home",
   });
-  const storeName = getStoreName();
-
-  /* Demo-only: Remove for production. */
-  const githubUrl = "https://github.com/spree/storefront";
-  const quickstartUrl =
-    "https://spreecommerce.org/docs/developer/getting-started/quickstart";
+  const services = t.raw("services") as string[];
 
   return (
-    <section className="border-b border-gray-200 min-h-[823px] md:min-h-0 flex items-center">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24">
-        <div className="text-center">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
-            {t("welcome", { storeName })}
+    <section className="relative isolate overflow-hidden bg-background">
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <Image
+          src="/img_background.webp"
+          alt=""
+          fill
+          priority
+          fetchPriority="high"
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-linear-to-b from-background/95 via-background/90 to-background/80 sm:bg-linear-to-r sm:from-background sm:from-40% sm:via-background/92 sm:to-background/45" />
+      </div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex max-w-2xl flex-col justify-center py-12 sm:min-h-[calc(100dvh-4rem)] sm:py-16 md:py-20">
+          <p className="flex items-center gap-3 text-xs font-semibold tracking-widest text-primary uppercase">
+            <span aria-hidden className="h-px w-8 bg-primary" />
+            {t("heroEyebrow")}
+          </p>
+          <h1 className="font-display mt-5 text-[clamp(2.5rem,5.5vw,4rem)] leading-[1.06] font-semibold tracking-[-0.015em] text-balance text-foreground">
+            {t("heroTitle")}
           </h1>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="mt-5 text-lg leading-relaxed text-foreground/90">
             {t("heroDescription")}
           </p>
-          <div className="mt-8 flex justify-center gap-4 flex-wrap">
-            <Button size="lg" asChild>
-              <Link href={`${basePath}/products`}>{t("shopNow")}</Link>
-            </Button>
-            {/* Demo-only: Remove for production. */}
-            <Button variant="outline" size="lg" asChild>
-              <Link href={githubUrl} target="_blank" rel="noopener noreferrer">
-                {t("forkOnGithub")}
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button asChild size="lg">
+              <Link href={`${basePath}/products`}>
+                <Store aria-hidden className="size-4" />
+                {t("heroCtaCatalog")}
               </Link>
             </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link
-                href={quickstartUrl}
+            <Button asChild size="lg" variant="outline">
+              <a
+                href={buildWhatsAppUrl(BUSINESS_WHATSAPP_MESSAGE)}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noreferrer"
               >
-                {t("quickstartGuide")} &rarr;
-              </Link>
+                <WhatsappIcon aria-hidden className="size-4" />
+                {t("ctaWhatsApp")}
+              </a>
             </Button>
           </div>
+          <ul className="font-display mt-9 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-foreground/15 pt-6 text-lg font-medium text-foreground/90">
+            {services.map((service, index) => (
+              <li key={service} className="flex items-baseline gap-3">
+                {index > 0 && (
+                  <span
+                    aria-hidden
+                    className="font-sans text-sm font-normal text-primary"
+                  >
+                    /
+                  </span>
+                )}
+                {service}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
