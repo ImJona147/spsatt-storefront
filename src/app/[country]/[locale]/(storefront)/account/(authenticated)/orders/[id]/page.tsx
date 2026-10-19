@@ -3,6 +3,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { OrderDetail } from "@/components/account/OrderDetail";
+import { Button } from "@/components/ui/button";
 import { getOrder } from "@/lib/data/orders";
 
 interface OrderDetailPageProps {
@@ -29,17 +30,16 @@ export default async function OrderDetailPage({
   // comes back for a cart id, which is not an order of this account.
   if (!order || isOrderGroup(order) || order.completed_at === null) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-xl font-medium text-gray-900 mb-2">
+      <div className="rounded-xl border bg-card px-6 py-8 text-center">
+        <h1 className="text-base font-semibold text-foreground">
           {t("orderNotFound")}
-        </h2>
-        <p className="text-gray-500 mb-6">{t("orderNotFoundDescription")}</p>
-        <Link
-          href={`${basePath}/account/orders`}
-          className="text-primary hover:text-primary font-medium"
-        >
-          {t("backToOrders")}
-        </Link>
+        </h1>
+        <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted-foreground">
+          {t("orderNotFoundDescription")}
+        </p>
+        <Button variant="outline" asChild className="mt-5">
+          <Link href={`${basePath}/account/orders`}>{t("backToOrders")}</Link>
+        </Button>
       </div>
     );
   }

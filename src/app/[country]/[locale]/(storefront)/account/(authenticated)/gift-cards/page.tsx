@@ -20,25 +20,31 @@ export default async function GiftCardsPage({ params }: GiftCardsPageProps) {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        {t("giftCards")}
-      </h1>
+      <header className="mb-5">
+        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+          {t("giftCards")}
+        </h1>
+      </header>
 
       {cards.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <Gift className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+        <div className="rounded-xl border bg-card px-6 py-8 text-center">
+          <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10">
+            <Gift className="size-6 text-primary" aria-hidden />
+          </div>
+          <h2 className="text-base font-semibold text-foreground">
             {t("noGiftCards")}
-          </h3>
-          <p className="text-gray-500">{t("noGiftCardsDescription")}</p>
+          </h2>
+          <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted-foreground">
+            {t("noGiftCardsDescription")}
+          </p>
         </div>
       ) : (
         <GiftCardList cards={cards} />
       )}
 
-      <div className="mt-6 p-4 bg-gray-50 rounded-xl">
-        <p className="text-sm text-gray-600">
-          <Info className="w-4 h-4 inline mr-1" />
+      <div className="mt-5 rounded-xl border bg-muted/50 p-3.5">
+        <p className="flex items-start gap-2 text-sm text-muted-foreground">
+          <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
           {t("giftCardsHelpText")}
         </p>
       </div>

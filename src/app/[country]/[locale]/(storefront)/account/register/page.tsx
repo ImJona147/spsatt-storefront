@@ -1,25 +1,23 @@
 "use client";
 
-import { CircleAlert, Eye, EyeOff } from "lucide-react";
+import { Check, Circle, CircleAlert, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import {
+  isPasswordValid,
+  PasswordChecklist,
+} from "@/components/account/PasswordChecklist";
 import { PolicyConsent } from "@/components/policy/PolicyConsent";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 import { extractBasePath } from "@/lib/utils/path";
+import RegisterSvg from "../../../../../../../public/illustrations/register.svg";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -42,8 +40,6 @@ export default function RegisterPage() {
   const [policyConsent, setPolicyConsent] = useState(false);
   const [policyError, setPolicyError] = useState(false);
 
-  // Redirect if already authenticated
-  // useEffect is needed here to prevent rendering issues.
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
       router.push(`${basePath}/account`);
@@ -53,17 +49,26 @@ export default function RegisterPage() {
     return null;
   }
 
+  const passwordValid = isPasswordValid(password);
+  const passwordsMatch =
+    passwordConfirmation.length > 0 && password === passwordConfirmation;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (password !== passwordConfirmation) {
-      setError(t("passwordsDontMatch"));
+    if (!passwordValid) {
+      document.getElementById("password-rules")?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+      document.getElementById("password")?.focus();
       return;
     }
 
-    if (password.length < 6) {
-      setError(t("passwordTooShort"));
+    if (password !== passwordConfirmation) {
+      setError(t("passwordsDontMatch"));
+      document.getElementById("passwordConfirmation")?.focus();
       return;
     }
 
@@ -100,15 +105,17 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle>{t("createAccount")}</CardTitle>
-          <CardDescription>{t("signUpDescription")}</CardDescription>
-        </CardHeader>
+    <div className="flex min-h-[60svh] items-center">
+      <section className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-6 sm:px-6 sm:py-8 md:grid-cols-2 md:items-center md:gap-10 lg:gap-14">
+        <div className="mx-auto w-full max-w-md">
+          <h1 className="font-display text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            {t("createAccount")}
+          </h1>
+          <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {t("signUpDescription")}
+          </p>
 
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="mt-5 space-y-3">
             {error && (
               <Alert variant="destructive">
                 <CircleAlert />
@@ -116,12 +123,14 @@ export default function RegisterPage() {
               </Alert>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <Field>
                 <FieldLabel htmlFor="firstName">{t("firstName")}</FieldLabel>
                 <Input
                   type="text"
                   id="firstName"
+                  name="given-name"
+                  autoComplete="given-name"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
@@ -134,6 +143,8 @@ export default function RegisterPage() {
                 <Input
                   type="text"
                   id="lastName"
+                  name="family-name"
+                  autoComplete="family-name"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
@@ -147,6 +158,8 @@ export default function RegisterPage() {
               <Input
                 type="email"
                 id="email"
+                name="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -160,10 +173,12 @@ export default function RegisterPage() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   id="password"
+                  name="new-password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={6}
+                  aria-describedby="password-rules"
                   placeholder="••••••••"
                   className="pr-10"
                 />
@@ -178,13 +193,14 @@ export default function RegisterPage() {
                     }
                   >
                     {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
+                      <EyeOff className="size-5" />
                     ) : (
-                      <Eye className="w-5 h-5" />
+                      <Eye className="size-5" />
                     )}
                   </Button>
                 </div>
               </div>
+              <PasswordChecklist password={password} id="password-rules" />
             </Field>
 
             <Field>
@@ -195,10 +211,11 @@ export default function RegisterPage() {
                 <Input
                   type={showPasswordConfirmation ? "text" : "password"}
                   id="passwordConfirmation"
+                  name="new-password"
+                  autoComplete="new-password"
                   value={passwordConfirmation}
                   onChange={(e) => setPasswordConfirmation(e.target.value)}
                   required
-                  minLength={6}
                   placeholder="••••••••"
                   className="pr-10"
                 />
@@ -217,13 +234,39 @@ export default function RegisterPage() {
                     }
                   >
                     {showPasswordConfirmation ? (
-                      <EyeOff className="w-5 h-5" />
+                      <EyeOff className="size-5" />
                     ) : (
-                      <Eye className="w-5 h-5" />
+                      <Eye className="size-5" />
                     )}
                   </Button>
                 </div>
               </div>
+              {passwordConfirmation.length > 0 && (
+                <p
+                  aria-live="polite"
+                  className={cn(
+                    "flex items-center gap-2 text-[0.8125rem] leading-tight",
+                    passwordsMatch
+                      ? "text-foreground"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {passwordsMatch ? (
+                    <Check
+                      aria-hidden
+                      focusable="false"
+                      className="size-4 shrink-0 text-primary"
+                    />
+                  ) : (
+                    <Circle
+                      aria-hidden
+                      focusable="false"
+                      className="size-4 shrink-0 text-muted-foreground"
+                    />
+                  )}
+                  {passwordsMatch ? t("passwordsMatch") : t("passwordsNoMatch")}
+                </p>
+              )}
             </Field>
 
             <PolicyConsent
@@ -235,31 +278,38 @@ export default function RegisterPage() {
               error={policyError}
             />
 
-            <div className="w-full">
-              <Button
-                type="submit"
-                disabled={submitting}
-                size="lg"
-                className="w-full"
-              >
-                {submitting ? t("creatingAccount") : t("createAccount")}
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              disabled={submitting || !passwordValid || !passwordsMatch}
+              size="lg"
+              className="w-full"
+            >
+              {submitting ? t("creatingAccount") : t("createAccount")}
+            </Button>
           </form>
-        </CardContent>
 
-        <CardFooter className="justify-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-6 text-center text-sm text-muted-foreground">
             {t("alreadyHaveAccount")}{" "}
             <Link
               href={`${basePath}/account`}
-              className="text-primary hover:text-primary/70 font-medium"
+              className="font-medium text-primary hover:text-primary/70"
             >
               {t("signIn")}
             </Link>
           </p>
-        </CardFooter>
-      </Card>
+        </div>
+
+        <div
+          aria-hidden
+          className="relative hidden items-center justify-center md:flex"
+        >
+          <div className="absolute inset-4 rounded-full bg-primary/10 blur-3xl" />
+          <RegisterSvg
+            focusable="false"
+            className="relative h-auto w-52 text-primary sm:w-64 lg:w-80"
+          />
+        </div>
+      </section>
     </div>
   );
 }

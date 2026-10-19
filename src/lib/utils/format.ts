@@ -42,10 +42,11 @@ export function getStatusLabel(
 
 // Orders saved before Spree 6.0 can carry the 5.6 values (balance_due,
 // credit_owed, pending, void, ready, shipped) until they are next updated, so those are mapped too.
+// Opacity tints keep badges legible on light and dark surfaces.
 export function getPaymentStatusColor(status: string | null): string {
   switch (status) {
     case "paid":
-      return "bg-green-100 text-green-800";
+      return "bg-emerald-500/12 text-emerald-700 dark:text-emerald-400";
     case "none":
     case "authorized":
     case "partially_paid":
@@ -53,16 +54,16 @@ export function getPaymentStatusColor(status: string | null): string {
     case "balance_due":
     case "credit_owed":
     case "pending":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-amber-500/12 text-amber-700 dark:text-amber-400";
     case "partially_refunded":
     case "refunded":
-      return "bg-blue-100 text-blue-800";
+      return "bg-sky-500/12 text-sky-700 dark:text-sky-400";
     case "voided":
     case "failed":
     case "void":
-      return "bg-red-100 text-red-800";
+      return "bg-red-500/12 text-red-700 dark:text-red-400";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-muted text-muted-foreground";
   }
 }
 
@@ -71,18 +72,18 @@ export function getFulfillmentStatusColor(status: string | null): string {
     case "fulfilled":
     case "delivered":
     case "shipped":
-      return "bg-green-100 text-green-800";
+      return "bg-emerald-500/12 text-emerald-700 dark:text-emerald-400";
     case "unfulfilled":
     case "backorder":
     case "pending":
     case "ready":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-amber-500/12 text-amber-700 dark:text-amber-400";
     case "partial":
-      return "bg-blue-100 text-blue-800";
+      return "bg-sky-500/12 text-sky-700 dark:text-sky-400";
     case "canceled":
-      return "bg-red-100 text-red-800";
+      return "bg-red-500/12 text-red-700 dark:text-red-400";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-muted text-muted-foreground";
   }
 }
 

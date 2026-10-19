@@ -45,10 +45,10 @@ function AddressCard({ address, onEdit, onDelete }: AddressCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <div className="flex justify-between items-start">
-        <div className="text-sm text-gray-600 space-y-0.5">
-          <p className="font-medium text-gray-800">{address.full_name}</p>
+    <div className="rounded-xl border bg-card p-4 sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="space-y-0.5 text-sm text-muted-foreground">
+          <p className="font-medium text-foreground">{address.full_name}</p>
           {address.company && <p>{address.company}</p>}
           <p>{address.address1}</p>
           {address.address2 && <p>{address.address2}</p>}

@@ -29,11 +29,14 @@ export function PolicyConsent({
         id="policy-consent"
         checked={checked}
         onCheckedChange={(value) => onCheckedChange(value === true)}
-        className={cn("mt-0.5", error && "border-red-500")}
+        className={cn("mt-0.5", error && "border-destructive")}
       />
       <label
         htmlFor="policy-consent"
-        className={cn("text-sm", error ? "text-red-500" : "text-gray-900")}
+        className={cn(
+          "text-sm",
+          error ? "text-destructive" : "text-foreground",
+        )}
       >
         {t("iAgreeToThe")}{" "}
         {CONSENT_POLICIES.map((policy, index) => (
@@ -50,7 +53,7 @@ export function PolicyConsent({
               className={cn(
                 "underline",
                 error
-                  ? "text-red-500 hover:text-red-700"
+                  ? "text-destructive hover:text-destructive/80"
                   : "text-primary hover:text-primary/70",
               )}
             >

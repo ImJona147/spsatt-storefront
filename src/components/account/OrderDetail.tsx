@@ -31,18 +31,20 @@ export async function OrderDetail({
     <div>
       <Link
         href={`${basePath}/account/orders`}
-        className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-flex items-center gap-1"
+        className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
-        <ChevronLeft className="w-4 h-4" />
+        <ChevronLeft className="size-4" aria-hidden />
         {t("backToOrders")}
       </Link>
 
-      <h1 className="text-2xl font-bold text-gray-900">
-        {t("orderTitle", { number: order.number })}
-      </h1>
-      <p className="text-sm text-gray-500 mt-1 mb-6">
-        {t("placedOn", { date: formatDateTime(order.completed_at, locale) })}
-      </p>
+      <header className="mb-5">
+        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+          {t("orderTitle", { number: order.number })}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {t("placedOn", { date: formatDateTime(order.completed_at, locale) })}
+        </p>
+      </header>
 
       {hasFulfillments ? (
         order.fulfillments.map((fulfillment) => {
@@ -67,10 +69,10 @@ export async function OrderDetail({
           );
         })
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-4">
-          <div className="divide-y divide-gray-200">
+        <div className="mb-4 overflow-hidden rounded-xl border bg-card">
+          <div className="divide-y divide-border">
             {order.items?.map((item) => (
-              <div key={item.id} className="px-6 py-4">
+              <div key={item.id} className="px-4 py-4 sm:px-6">
                 <LineItemCard item={item} basePath={basePath} />
               </div>
             ))}
@@ -79,29 +81,29 @@ export async function OrderDetail({
       )}
 
       {order.customer_note && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">
+        <div className="mb-4 rounded-xl border bg-card p-4 sm:p-6">
+          <h2 className="mb-2 text-sm font-semibold text-foreground">
             {t("specialInstructions")}
-          </h3>
-          <p className="text-sm text-gray-900">{order.customer_note}</p>
+          </h2>
+          <p className="text-sm text-foreground">{order.customer_note}</p>
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
+      <div className="mb-4 overflow-hidden rounded-xl border bg-card">
+        <div className="grid grid-cols-1 divide-y divide-border lg:grid-cols-2 lg:divide-x lg:divide-y-0">
           {order.billing_address && (
-            <div className="px-6 py-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            <div className="p-4 sm:p-6">
+              <h2 className="mb-2 text-sm font-semibold text-foreground">
                 {t("billingAddress")}
-              </h3>
+              </h2>
               <AddressBlock address={order.billing_address} />
             </div>
           )}
           {order.payments && order.payments.length > 0 && (
-            <div className="px-6 py-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">
+            <div className="p-4 sm:p-6">
+              <h2 className="mb-2 text-sm font-semibold text-foreground">
                 {t("paymentInformation")}
-              </h3>
+              </h2>
               {order.payments
                 .filter((p) => p.status !== "void" && p.status !== "invalid")
                 .map((payment) => (
@@ -111,7 +113,7 @@ export async function OrderDetail({
                       currency={order.currency}
                       giftCardTotal={order.gift_card_total}
                     />
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       {formatMoney(payment.amount, order.currency, locale)}
                     </p>
                   </div>
@@ -121,7 +123,7 @@ export async function OrderDetail({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="rounded-xl border bg-card p-4 sm:p-6">
         <OrderTotals order={order} />
       </div>
     </div>

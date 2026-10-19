@@ -7,18 +7,26 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { requestPasswordReset } from "@/lib/data/customer";
 import { extractBasePath } from "@/lib/utils/path";
+import QuestionsSvg from "../../../../../../../public/illustrations/questions.svg";
+
+function AuthAside() {
+  return (
+    <div
+      aria-hidden
+      className="relative hidden items-center justify-center md:flex"
+    >
+      <div className="absolute inset-4 rounded-full bg-primary/10 blur-3xl" />
+      <QuestionsSvg
+        focusable="false"
+        className="relative h-auto w-52 text-primary sm:w-64 lg:w-80"
+      />
+    </div>
+  );
+}
 
 export default function ForgotPasswordPage() {
   const t = useTranslations("forgotPassword");
@@ -53,30 +61,43 @@ export default function ForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-2">
-              <CircleCheck className="w-6 h-6 text-green-600" />
+      <div className="flex min-h-[60svh] items-center">
+        <section className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-6 sm:px-6 sm:py-8 md:grid-cols-2 md:items-center md:gap-10 lg:gap-14">
+          <div className="mx-auto w-full max-w-md">
+            <div
+              aria-hidden
+              className="mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10"
+            >
+              <CircleCheck className="size-6 text-primary" />
             </div>
-            <CardTitle>{t("checkYourEmail")}</CardTitle>
-            <CardDescription>
+            <h1 className="font-display text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              {t("checkYourEmail")}
+            </h1>
+            <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground sm:text-base">
               {t.rich("resetEmailSent", {
                 email,
-                strong: (chunks) => <strong>{chunks}</strong>,
+                strong: (chunks) => (
+                  <strong className="font-medium text-foreground">
+                    {chunks}
+                  </strong>
+                ),
               })}
-            </CardDescription>
-          </CardHeader>
+            </p>
 
-          <CardContent className="space-y-4">
-            <div className="flex items-start gap-3 text-sm text-gray-600">
-              <Mail className="w-5 h-5 mt-0.5 flex-shrink-0 text-gray-400" />
+            <div className="mt-5 flex items-start gap-2.5 text-sm leading-relaxed text-muted-foreground">
+              <Mail
+                aria-hidden
+                focusable="false"
+                className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+              />
               <p>{t("linkExpiry")}</p>
             </div>
 
             <Button
+              type="button"
               variant="outline"
-              className="w-full"
+              size="lg"
+              className="mt-5 w-full"
               onClick={() => {
                 setSubmitted(false);
                 setEmail("");
@@ -84,31 +105,35 @@ export default function ForgotPasswordPage() {
             >
               {t("tryDifferentEmail")}
             </Button>
-          </CardContent>
 
-          <CardFooter className="justify-center">
-            <Link
-              href={`${basePath}/account`}
-              className="text-sm text-primary hover:text-primary/70 font-medium"
-            >
-              {t("backToSignIn")}
-            </Link>
-          </CardFooter>
-        </Card>
+            <p className="mt-6 text-center text-sm text-muted-foreground">
+              <Link
+                href={`${basePath}/account`}
+                className="font-medium text-primary hover:text-primary/70"
+              >
+                {t("backToSignIn")}
+              </Link>
+            </p>
+          </div>
+
+          <AuthAside />
+        </section>
       </div>
     );
   }
 
   return (
-    <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle>{t("title")}</CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
-        </CardHeader>
+    <div className="flex min-h-[60svh] items-center">
+      <section className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-6 sm:px-6 sm:py-8 md:grid-cols-2 md:items-center md:gap-10 lg:gap-14">
+        <div className="mx-auto w-full max-w-md">
+          <h1 className="font-display text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            {t("title")}
+          </h1>
+          <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {t("description")}
+          </p>
 
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="mt-5 space-y-3">
             {error && (
               <Alert variant="destructive">
                 <CircleAlert />
@@ -126,32 +151,32 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="you@example.com"
+                placeholder={t("emailPlaceholder")}
               />
             </Field>
 
-            <div className="w-full">
-              <Button
-                type="submit"
-                disabled={submitting}
-                size="lg"
-                className="w-full"
-              >
-                {submitting ? t("sending") : t("sendResetLink")}
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              disabled={submitting}
+              size="lg"
+              className="w-full"
+            >
+              {submitting ? t("sending") : t("sendResetLink")}
+            </Button>
           </form>
-        </CardContent>
 
-        <CardFooter className="justify-center">
-          <Link
-            href={`${basePath}/account`}
-            className="text-sm text-primary hover:text-primary/70 font-medium"
-          >
-            {t("backToSignIn")}
-          </Link>
-        </CardFooter>
-      </Card>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            <Link
+              href={`${basePath}/account`}
+              className="font-medium text-primary hover:text-primary/70"
+            >
+              {t("backToSignIn")}
+            </Link>
+          </p>
+        </div>
+
+        <AuthAside />
+      </section>
     </div>
   );
 }

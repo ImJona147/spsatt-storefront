@@ -70,23 +70,31 @@ function ProfileForm({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t("profile")}</h1>
+      <header className="mb-5">
+        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+          {t("profile")}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {ta("profileDescription")}
+        </p>
+      </header>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="overflow-hidden rounded-xl border bg-card">
         <form onSubmit={handleSubmit}>
-          <div className="p-6 space-y-6">
+          <div className="space-y-6 p-4 sm:p-6">
             {error && (
               <Alert variant="destructive">
                 <CircleAlert />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Field>
                 <FieldLabel htmlFor="first_name">{t("firstName")}</FieldLabel>
                 <Input
                   type="text"
                   id="first_name"
+                  autoComplete="given-name"
                   value={formData.first_name}
                   onChange={(e) =>
                     setFormData({ ...formData, first_name: e.target.value })
@@ -99,6 +107,7 @@ function ProfileForm({
                 <Input
                   type="text"
                   id="last_name"
+                  autoComplete="family-name"
                   value={formData.last_name}
                   onChange={(e) =>
                     setFormData({ ...formData, last_name: e.target.value })
@@ -113,6 +122,7 @@ function ProfileForm({
                 type="email"
                 id="email"
                 required
+                autoComplete="email"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -156,9 +166,9 @@ function ProfileForm({
                       }
                     >
                       {showCurrentPassword ? (
-                        <EyeOff className="w-5 h-5" />
+                        <EyeOff className="size-5" />
                       ) : (
-                        <Eye className="w-5 h-5" />
+                        <Eye className="size-5" />
                       )}
                     </Button>
                   </div>
@@ -166,7 +176,7 @@ function ProfileForm({
                 <p
                   id="current_password_help"
                   className={`text-sm ${
-                    passwordError ? "text-red-600" : "text-gray-500"
+                    passwordError ? "text-destructive" : "text-muted-foreground"
                   }`}
                 >
                   {passwordError || t("currentPasswordHelp")}
@@ -175,7 +185,7 @@ function ProfileForm({
             )}
           </div>
 
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+          <div className="flex justify-end border-t bg-muted/50 px-4 py-4 sm:px-6">
             <Button type="submit" disabled={saving}>
               {saving ? t("saving") : t("saveChanges")}
             </Button>
@@ -183,26 +193,29 @@ function ProfileForm({
         </form>
       </div>
 
-      {/* Account Info */}
-      <div className="mt-8 bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">
+      <div className="mt-8 overflow-hidden rounded-xl border bg-card">
+        <div className="border-b px-4 py-4 sm:px-6">
+          <h2 className="text-lg font-medium text-foreground">
             {t("accountInformation")}
           </h2>
         </div>
-        <div className="p-6">
-          <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-4 sm:p-6">
+          <dl className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 {t("accountId")}
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">{user.id}</dd>
+              <dd className="mt-1 truncate text-sm text-foreground">
+                {user.id}
+              </dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-gray-500">
+              <dt className="text-sm font-medium text-muted-foreground">
                 {t("email")}
               </dt>
-              <dd className="mt-1 text-sm text-gray-900">{user.email}</dd>
+              <dd className="mt-1 truncate text-sm text-foreground">
+                {user.email}
+              </dd>
             </div>
           </dl>
         </div>
@@ -218,8 +231,8 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">{t("loadingProfile")}</p>
+      <div className="py-12 text-center">
+        <p className="text-sm text-muted-foreground">{t("loadingProfile")}</p>
       </div>
     );
   }

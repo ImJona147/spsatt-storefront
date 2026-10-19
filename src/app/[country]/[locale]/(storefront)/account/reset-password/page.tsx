@@ -1,24 +1,44 @@
 "use client";
 
-import { CircleAlert, CircleCheck, Eye, EyeOff } from "lucide-react";
+import {
+  Check,
+  Circle,
+  CircleAlert,
+  CircleCheck,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import {
+  isPasswordValid,
+  PasswordChecklist,
+} from "@/components/account/PasswordChecklist";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { resetPassword } from "@/lib/data/customer";
+import { cn } from "@/lib/utils";
 import { extractBasePath } from "@/lib/utils/path";
+import LoginSvg from "../../../../../../../public/illustrations/login.svg";
+
+function AuthAside() {
+  return (
+    <div
+      aria-hidden
+      className="relative hidden items-center justify-center md:flex"
+    >
+      <div className="absolute inset-4 rounded-full bg-primary/10 blur-3xl" />
+      <LoginSvg
+        focusable="false"
+        className="relative h-auto w-52 text-primary sm:w-64 lg:w-80"
+      />
+    </div>
+  );
+}
 
 export default function ResetPasswordPage() {
   const t = useTranslations("resetPassword");
@@ -38,40 +58,60 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // No token = invalid link
   if (!token) {
     return (
-      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle>{t("invalidLink")}</CardTitle>
-            <CardDescription>{t("invalidLinkDescription")}</CardDescription>
-          </CardHeader>
-
-          <CardFooter className="justify-center">
-            <Link
-              href={`${basePath}/account/forgot-password`}
-              className="text-sm text-primary hover:text-primary/70 font-medium"
+      <div className="flex min-h-[60svh] items-center">
+        <section className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-6 sm:px-6 sm:py-8 md:grid-cols-2 md:items-center md:gap-10 lg:gap-14">
+          <div className="mx-auto w-full max-w-md">
+            <h1 className="font-display text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              {t("invalidLink")}
+            </h1>
+            <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              {t("invalidLinkDescription")}
+            </p>
+            <Button
+              type="button"
+              size="lg"
+              className="mt-5 w-full"
+              onClick={() => router.push(`${basePath}/account/forgot-password`)}
             >
               {t("requestNewLink")}
-            </Link>
-          </CardFooter>
-        </Card>
+            </Button>
+            <p className="mt-6 text-center text-sm text-muted-foreground">
+              <Link
+                href={`${basePath}/account`}
+                className="font-medium text-primary hover:text-primary/70"
+              >
+                {t("backToSignIn")}
+              </Link>
+            </p>
+          </div>
+          <AuthAside />
+        </section>
       </div>
     );
   }
+
+  const passwordValid = isPasswordValid(password);
+  const passwordsMatch =
+    passwordConfirmation.length > 0 && password === passwordConfirmation;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (password !== passwordConfirmation) {
-      setError(t("passwordsDontMatch"));
+    if (!passwordValid) {
+      document.getElementById("password-rules")?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+      document.getElementById("password")?.focus();
       return;
     }
 
-    if (password.length < 6) {
-      setError(t("passwordTooShort"));
+    if (password !== passwordConfirmation) {
+      setError(t("passwordsDontMatch"));
+      document.getElementById("passwordConfirmation")?.focus();
       return;
     }
 
@@ -93,40 +133,48 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-2">
-              <CircleCheck className="w-6 h-6 text-green-600" />
+      <div className="flex min-h-[60svh] items-center">
+        <section className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-6 sm:px-6 sm:py-8 md:grid-cols-2 md:items-center md:gap-10 lg:gap-14">
+          <div className="mx-auto w-full max-w-md">
+            <div
+              aria-hidden
+              className="mb-4 flex size-12 items-center justify-center rounded-full bg-primary/10"
+            >
+              <CircleCheck className="size-6 text-primary" />
             </div>
-            <CardTitle>{t("success")}</CardTitle>
-            <CardDescription>{t("successDescription")}</CardDescription>
-          </CardHeader>
-
-          <CardContent>
+            <h1 className="font-display text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              {t("success")}
+            </h1>
+            <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              {t("successDescription")}
+            </p>
             <Button
+              type="button"
               size="lg"
-              className="w-full"
+              className="mt-5 w-full"
               onClick={() => router.push(`${basePath}/account`)}
             >
               {t("signIn")}
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+          <AuthAside />
+        </section>
       </div>
     );
   }
 
   return (
-    <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle>{t("title")}</CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
-        </CardHeader>
+    <div className="flex min-h-[60svh] items-center">
+      <section className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-6 sm:px-6 sm:py-8 md:grid-cols-2 md:items-center md:gap-10 lg:gap-14">
+        <div className="mx-auto w-full max-w-md">
+          <h1 className="font-display text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            {t("title")}
+          </h1>
+          <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {t("description")}
+          </p>
 
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="mt-5 space-y-3">
             {error && (
               <Alert variant="destructive">
                 <CircleAlert />
@@ -140,11 +188,12 @@ export default function ResetPasswordPage() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   id="password"
+                  name="new-password"
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={6}
+                  aria-describedby="password-rules"
                   placeholder="••••••••"
                   className="pr-10"
                 />
@@ -159,13 +208,14 @@ export default function ResetPasswordPage() {
                     }
                   >
                     {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
+                      <EyeOff className="size-5" />
                     ) : (
-                      <Eye className="w-5 h-5" />
+                      <Eye className="size-5" />
                     )}
                   </Button>
                 </div>
               </div>
+              <PasswordChecklist password={password} id="password-rules" />
             </Field>
 
             <Field>
@@ -176,11 +226,11 @@ export default function ResetPasswordPage() {
                 <Input
                   type={showPasswordConfirmation ? "text" : "password"}
                   id="passwordConfirmation"
+                  name="new-password"
                   autoComplete="new-password"
                   value={passwordConfirmation}
                   onChange={(e) => setPasswordConfirmation(e.target.value)}
                   required
-                  minLength={6}
                   placeholder="••••••••"
                   className="pr-10"
                 />
@@ -199,37 +249,63 @@ export default function ResetPasswordPage() {
                     }
                   >
                     {showPasswordConfirmation ? (
-                      <EyeOff className="w-5 h-5" />
+                      <EyeOff className="size-5" />
                     ) : (
-                      <Eye className="w-5 h-5" />
+                      <Eye className="size-5" />
                     )}
                   </Button>
                 </div>
               </div>
+              {passwordConfirmation.length > 0 && (
+                <p
+                  aria-live="polite"
+                  className={cn(
+                    "flex items-center gap-2 text-[0.8125rem] leading-tight",
+                    passwordsMatch
+                      ? "text-foreground"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {passwordsMatch ? (
+                    <Check
+                      aria-hidden
+                      focusable="false"
+                      className="size-4 shrink-0 text-primary"
+                    />
+                  ) : (
+                    <Circle
+                      aria-hidden
+                      focusable="false"
+                      className="size-4 shrink-0 text-muted-foreground"
+                    />
+                  )}
+                  {passwordsMatch ? t("passwordsMatch") : t("passwordsNoMatch")}
+                </p>
+              )}
             </Field>
 
-            <div className="w-full">
-              <Button
-                type="submit"
-                disabled={submitting}
-                size="lg"
-                className="w-full"
-              >
-                {submitting ? t("resetting") : t("resetPassword")}
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              disabled={submitting || !passwordValid || !passwordsMatch}
+              size="lg"
+              className="w-full"
+            >
+              {submitting ? t("resetting") : t("resetPassword")}
+            </Button>
           </form>
-        </CardContent>
 
-        <CardFooter className="justify-center">
-          <Link
-            href={`${basePath}/account`}
-            className="text-sm text-primary hover:text-primary/70 font-medium"
-          >
-            {t("backToSignIn")}
-          </Link>
-        </CardFooter>
-      </Card>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            <Link
+              href={`${basePath}/account`}
+              className="font-medium text-primary hover:text-primary/70"
+            >
+              {t("backToSignIn")}
+            </Link>
+          </p>
+        </div>
+
+        <AuthAside />
+      </section>
     </div>
   );
 }

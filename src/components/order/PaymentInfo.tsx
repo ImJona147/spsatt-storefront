@@ -40,13 +40,13 @@ export function PaymentInfo({
           width={40}
         />
         <div>
-          <p className="text-sm font-medium text-gray-900">
+          <p className="text-sm font-medium text-foreground">
             {t("cardEndingIn", {
               label: getCardLabel(card.brand),
               digits: card.last4,
             })}
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             {t("cardExpires", {
               month: String(card.month).padStart(2, "0"),
               year: card.year,
@@ -66,8 +66,8 @@ export function PaymentInfo({
     const label = paidByGiftCard ? tc("giftCard") : t("storeCredit");
     return (
       <div>
-        <p className="text-sm font-medium text-gray-900">{label}</p>
-        <p className="text-xs text-gray-500">
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        <p className="text-xs text-muted-foreground">
           {t("storeCreditApplied", {
             amount: formatMoney(payment.amount, currency),
             remaining: formatMoney(credit.amount_remaining, credit.currency),
@@ -79,10 +79,10 @@ export function PaymentInfo({
 
   return (
     <div>
-      <p className="text-sm font-medium text-gray-900">
+      <p className="text-sm font-medium text-foreground">
         {payment.payment_method?.name}
       </p>
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-muted-foreground">
         {formatMoney(payment.amount, currency)}
       </p>
     </div>

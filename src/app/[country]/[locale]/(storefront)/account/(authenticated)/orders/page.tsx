@@ -1,9 +1,9 @@
-import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { OrderList } from "@/components/account/OrderList";
 import { Button } from "@/components/ui/button";
+import { EmptyIllustration } from "@/components/ui/empty-illustration";
 import { getOrders } from "@/lib/data/orders";
 
 interface OrdersPageProps {
@@ -17,6 +17,10 @@ export default async function OrdersPage({ params }: OrdersPageProps) {
     locale: locale as Locale,
     namespace: "orders",
   });
+  const ta = await getTranslations({
+    locale: locale as Locale,
+    namespace: "account",
+  });
   const basePath = `/${country}/${locale}`;
 
   const response = await getOrders({ limit: 50 });
@@ -24,18 +28,25 @@ export default async function OrdersPage({ params }: OrdersPageProps) {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        {t("orderHistory")}
-      </h1>
+      <header className="mb-5">
+        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+          {t("orderHistory")}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {ta("orderHistoryDescription")}
+        </p>
+      </header>
 
       {orders.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <ShoppingBag className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+        <div className="rounded-xl border bg-card px-6 py-8 text-center">
+          <EmptyIllustration className="mx-auto mb-4 w-32" />
+          <h2 className="text-base font-semibold text-foreground">
             {t("noOrders")}
-          </h3>
-          <p className="text-gray-500 mb-6">{t("noOrdersDescription")}</p>
-          <Button asChild>
+          </h2>
+          <p className="mx-auto mt-1.5 max-w-sm text-sm text-muted-foreground">
+            {t("noOrdersDescription")}
+          </p>
+          <Button asChild className="mt-5">
             <Link href={`${basePath}/products`}>{t("startShopping")}</Link>
           </Button>
         </div>
