@@ -1,6 +1,7 @@
-import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 import { ProductDetails } from "@/app/[country]/[locale]/(storefront)/products/[slug]/ProductDetails";
+import { SignalNotFound } from "@/components/not-found/SignalNotFound";
 import { PRODUCT_PAGE_EXPAND } from "@/lib/data/cached";
 import { getWholesaleProduct } from "@/lib/data/wholesale";
 import { WHOLESALE_MIN_QUANTITY } from "@/lib/wholesale";
@@ -51,10 +52,20 @@ async function WholesaleProductContent({
   try {
     product = await getWholesaleProduct(slug, { expand: PRODUCT_PAGE_EXPAND });
   } catch {
-    notFound();
+    return (
+      <Suspense fallback={null}>
+        <SignalNotFound />
+      </Suspense>
+    );
   }
 
-  if (!product) notFound();
+  if (!product) {
+    return (
+      <Suspense fallback={null}>
+        <SignalNotFound />
+      </Suspense>
+    );
+  }
 
   const t = await getTranslations({
     locale: locale as Locale,

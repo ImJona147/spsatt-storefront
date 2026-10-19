@@ -1,7 +1,8 @@
 import type { Category } from "@spree/sdk";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
+import { SignalNotFound } from "@/components/not-found/SignalNotFound";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCachedProduct, PRODUCT_PAGE_EXPAND } from "@/lib/data/cached";
 import { generateProductMetadata } from "@/lib/metadata/product";
@@ -55,7 +56,11 @@ export default async function ProductPage({
   try {
     product = await getCachedProduct(slug, PRODUCT_PAGE_EXPAND);
   } catch {
-    notFound();
+    return (
+      <Suspense fallback={null}>
+        <SignalNotFound />
+      </Suspense>
+    );
   }
 
   const storeUrl = getStoreUrl();

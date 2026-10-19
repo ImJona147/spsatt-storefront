@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
+import { SignalNotFound } from "@/components/not-found/SignalNotFound";
 import { cachedGetPolicy, getPolicy } from "@/lib/data/policies";
 import {
   buildLocalizedAlternates,
@@ -85,7 +86,11 @@ export default async function PolicyPage({
   ]);
 
   if (!policy) {
-    notFound();
+    return (
+      <Suspense fallback={null}>
+        <SignalNotFound />
+      </Suspense>
+    );
   }
 
   return (
