@@ -29,6 +29,7 @@ import {
 } from "@/components/checkout/PaymentSection";
 import { PolicyConsent } from "@/components/policy/PolicyConsent";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { EmptyIllustration } from "@/components/ui/empty-illustration";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useCheckout } from "@/contexts/CheckoutContext";
@@ -637,7 +638,7 @@ function CheckoutPageContentInner({
         <p className="text-gray-600 mb-6">{error}</p>
         <Link
           href={`${basePath}/cart`}
-          className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-700"
+          className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-xl hover:brightness-[1.08]"
         >
           {t("returnToCart")}
         </Link>
@@ -651,13 +652,14 @@ function CheckoutPageContentInner({
   if (!cart.items || cart.items.length === 0) {
     return (
       <div className="text-center py-12">
+        <EmptyIllustration className="mb-4" />
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
           {t("emptyCart")}
         </h1>
         <p className="text-gray-600 mb-6">{t("emptyCartDescription")}</p>
         <Link
           href={`${basePath}/products`}
-          className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-700"
+          className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-xl hover:brightness-[1.08]"
         >
           {tc("continueShopping")}
         </Link>

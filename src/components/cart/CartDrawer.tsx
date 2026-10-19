@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { QuantityPickerField } from "@/components/cart/QuantityPickerField";
 import { Button } from "@/components/ui/button";
+import { EmptyIllustration } from "@/components/ui/empty-illustration";
 import { ProductImage } from "@/components/ui/product-image";
 import {
   Sheet,
@@ -128,10 +129,7 @@ export function CartDrawer() {
             </div>
           ) : isEmpty ? (
             <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-              <ShoppingBag
-                className="w-16 h-16 text-gray-300 mb-4"
-                strokeWidth={1}
-              />
+              <EmptyIllustration className="mb-4 w-36" />
               <p className="text-gray-500 mb-4">{t("emptyCart")}</p>
               <Link
                 href={`${basePath}/products`}

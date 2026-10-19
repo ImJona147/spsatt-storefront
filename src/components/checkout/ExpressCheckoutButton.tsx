@@ -403,7 +403,7 @@ function ExpressCheckoutInner({
             processing ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
-          <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           <p className="mt-4 text-sm font-medium text-gray-700">
             {t("finalizingPayment")}
           </p>

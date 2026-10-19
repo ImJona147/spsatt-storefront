@@ -1,7 +1,6 @@
 "use client";
 
 import type { LineItem } from "@spree/sdk";
-import { ShoppingBag } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { QuantityPickerField } from "@/components/cart/QuantityPickerField";
 import { Button } from "@/components/ui/button";
+import { EmptyIllustration } from "@/components/ui/empty-illustration";
 import { ProductImage } from "@/components/ui/product-image";
 import { useCart } from "@/contexts/CartContext";
 import { useFormatMoney } from "@/hooks/useFormatMoney";
@@ -72,10 +72,7 @@ export default function CartPage() {
     return (
       <div className="container mx-auto px-4 sm:px-6 lg:px-8  py-16">
         <div className="text-center">
-          <ShoppingBag
-            className="w-24 h-24 text-gray-300 mx-auto"
-            strokeWidth={1}
-          />
+          <EmptyIllustration />
           <h1 className="mt-4 text-2xl font-bold text-gray-900">
             {t("emptyCart")}
           </h1>
