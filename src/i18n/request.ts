@@ -4,6 +4,7 @@ import {
   DEFAULT_LOCALE,
   loadMessages,
   resolveSupportedLocale,
+  STORE_TIME_ZONE,
 } from "@/i18n/locales";
 
 export default getRequestConfig(async ({ locale, requestLocale }) => {
@@ -15,5 +16,5 @@ export default getRequestConfig(async ({ locale, requestLocale }) => {
     resolveSupportedLocale(requested) ?? DEFAULT_LOCALE;
   const messages = await loadMessages(resolvedLocale);
 
-  return { locale: resolvedLocale, messages };
+  return { locale: resolvedLocale, messages, timeZone: STORE_TIME_ZONE };
 });

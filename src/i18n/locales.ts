@@ -22,6 +22,11 @@ export const SUPPORTED_LOCALES = Object.freeze(
   Object.keys(MESSAGE_LOADERS) as SupportedLocale[],
 );
 
+// Zona del mercado (MX): la consumen el request config de next-intl y los
+// providers de cliente; sin ella el prerender emite ENVIRONMENT_FALLBACK y
+// las fechas se calculan con la zona del host.
+export const STORE_TIME_ZONE = "America/Mexico_City";
+
 const RTL_LANGUAGES = new Set(["ar", "fa", "he", "ur", "yi"]);
 
 export function resolveSupportedLocale(

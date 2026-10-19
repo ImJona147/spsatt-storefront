@@ -4,7 +4,11 @@ import { Fraunces, Inter } from "next/font/google";
 import { usePathname } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import "../../app/globals.css";
-import { DEFAULT_LOCALE, resolveSupportedLocale } from "@/i18n/locales";
+import {
+  DEFAULT_LOCALE,
+  resolveSupportedLocale,
+  STORE_TIME_ZONE,
+} from "@/i18n/locales";
 import de from "../../../messages/de.json";
 import en from "../../../messages/en.json";
 import es from "../../../messages/es.json";
@@ -48,7 +52,11 @@ export function RootNotFound() {
     <div
       className={`${inter.variable} ${fraunces.variable} ${frauncesItalic.variable} flex min-h-screen flex-col bg-background font-sans text-foreground antialiased`}
     >
-      <NextIntlClientProvider locale={locale} messages={MESSAGES[locale]}>
+      <NextIntlClientProvider
+        locale={locale}
+        messages={MESSAGES[locale]}
+        timeZone={STORE_TIME_ZONE}
+      >
         <GeneralNotFound />
       </NextIntlClientProvider>
     </div>
