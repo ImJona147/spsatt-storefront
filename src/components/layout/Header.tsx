@@ -1,37 +1,17 @@
 import type { Category } from "@spree/sdk";
 import { User } from "lucide-react";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { CartButton } from "@/components/layout/CartButton";
+import { MobileMenu } from "@/components/layout/MobileMenu";
+import { RegionPreferences } from "@/components/layout/RegionPreferences";
 import { SearchToggle } from "@/components/layout/SearchToggle";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { isWholesaleEnabled } from "@/lib/spree";
 import { getStoreName } from "@/lib/store";
-
-const LazyMobileMenu = dynamic(
-  () =>
-    import("@/components/layout/MobileMenu").then((mod) => ({
-      default: mod.MobileMenu,
-    })),
-  {
-    loading: () => (
-      <div className="inline-flex items-center justify-center h-10 w-10" />
-    ),
-  },
-);
-
-const LazyRegionPreferences = dynamic(
-  () =>
-    import("@/components/layout/RegionPreferences").then((mod) => ({
-      default: mod.RegionPreferences,
-    })),
-  {
-    loading: () => <div className="size-11" aria-hidden="true" />,
-  },
-);
 
 const storeName = getStoreName();
 
@@ -51,7 +31,7 @@ export function HeaderMobileMenu({
   basePath,
 }: HeaderMobileMenuProps) {
   return (
-    <LazyMobileMenu
+    <MobileMenu
       rootCategories={rootCategories}
       basePath={basePath}
       wholesaleEnabled={isWholesaleEnabled()}
@@ -74,12 +54,11 @@ export async function Header({
       center={
         <Link href={basePath || "/"} className="flex items-center min-w-0">
           <Image
-            src="/spree.png"
+            src="/spsatt.svg"
             alt={storeName}
             width={90}
             height={32}
-            className="max-w-full object-contain"
-            style={{ width: "auto", height: "auto" }}
+            className="h-20 w-20 max-w-full object-contain "
             fetchPriority="high"
             loading="eager"
           />
@@ -92,16 +71,19 @@ export async function Header({
           {wholesaleEnabled && (
             <Link
               href={`${basePath}/wholesale`}
-              className="px-2 py-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors whitespace-nowrap"
+              className="px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
             >
               {t("wholesale")}
             </Link>
           )}
-          <LazyRegionPreferences variant="header" />
+          <RegionPreferences variant="header" />
         </div>
       }
       rightEnd={
         <>
+          {/* Light/dark toggle: same row as region, search, account and cart */}
+          <ThemeToggle />
+
           {/* Account - desktop only */}
           <div className="hidden md:block">
             <Button variant="ghost" size="icon-lg" asChild>
