@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 import { ProductListing } from "@/components/products/ProductListing";
+import { ProductListingSkeleton } from "@/components/products/ProductListingSkeleton";
 import { resolveCurrency } from "@/lib/data/markets";
 import { getProductFilters, getProducts } from "@/lib/data/products";
 import { generateProductsMetadata } from "@/lib/metadata/products";
@@ -26,8 +28,32 @@ export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps) {
   const { country, locale } = await params;
-  const rawSearchParams = await searchParams;
   const basePath = `/${country}/${locale}`;
+
+  return (
+    <Suspense fallback={<ProductListingSkeleton />}>
+      <ProductsPageContent
+        searchParams={searchParams}
+        country={country}
+        locale={locale}
+        basePath={basePath}
+      />
+    </Suspense>
+  );
+}
+
+async function ProductsPageContent({
+  searchParams,
+  country,
+  locale,
+  basePath,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  country: string;
+  locale: string;
+  basePath: string;
+}) {
+  const rawSearchParams = await searchParams;
   const currency = await resolveCurrency(country);
 
   const listingState = parseListingSearchParams(rawSearchParams);

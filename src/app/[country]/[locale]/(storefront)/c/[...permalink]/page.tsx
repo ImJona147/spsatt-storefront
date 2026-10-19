@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { ProductListing } from "@/components/products/ProductListing";
+import { ProductListingSkeleton } from "@/components/products/ProductListingSkeleton";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCategory, getCategoryProducts } from "@/lib/data/categories";
 import { resolveCurrency } from "@/lib/data/markets";
@@ -32,6 +34,30 @@ export default async function CategoryPage({
   searchParams,
 }: CategoryPageProps) {
   const { country, locale, permalink } = await params;
+
+  return (
+    <Suspense fallback={<ProductListingSkeleton />}>
+      <CategoryPageContent
+        permalink={permalink}
+        searchParams={searchParams}
+        country={country}
+        locale={locale}
+      />
+    </Suspense>
+  );
+}
+
+async function CategoryPageContent({
+  permalink,
+  searchParams,
+  country,
+  locale,
+}: {
+  permalink: string[];
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  country: string;
+  locale: string;
+}) {
   const rawSearchParams = await searchParams;
   const fullPermalink = permalink.join("/");
   const basePath = `/${country}/${locale}`;

@@ -2,7 +2,24 @@
 
 import type { Market } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
-import { getClient, getLocaleOptions } from "@/lib/spree";
+import { getClient } from "@/lib/spree";
+import { getDefaultCountry, getDefaultLocale } from "@/lib/store";
+
+/**
+ * Options that don't read request cookies: market list/resolve only need a
+ * valid Store API context, and the env defaults are always valid. Reading
+ * cookies() here would flag every route as blocking runtime data under
+ * Cache Components (instant navigations).
+ */
+function defaultOptions(country?: string): {
+  locale: string;
+  country: string;
+} {
+  return {
+    locale: getDefaultLocale(),
+    country: (country ?? getDefaultCountry()).toLowerCase(),
+  };
+}
 
 async function cachedListMarkets(options: {
   locale?: string;
@@ -38,18 +55,16 @@ export async function getMarkets(options?: {
   locale?: string;
   country?: string;
 }): Promise<{ data: Market[] }> {
-  const resolvedOptions = options ?? (await getLocaleOptions());
+  const resolvedOptions = options ?? defaultOptions();
   return cachedListMarkets(resolvedOptions);
 }
 
 export async function resolveMarket(country: string) {
-  const options = await getLocaleOptions();
-  return cachedResolveMarket(country, options);
+  return cachedResolveMarket(country, defaultOptions(country));
 }
 
 export async function getMarketCountries(marketId: string) {
-  const options = await getLocaleOptions();
-  return cachedListMarketCountries(marketId, options);
+  return cachedListMarketCountries(marketId, defaultOptions());
 }
 
 /**
@@ -60,7 +75,7 @@ export async function getMarketCountries(marketId: string) {
 export async function resolveCurrency(
   country: string,
 ): Promise<string | undefined> {
-  const { data: markets } = await getMarkets();
+  const { data: markets } = await getMarkets(defaultOptions(country));
   const iso = country.toLowerCase();
   for (const market of markets) {
     const match = market.countries?.some((c) => c.iso.toLowerCase() === iso);

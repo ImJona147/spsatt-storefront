@@ -1,5 +1,7 @@
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 import { ProductListing } from "@/components/products/ProductListing";
+import { ProductListingSkeleton } from "@/components/products/ProductListingSkeleton";
 import { resolveCurrency } from "@/lib/data/markets";
 import {
   getWholesaleProductFilters,
@@ -19,6 +21,27 @@ export default async function WholesaleProductsPage({
   searchParams,
 }: WholesalePlpProps) {
   const { country, locale } = await params;
+
+  return (
+    <Suspense fallback={<ProductListingSkeleton />}>
+      <WholesaleProductsContent
+        country={country}
+        locale={locale}
+        searchParams={searchParams}
+      />
+    </Suspense>
+  );
+}
+
+async function WholesaleProductsContent({
+  country,
+  locale,
+  searchParams,
+}: {
+  country: string;
+  locale: string;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const rawSearchParams = await searchParams;
   const basePath = `/${country}/${locale}/wholesale`;
   const currency = await resolveCurrency(country);
