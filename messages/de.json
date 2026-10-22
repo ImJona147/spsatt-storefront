@@ -298,7 +298,8 @@
     "edit": "Bearbeiten",
     "failedToDeleteAddress": "Adresse konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
     "addFirstAddress": "Erste Adresse hinzufügen",
-    "addAddress": "Adresse hinzufügen"
+    "addAddress": "Adresse hinzufügen",
+    "yourAddresses": "Ihre Adressen"
   },
   "account": {
     "myAccount": "Mein Konto",

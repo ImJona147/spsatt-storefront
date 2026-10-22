@@ -298,7 +298,8 @@
     "edit": "Editar",
     "failedToDeleteAddress": "Error al eliminar la direccion. Por favor, intenta de nuevo.",
     "addFirstAddress": "Agrega tu primera direccion",
-    "addAddress": "Agregar direccion"
+    "addAddress": "Agregar direccion",
+    "yourAddresses": "Tus direcciones"
   },
   "account": {
     "myAccount": "Mi cuenta",

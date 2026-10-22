@@ -15,7 +15,10 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AddressEditModal } from "@/components/checkout/AddressEditModal";
 import { AddressFormFields } from "@/components/checkout/AddressFormFields";
-import { AddressSelector } from "@/components/checkout/AddressSelector";
+import {
+  AddressSelector,
+  groupByBook,
+} from "@/components/checkout/AddressSelector";
 import { Input } from "@/components/ui/input";
 import type { User } from "@/contexts/AuthContext";
 import { useCountryStates } from "@/hooks/useCountryStates";
@@ -29,7 +32,9 @@ import {
 interface AddressSectionProps {
   cart: Cart;
   countries: Country[];
-  savedAddresses: Address[];
+  /** Everything the cart accepts, each entry naming the book it came out of.
+   * Empty for a guest, who keeps no book. */
+  selectableAddresses: Address[];
   isAuthenticated: boolean;
   signInUrl: string;
   fetchStates: (countryIso: string) => Promise<State[]>;
@@ -78,7 +83,7 @@ function buildAutoSaveHash(
 export function AddressSection({
   cart,
   countries,
-  savedAddresses: initialSavedAddresses,
+  selectableAddresses,
   isAuthenticated,
   signInUrl,
   fetchStates,
@@ -94,13 +99,25 @@ export function AddressSection({
   const tc = useTranslations("common");
   const ta = useTranslations("address");
 
+  // Both books are selectable; the company's sites come first because a
+  // purchase for the organization usually goes to one of them.
+  const offeredAddresses = [
+    ...selectableAddresses.filter(
+      (address) => address.owner?.type === "company",
+    ),
+    ...selectableAddresses.filter(
+      (address) => address.owner?.type !== "company",
+    ),
+  ];
+
   // Determine initial saved address: use the first saved address when the
-  // cart doesn't have a shipping address yet (authenticated users).
+  // cart doesn't have a shipping address yet (authenticated users). A company
+  // nominates where its deliveries go by default, so that site wins over
+  // whichever entry happens to come back first.
   const initialSavedAddress =
-    !cart.shipping_address &&
-    isAuthenticated &&
-    initialSavedAddresses.length > 0
-      ? initialSavedAddresses[0]
+    !cart.shipping_address && isAuthenticated && offeredAddresses.length > 0
+      ? (offeredAddresses.find((address) => address.is_default_shipping) ??
+        offeredAddresses[0])
       : undefined;
 
   const [email, setEmail] = useState(cart.email || user?.email || "");
@@ -128,7 +145,10 @@ export function AddressSection({
     }
     return formData;
   });
-  const [savedAddresses, setSavedAddresses] = useState(initialSavedAddresses);
+  // Held locally so an edit lands in the list without another round-trip.
+  const [addresses, setAddresses] = useState(selectableAddresses);
+  const addressGroups = groupByBook(addresses, ta("yourAddresses"));
+  const addressGroupsHaveEntries = addresses.length > 0;
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [selectedSavedAddressId, setSelectedSavedAddressId] = useState<
     string | undefined
@@ -250,8 +270,12 @@ export function AddressSection({
       throw new Error("Failed to update address");
     }
 
-    setSavedAddresses((prev) =>
-      prev.map((addr) => (addr.id === id ? updatedAddress : addr)),
+    // Spread onto the existing entry rather than replacing it: the write
+    // answers with a plain address, which does not say which book it is in.
+    setAddresses((prev) =>
+      prev.map((addr) =>
+        addr.id === id ? { ...addr, ...updatedAddress } : addr,
+      ),
     );
     handleSelectSavedAddress(updatedAddress);
   };
@@ -314,9 +338,9 @@ export function AddressSection({
             </span>
           )}
         </div>
-        {isAuthenticated && savedAddresses.length > 0 ? (
+        {isAuthenticated && addressGroupsHaveEntries ? (
           <AddressSelector
-            savedAddresses={savedAddresses}
+            groups={addressGroups}
             currentAddress={shipAddress}
             countries={countries}
             states={shipStates}
