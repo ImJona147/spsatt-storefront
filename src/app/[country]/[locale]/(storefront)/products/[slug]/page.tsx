@@ -1,8 +1,10 @@
 import type { Category } from "@spree/sdk";
+import { SpreeError } from "@spree/sdk";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { SignalNotFound } from "@/components/not-found/SignalNotFound";
+import { ProductFetchError } from "@/components/products/ProductFetchError";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCachedProduct, PRODUCT_PAGE_EXPAND } from "@/lib/data/cached";
 import { generateProductMetadata } from "@/lib/metadata/product";
@@ -55,12 +57,18 @@ export default async function ProductPage({
   let product;
   try {
     product = await getCachedProduct(slug, PRODUCT_PAGE_EXPAND);
-  } catch {
-    return (
-      <Suspense fallback={null}>
-        <SignalNotFound />
-      </Suspense>
-    );
+  } catch (error) {
+    // A 404 that survives the transient-retry window is a real missing
+    // product; anything else (5xx, network) gets a retryable error state
+    // instead of lying to the visitor that the product does not exist.
+    if (error instanceof SpreeError && error.status === 404) {
+      return (
+        <Suspense fallback={null}>
+          <SignalNotFound />
+        </Suspense>
+      );
+    }
+    return <ProductFetchError />;
   }
 
   const storeUrl = getStoreUrl();

@@ -252,7 +252,10 @@
     "properties": "Proprietes",
     "yes": "Oui",
     "no": "Non",
-    "optionFilterChip": "{filter} : {value}"
+    "optionFilterChip": "{filter} : {value}",
+    "loadErrorTitle": "Impossible de charger le produit",
+    "loadErrorDescription": "Le service a pris plus de temps que prévu. Réessayez dans un instant.",
+    "retry": "Réessayer"
   },
   "navigation": {
     "home": "Accueil",

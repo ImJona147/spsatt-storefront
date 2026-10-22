@@ -252,7 +252,10 @@
     "properties": "Properties",
     "yes": "Yes",
     "no": "No",
-    "optionFilterChip": "{filter}: {value}"
+    "optionFilterChip": "{filter}: {value}",
+    "loadErrorTitle": "We couldn't load the product",
+    "loadErrorDescription": "The service took longer than expected. Try again in a moment.",
+    "retry": "Try again"
   },
   "navigation": {
     "home": "Home",

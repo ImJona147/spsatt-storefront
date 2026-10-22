@@ -245,7 +245,10 @@
     "properties": "Eigenschaften",
     "yes": "Ja",
     "no": "Nein",
-    "optionFilterChip": "{filter}: {value}"
+    "optionFilterChip": "{filter}: {value}",
+    "loadErrorTitle": "Das Produkt konnte nicht geladen werden",
+    "loadErrorDescription": "Der Dienst hat länger als erwartet gedauert. Versuche es gleich noch einmal.",
+    "retry": "Erneut versuchen"
   },
   "navigation": {
     "home": "Startseite",

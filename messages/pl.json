@@ -245,7 +245,10 @@
     "properties": "Właściwości",
     "yes": "Tak",
     "no": "Nie",
-    "optionFilterChip": "{filter}: {value}"
+    "optionFilterChip": "{filter}: {value}",
+    "loadErrorTitle": "Nie udało się wczytać produktu",
+    "loadErrorDescription": "Usługa trwała dłużej niż oczekiwano. Spróbuj ponownie za chwilę.",
+    "retry": "Spróbuj ponownie"
   },
   "navigation": {
     "home": "Strona główna",
