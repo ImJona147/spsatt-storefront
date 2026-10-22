@@ -25,7 +25,7 @@ const LazyMediaLightbox = dynamic(
     // Minimal fullscreen overlay so the zoom click gives immediate
     // feedback on slow networks while the chunk downloads.
     loading: () => (
-      <div className="fixed inset-0 z-50 bg-black/90" aria-hidden="true" />
+      <div className="fixed inset-0 z-[100] bg-black/90" aria-hidden="true" />
     ),
   },
 );
@@ -173,7 +173,7 @@ function MediaGalleryInner({
       <div className="relative min-w-0 flex-1">
         <button
           type="button"
-          className="relative aspect-square bg-muted rounded-xl overflow-hidden cursor-zoom-in w-full touch-pan-y"
+          className="relative aspect-square bg-muted rounded-xl border border-border overflow-hidden cursor-zoom-in w-full touch-pan-y"
           onClick={() => {
             if (suppressClickRef.current) {
               suppressClickRef.current = false;
@@ -191,7 +191,7 @@ function MediaGalleryInner({
             src={mainImageUrl}
             alt={selectedImage?.alt || productName}
             fill
-            className="object-cover"
+            className="object-contain p-4"
             fetchPriority="high"
             loading="eager"
             priority

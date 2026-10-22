@@ -16,6 +16,7 @@ import { useHiddenPricing } from "@/contexts/HiddenPricingContext";
 import { useStore } from "@/contexts/StoreContext";
 import { useFormatMoney } from "@/hooks/useFormatMoney";
 import { trackAddToCart, trackViewItem } from "@/lib/analytics/gtm";
+import { cn } from "@/lib/utils";
 import { strikethroughAmount } from "@/lib/utils/price";
 
 interface ProductDetailsProps {
@@ -131,7 +132,7 @@ export function ProductDetails({ product, basePath }: ProductDetailsProps) {
   const addToCartButton = (className?: string) => (
     <Button
       size="lg"
-      className={className}
+      className={cn("gap-2.5 font-semibold", className)}
       onClick={handleAddToCart}
       disabled={loading || !isPurchasable}
     >
@@ -248,6 +249,7 @@ export function ProductDetails({ product, basePath }: ProductDetailsProps) {
                     quantity={quantity}
                     onQuantityChange={setQuantity}
                     size="lg"
+                    className="h-13 w-full sm:w-auto"
                   />
                   {/* Mobile's CTA lives in the fixed bottom bar; desktop
                       gets the full-width button inside the buy box. */}

@@ -2,6 +2,7 @@
 
 import { Minus, Plus } from "lucide-react";
 import * as React from "react";
+import { cn } from "@/lib/utils";
 import { Button } from "./button";
 
 export interface QuantityPickerProps {
@@ -12,6 +13,7 @@ export interface QuantityPickerProps {
   quantityLabel: string;
   disabled?: boolean;
   size?: "sm" | "lg";
+  className?: string;
 }
 
 export function QuantityPicker({
@@ -22,6 +24,7 @@ export function QuantityPicker({
   quantityLabel,
   disabled = false,
   size = "sm",
+  className,
 }: QuantityPickerProps): React.JSX.Element {
   // Holds the raw text while the user is typing; null means "not editing",
   // so the displayed value tracks the quantity prop between edits without
@@ -46,7 +49,14 @@ export function QuantityPicker({
       : "w-10 bg-transparent py-2 text-center text-sm font-medium tabular-nums outline-none disabled:opacity-50";
 
   return (
-    <div className="flex items-center border border-gray-300 rounded-lg px-0.5 focus-within:border-gray-500">
+    <div
+      className={cn(
+        // justify-between keeps the numeric field optically centered between
+        // the two stepper buttons even when the host stretches the control.
+        "flex items-center justify-between rounded-lg border border-border px-0.5 transition-colors focus-within:border-ring focus-within:[outline:1px_solid_black] dark:focus-within:border-white dark:focus-within:[outline:1px_solid_white]",
+        className,
+      )}
+    >
       <Button
         type="button"
         variant="ghost"
@@ -56,7 +66,7 @@ export function QuantityPicker({
         onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
         aria-label={decrementLabel}
       >
-        <Minus className="w-3 h-3" />
+        <Minus className="w-3 h-3" aria-hidden="true" />
       </Button>
       <input
         type="text"
@@ -92,7 +102,7 @@ export function QuantityPicker({
         onClick={() => onQuantityChange(quantity + 1)}
         aria-label={incrementLabel}
       >
-        <Plus className="w-3 h-3" />
+        <Plus className="w-3 h-3" aria-hidden="true" />
       </Button>
     </div>
   );

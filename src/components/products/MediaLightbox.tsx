@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 const SWIPE_THRESHOLD_PX = 50;
 const SWIPE_MAX_VERTICAL_PX = 75;
@@ -109,14 +110,26 @@ export function MediaLightbox({
     };
   }, []);
 
+  // Lock background scroll while the overlay is open.
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
   if (!src) return null;
 
-  return (
+  // Portaled to <body>: the gallery wrapper is `position: sticky`, which
+  // creates a stacking context, so an in-place fixed overlay would paint
+  // underneath the site header (also z-50) instead of above it.
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-label={t("openImageZoom")}
-      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center touch-pan-y"
+      className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center touch-pan-y"
       onPointerDown={(e) => {
         pressedOnBackdropRef.current = e.target === e.currentTarget;
       }}
@@ -132,14 +145,14 @@ export function MediaLightbox({
       <button
         ref={closeButtonRef}
         type="button"
-        className="absolute top-4 right-4 z-10 text-white p-3 hover:bg-white/10 rounded-lg transition-colors"
+        className="absolute z-10 text-white p-3 hover:bg-white/10 rounded-lg transition-colors top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))]"
         onClick={(e) => {
           e.stopPropagation();
           onClose();
         }}
         aria-label={t("lightboxClose")}
       >
-        <X className="w-8 h-8" />
+        <X className="w-8 h-8" aria-hidden="true" />
       </button>
 
       {images.length > 1 && (
@@ -153,7 +166,7 @@ export function MediaLightbox({
             }}
             aria-label={t("lightboxPrev")}
           >
-            <ChevronLeft className="w-8 h-8" />
+            <ChevronLeft className="w-8 h-8" aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -164,12 +177,12 @@ export function MediaLightbox({
             }}
             aria-label={t("lightboxNext")}
           >
-            <ChevronRight className="w-8 h-8" />
+            <ChevronRight className="w-8 h-8" aria-hidden="true" />
           </button>
         </>
       )}
 
-      <div className="relative max-w-4xl max-h-[90vh] w-full h-full m-4">
+      <div className="relative w-full h-full max-w-5xl max-h-[85svh] m-4">
         <Image
           src={src}
           alt={current?.alt || productName}
@@ -180,10 +193,11 @@ export function MediaLightbox({
       </div>
 
       {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white bg-black/50 px-3 py-1 rounded-lg text-sm">
+        <div className="absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 text-white bg-black/50 px-3 py-1 rounded-lg text-sm tabular-nums">
           {activeIndex + 1} / {images.length}
         </div>
       )}
-    </div>
+    </div>,
+    document.body,
   );
 }
