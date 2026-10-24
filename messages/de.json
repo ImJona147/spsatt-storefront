@@ -25,7 +25,7 @@
     "giftCard": "Geschenkkarte",
     "storeCredit": "Guthaben",
     "amountDue": "Fälliger Betrag",
-    "loadErrorTitle": "Das Produkt konnte nicht geladen werden",
+    "loadErrorTitle": "Die Inhalte konnten nicht geladen werden",
     "loadErrorDescription": "Der Dienst hat länger als erwartet gedauert. Versuche es gleich noch einmal.",
     "retry": "Erneut versuchen"
   },
@@ -66,6 +66,7 @@
     "orderHistory": "Bestellverlauf",
     "cart": "Warenkorb",
     "policies": "Richtlinien",
+    "portfolio": "Referenzen",
     "copyright": "© {year} {storeName}. Unterstützt durch Spree Commerce.",
     "wholesale": "Handel & Großhandel",
     "rights": "Alle Rechte vorbehalten.",
@@ -104,14 +105,7 @@
     "contactDescription": "Rufen Sie an oder schreiben Sie uns, wir kalkulieren Ihr Stück.",
     "contactCta": "Anrufen für ein Angebot",
     "heroImageAlt": "SPSATT-Werkstatt mit beleuchteten Neon- und Acrylstücken",
-    "services": [
-      "MDF",
-      "Acryl",
-      "Neon",
-      "Laser",
-      "3D-Druck",
-      "Sublimation"
-    ],
+    "services": ["MDF", "Acryl", "Neon", "Laser", "3D-Druck", "Sublimation"],
     "clientsEyebrow": "Kunden",
     "clientsTitle": "Unternehmen, mit denen wir gearbeitet haben",
     "contactDirections": "Route berechnen",

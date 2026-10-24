@@ -25,7 +25,7 @@
     "giftCard": "Karta podarunkowa",
     "storeCredit": "Kredyt sklepowy",
     "amountDue": "Do zapłaty",
-    "loadErrorTitle": "Nie udało się wczytać produktu",
+    "loadErrorTitle": "Nie udało się wczytać treści",
     "loadErrorDescription": "Usługa trwała dłużej niż oczekiwano. Spróbuj ponownie za chwilę.",
     "retry": "Spróbuj ponownie"
   },
@@ -66,6 +66,7 @@
     "orderHistory": "Historia zamówień",
     "cart": "Koszyk",
     "policies": "Regulaminy",
+    "portfolio": "Portfolio",
     "copyright": "© {year} {storeName}. Zasilany przez Spree Commerce.",
     "wholesale": "Handel i sprzedaż hurtowa",
     "rights": "Wszelkie prawa zastrzeżone.",
@@ -104,14 +105,7 @@
     "contactDescription": "Zadzwoń lub napisz, wycenimy Twoją realizację.",
     "contactCta": "Zadzwoń po wycenę",
     "heroImageAlt": "Warsztat SPSATT z podświetlonymi elementami z neonu i akrylu",
-    "services": [
-      "MDF",
-      "Akryl",
-      "Neon",
-      "Laser",
-      "Druk 3D",
-      "Sublimacja"
-    ],
+    "services": ["MDF", "Akryl", "Neon", "Laser", "Druk 3D", "Sublimacja"],
     "clientsEyebrow": "Klienci",
     "clientsTitle": "Firmy, z którymi współpracowaliśmy",
     "contactDirections": "Wyznacz trasę",

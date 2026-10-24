@@ -4,20 +4,18 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { SectionHeading } from "@/components/home/SectionHeading";
 
-interface PortfolioCategory {
+const WIDE_SIZES = "(max-width: 767px) 100vw, (max-width: 1024px) 50vw, 33vw";
+const NARROW_SIZES = "(max-width: 767px) 50vw, (max-width: 1024px) 25vw, 17vw";
+
+interface PortfolioTile {
   slug: string;
   image: string;
-  /** Representative photo for the category tile. */
   altKey: string;
-  /** Grid span: tiles alternate wide and tall so the bento never reads as a row of equals. */
   span: string;
   sizes: string;
 }
 
-const WIDE_SIZES = "(max-width: 767px) 100vw, (max-width: 1024px) 50vw, 33vw";
-const NARROW_SIZES = "(max-width: 767px) 50vw, (max-width: 1024px) 25vw, 17vw";
-
-const categories: PortfolioCategory[] = [
+const tiles: PortfolioTile[] = [
   {
     slug: "letras",
     image: "/portafolio/letras/la-casona.jpg",
@@ -93,17 +91,17 @@ export async function PortfolioSection({
           id="portfolio-title"
         />
         <ul className="mt-10 grid auto-rows-[9rem] grid-cols-2 gap-3 md:grid-cols-4 md:gap-4 lg:auto-rows-[11.5rem]">
-          {categories.map((category) => (
-            <li key={category.slug} className={category.span}>
+          {tiles.map((tile) => (
+            <li key={tile.slug} className={tile.span}>
               <Link
-                href={`${basePath}/products`}
+                href={`${basePath}/portafolio/${tile.slug}`}
                 className="group relative block h-full overflow-hidden rounded-xl border border-border"
               >
                 <Image
-                  src={category.image}
-                  alt={t(category.altKey)}
+                  src={tile.image}
+                  alt={t(tile.altKey)}
                   fill
-                  sizes={category.sizes}
+                  sizes={tile.sizes}
                   className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none"
                 />
                 <span
@@ -113,7 +111,7 @@ export async function PortfolioSection({
                 <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-3 md:p-4">
                   <span className="min-w-0">
                     <span className="block text-base font-semibold text-white md:text-lg">
-                      {t(category.altKey)}
+                      {t(tile.altKey)}
                     </span>
                     <span className="mt-1 flex items-center gap-1 text-xs font-medium text-white/75 transition-colors group-hover:text-white">
                       {t("portfolioView")}

@@ -25,7 +25,7 @@
     "giftCard": "Gift card",
     "storeCredit": "Store credit",
     "amountDue": "Amount due",
-    "loadErrorTitle": "We couldn't load the product",
+    "loadErrorTitle": "We couldn't load the content",
     "loadErrorDescription": "The service took longer than expected. Try again in a moment.",
     "retry": "Try again"
   },
@@ -66,6 +66,7 @@
     "orderHistory": "Order History",
     "cart": "Cart",
     "policies": "Policies",
+    "portfolio": "Portfolio",
     "copyright": "© {year} {storeName}. Powered by Spree Commerce.",
     "wholesale": "Trade & Wholesale",
     "rights": "All rights reserved.",

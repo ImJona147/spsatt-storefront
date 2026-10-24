@@ -25,7 +25,7 @@
     "giftCard": "Tarjeta regalo",
     "storeCredit": "Credito de la tienda",
     "amountDue": "Importe pendiente",
-    "loadErrorTitle": "No pudimos cargar el producto",
+    "loadErrorTitle": "No pudimos cargar la información",
     "loadErrorDescription": "El servicio tardó más de lo esperado. Intenta de nuevo en un momento.",
     "retry": "Reintentar"
   },
@@ -66,6 +66,7 @@
     "orderHistory": "Historial de pedidos",
     "cart": "Carrito",
     "policies": "Politicas",
+    "portfolio": "Portafolio",
     "copyright": "© {year} {storeName}. Impulsado por Spree Commerce.",
     "wholesale": "Comercio y venta al por mayor",
     "rights": "Todos los derechos reservados.",

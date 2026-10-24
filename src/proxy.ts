@@ -15,6 +15,7 @@ const STOREFRONT_ROUTES = new Set([
   "order-placed",
   "pagina-no-encontrada",
   "policies",
+  "portafolio",
   "products",
   "wholesale",
 ]);
