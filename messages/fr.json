@@ -24,7 +24,10 @@
     "myAccount": "Mon compte",
     "giftCard": "Carte cadeau",
     "storeCredit": "Credit boutique",
-    "amountDue": "Montant du"
+    "amountDue": "Montant du",
+    "loadErrorTitle": "Impossible de charger le produit",
+    "loadErrorDescription": "Le service a pris plus de temps que prévu. Réessayez dans un instant.",
+    "retry": "Réessayer"
   },
   "header": {
     "categories": "Categories",
@@ -252,10 +255,7 @@
     "properties": "Proprietes",
     "yes": "Oui",
     "no": "Non",
-    "optionFilterChip": "{filter} : {value}",
-    "loadErrorTitle": "Impossible de charger le produit",
-    "loadErrorDescription": "Le service a pris plus de temps que prévu. Réessayez dans un instant.",
-    "retry": "Réessayer"
+    "optionFilterChip": "{filter} : {value}"
   },
   "navigation": {
     "home": "Accueil",

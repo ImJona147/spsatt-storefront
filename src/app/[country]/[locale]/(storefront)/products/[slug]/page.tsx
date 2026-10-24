@@ -2,9 +2,9 @@ import type { Category } from "@spree/sdk";
 import { SpreeError } from "@spree/sdk";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { FetchErrorState } from "@/components/errors/FetchErrorState";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { SignalNotFound } from "@/components/not-found/SignalNotFound";
-import { ProductFetchError } from "@/components/products/ProductFetchError";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCachedProduct, PRODUCT_PAGE_EXPAND } from "@/lib/data/cached";
 import { generateProductMetadata } from "@/lib/metadata/product";
@@ -68,7 +68,7 @@ export default async function ProductPage({
         </Suspense>
       );
     }
-    return <ProductFetchError />;
+    return <FetchErrorState />;
   }
 
   const storeUrl = getStoreUrl();

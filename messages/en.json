@@ -24,7 +24,10 @@
     "myAccount": "My Account",
     "giftCard": "Gift card",
     "storeCredit": "Store credit",
-    "amountDue": "Amount due"
+    "amountDue": "Amount due",
+    "loadErrorTitle": "We couldn't load the product",
+    "loadErrorDescription": "The service took longer than expected. Try again in a moment.",
+    "retry": "Try again"
   },
   "header": {
     "categories": "Categories",
@@ -252,10 +255,7 @@
     "properties": "Properties",
     "yes": "Yes",
     "no": "No",
-    "optionFilterChip": "{filter}: {value}",
-    "loadErrorTitle": "We couldn't load the product",
-    "loadErrorDescription": "The service took longer than expected. Try again in a moment.",
-    "retry": "Try again"
+    "optionFilterChip": "{filter}: {value}"
   },
   "navigation": {
     "home": "Home",

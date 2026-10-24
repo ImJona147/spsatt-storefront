@@ -2,6 +2,7 @@
 
 import type { CategoryListParams, ProductListParams } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
+import { withTransient404Retry } from "@/lib/data/transient-404";
 import { getAccessToken, getClient, getLocaleOptions } from "@/lib/spree";
 
 async function cachedListCategories(
@@ -30,7 +31,10 @@ export async function cachedGetCategory(
   "use cache: remote";
   cacheLife("tenMinutes");
   cacheTag("category");
-  return getClient().categories.get(idOrPermalink, params, options);
+  // Same intermittent Spree 404 as product lookups; retry before giving up.
+  return withTransient404Retry(() =>
+    getClient().categories.get(idOrPermalink, params, options),
+  );
 }
 
 export async function getCategory(

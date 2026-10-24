@@ -24,7 +24,10 @@
     "myAccount": "Moje konto",
     "giftCard": "Karta podarunkowa",
     "storeCredit": "Kredyt sklepowy",
-    "amountDue": "Do zapłaty"
+    "amountDue": "Do zapłaty",
+    "loadErrorTitle": "Nie udało się wczytać produktu",
+    "loadErrorDescription": "Usługa trwała dłużej niż oczekiwano. Spróbuj ponownie za chwilę.",
+    "retry": "Spróbuj ponownie"
   },
   "header": {
     "categories": "Kategorie",
@@ -101,7 +104,14 @@
     "contactDescription": "Zadzwoń lub napisz, wycenimy Twoją realizację.",
     "contactCta": "Zadzwoń po wycenę",
     "heroImageAlt": "Warsztat SPSATT z podświetlonymi elementami z neonu i akrylu",
-    "services": ["MDF", "Akryl", "Neon", "Laser", "Druk 3D", "Sublimacja"],
+    "services": [
+      "MDF",
+      "Akryl",
+      "Neon",
+      "Laser",
+      "Druk 3D",
+      "Sublimacja"
+    ],
     "clientsEyebrow": "Klienci",
     "clientsTitle": "Firmy, z którymi współpracowaliśmy",
     "contactDirections": "Wyznacz trasę",
@@ -245,10 +255,7 @@
     "properties": "Właściwości",
     "yes": "Tak",
     "no": "Nie",
-    "optionFilterChip": "{filter}: {value}",
-    "loadErrorTitle": "Nie udało się wczytać produktu",
-    "loadErrorDescription": "Usługa trwała dłużej niż oczekiwano. Spróbuj ponownie za chwilę.",
-    "retry": "Spróbuj ponownie"
+    "optionFilterChip": "{filter}: {value}"
   },
   "navigation": {
     "home": "Strona główna",

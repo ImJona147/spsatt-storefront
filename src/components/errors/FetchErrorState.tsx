@@ -6,13 +6,13 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
 /**
- * Friendly in-page state shown when the product fetch failed for a reason
- * other than "this product does not exist" (backend hiccup, network). A
+ * Friendly in-page state shown when a data fetch failed for a reason other
+ * than "this record does not exist" (backend hiccup, network). A
  * router.refresh() re-runs the server components without a full reload.
  */
-export function ProductFetchError() {
+export function FetchErrorState() {
   const router = useRouter();
-  const t = useTranslations("products");
+  const t = useTranslations("common");
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">

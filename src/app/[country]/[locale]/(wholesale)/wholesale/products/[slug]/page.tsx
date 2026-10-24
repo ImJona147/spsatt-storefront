@@ -1,6 +1,8 @@
+import { SpreeError } from "@spree/sdk";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ProductDetails } from "@/app/[country]/[locale]/(storefront)/products/[slug]/ProductDetails";
+import { FetchErrorState } from "@/components/errors/FetchErrorState";
 import { SignalNotFound } from "@/components/not-found/SignalNotFound";
 import { PRODUCT_PAGE_EXPAND } from "@/lib/data/cached";
 import { getWholesaleProduct } from "@/lib/data/wholesale";
@@ -51,12 +53,18 @@ async function WholesaleProductContent({
   let product;
   try {
     product = await getWholesaleProduct(slug, { expand: PRODUCT_PAGE_EXPAND });
-  } catch {
-    return (
-      <Suspense fallback={null}>
-        <SignalNotFound />
-      </Suspense>
-    );
+  } catch (error) {
+    // Same distinction as the storefront PDP: only a persistent 404 is a
+    // real miss; anything else gets a retryable error state.
+    if (error instanceof SpreeError && error.status === 404) {
+      return (
+        <Suspense fallback={null}>
+          <SignalNotFound />
+        </Suspense>
+      );
+    }
+    console.error("Failed to fetch wholesale product:", error);
+    return <FetchErrorState />;
   }
 
   if (!product) {

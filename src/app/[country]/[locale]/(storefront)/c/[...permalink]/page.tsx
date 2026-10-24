@@ -1,6 +1,8 @@
+import { SpreeError } from "@spree/sdk";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { FetchErrorState } from "@/components/errors/FetchErrorState";
 import { ProductListing } from "@/components/products/ProductListing";
 import { ProductListingSkeleton } from "@/components/products/ProductListingSkeleton";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -68,8 +70,14 @@ async function CategoryPageContent({
       expand: ["ancestors", "children"],
     });
   } catch (error) {
+    // A 404 that survives the transient-retry window is a real missing
+    // category; anything else (5xx, network) gets a retryable error state
+    // instead of lying to the visitor that the category does not exist.
+    if (error instanceof SpreeError && error.status === 404) {
+      notFound();
+    }
     console.error("Failed to fetch category:", error);
-    notFound();
+    return <FetchErrorState />;
   }
 
   if (!category) {

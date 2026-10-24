@@ -24,7 +24,10 @@
     "myAccount": "Mi cuenta",
     "giftCard": "Tarjeta regalo",
     "storeCredit": "Credito de la tienda",
-    "amountDue": "Importe pendiente"
+    "amountDue": "Importe pendiente",
+    "loadErrorTitle": "No pudimos cargar el producto",
+    "loadErrorDescription": "El servicio tardó más de lo esperado. Intenta de nuevo en un momento.",
+    "retry": "Reintentar"
   },
   "header": {
     "categories": "Categorias",
@@ -252,10 +255,7 @@
     "properties": "Propiedades",
     "yes": "Si",
     "no": "No",
-    "optionFilterChip": "{filter}: {value}",
-    "loadErrorTitle": "No pudimos cargar el producto",
-    "loadErrorDescription": "El servicio tardó más de lo esperado. Intenta de nuevo en un momento.",
-    "retry": "Reintentar"
+    "optionFilterChip": "{filter}: {value}"
   },
   "navigation": {
     "home": "Inicio",
