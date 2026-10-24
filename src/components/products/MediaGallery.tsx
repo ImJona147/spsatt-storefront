@@ -140,7 +140,7 @@ function MediaGalleryInner({
             onClick={() => selectImage(index)}
             aria-label={`${productName} ${index + 1}`}
             aria-current={index === safeIndex}
-            className={`relative w-16 h-16 lg:w-[4.5rem] lg:h-[4.5rem] flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors bg-muted ${
+            className={`relative w-16 h-16 lg:w-[4.5rem] lg:h-[4.5rem] flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
               index === safeIndex
                 ? "border-primary"
                 : "border-transparent hover:border-border"
@@ -173,7 +173,7 @@ function MediaGalleryInner({
       <div className="relative min-w-0 flex-1">
         <button
           type="button"
-          className="relative aspect-square bg-muted rounded-xl border border-border overflow-hidden cursor-zoom-in w-full touch-pan-y"
+          className="relative aspect-square bg-muted rounded-xl border border-border overflow-hidden cursor-zoom-in w-full touch-pan-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           onClick={() => {
             if (suppressClickRef.current) {
               suppressClickRef.current = false;

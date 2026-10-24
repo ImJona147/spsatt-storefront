@@ -169,7 +169,8 @@ export function VariantPicker({
                       disabled={!isAvailable}
                       title={optionValue?.label || value}
                       className={`
-                        w-10 h-10 rounded-lg border transition-all relative overflow-hidden
+                        w-11 h-11 rounded-lg border transition-all relative overflow-hidden
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
                         ${isSelected ? "border-primary ring-2 ring-primary ring-offset-2 ring-offset-background" : "border-border"}
                         ${!isAvailable ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}
                         ${!isPurchasable && isAvailable ? "opacity-50" : ""}
