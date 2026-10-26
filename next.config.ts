@@ -93,8 +93,29 @@ const nextConfig: NextConfig = {
 
 const configWithIntl = withNextIntl(nextConfig);
 
+// Respuestas de seguridad para todo el sitio. El CSP queda fuera a propósito:
+// exige allowlist de GTM/Stripe/Adyen/PayPal y debe probarse por flujo de pago.
+const securityHeaders = [
+  {
+    key: "Strict-Transport-Security",
+    value: "max-age=31536000; includeSubDomains",
+  },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), geolocation=(), microphone=(), usb=()",
+  },
+];
+
+const configWithHeaders: NextConfig = {
+  ...configWithIntl,
+  headers: async () => [{ source: "/(.*)", headers: securityHeaders }],
+};
+
 export default process.env.SENTRY_DSN
-  ? withSentryConfig(configWithIntl, {
+  ? withSentryConfig(configWithHeaders, {
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
       authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -112,4 +133,4 @@ export default process.env.SENTRY_DSN
       // Disables the Sentry SDK build-time telemetry
       telemetry: false,
     })
-  : configWithIntl;
+  : configWithHeaders;

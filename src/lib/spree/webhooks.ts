@@ -34,8 +34,8 @@ export interface CreateWebhookHandlerOptions {
 
   /**
    * Optional `waitUntil` function for extending serverless execution context.
-   * On Vercel/Cloudflare, pass `waitUntil` from the request context to ensure
-   * handlers complete even after the response is sent.
+   * On platforms that expose one (e.g. Cloudflare), pass `waitUntil` from the
+   * request context to ensure handlers complete even after the response is sent.
    *
    * If not provided, handlers are awaited before returning the response.
    */

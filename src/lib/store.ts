@@ -18,15 +18,12 @@ export function ensureProtocol(url: string): string {
 }
 
 /**
- * Get the store URL, preferring NEXT_PUBLIC_SITE_URL and falling back to
- * NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL. In development, falls back to
+ * Get the store URL from NEXT_PUBLIC_SITE_URL. In development, falls back to
  * http://localhost:3001. Returns undefined in production when unconfigured
  * so misconfiguration surfaces immediately.
  */
 export function getStoreUrl(): string | undefined {
-  const raw =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL;
+  const raw = process.env.NEXT_PUBLIC_SITE_URL;
   if (raw) return ensureProtocol(raw);
   return process.env.NODE_ENV === "development"
     ? "http://localhost:3001"

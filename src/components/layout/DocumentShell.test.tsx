@@ -16,14 +16,6 @@ vi.mock("@next/third-parties/google", () => ({
   GoogleTagManager: () => null,
 }));
 
-vi.mock("@vercel/analytics/next", () => ({
-  Analytics: () => null,
-}));
-
-vi.mock("@vercel/speed-insights/next", () => ({
-  SpeedInsights: () => null,
-}));
-
 describe("DocumentShell", () => {
   it("renders the route locale and tolerates extension root mutations", () => {
     const document = DocumentShell({

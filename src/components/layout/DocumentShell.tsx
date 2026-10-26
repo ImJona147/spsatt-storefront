@@ -1,6 +1,4 @@
 import { GoogleTagManager } from "@next/third-parties/google";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Fraunces, Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Suspense } from "react";
@@ -68,8 +66,6 @@ export function DocumentShell({ children, locale }: DocumentShellProps) {
         >
           <Suspense fallback={null}>{children}</Suspense>
         </ThemeProvider>
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );

@@ -6,8 +6,6 @@
 
 A production-ready, headless ecommerce storefront for [Spree Commerce](https://spreecommerce.org), built with Next.js 16, React 19, and the [Spree REST API](https://spreecommerce.org/docs/api-reference). Open source (MIT) and free to customize.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/spree/storefront)
-
 [Live Demo](https://demo.spreecommerce.org) | [Quickstart Docs](https://spreecommerce.org/docs/developer/storefront/nextjs/quickstart) | [TypeScript SDK](https://www.npmjs.com/package/@spree/sdk)
 
 > **You are on `6-0-dev`.** This branch tracks the unreleased Spree 6.0 Store API and SDK, so it can break as those change. For a stable storefront to fork or deploy, use `main`. This branch merges into `main` at the 6.0 release.
@@ -177,7 +175,7 @@ The storefront can render and send its own order, shipment, and account emails w
 
 ## Deployment
 
-Deploy to Vercel, Docker (a multi-stage `Dockerfile` ships at the repo root), or any Node.js host. See the [Deployment guide](https://spreecommerce.org/docs/developer/storefront/nextjs/deployment).
+Deploy with Docker (a multi-stage `Dockerfile` ships at the repo root) or any Node.js host. See the [Deployment guide](https://spreecommerce.org/docs/developer/storefront/nextjs/deployment).
 
 ## License
 

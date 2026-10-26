@@ -58,14 +58,14 @@ function setLocaleCookies(
   country: string,
   locale: string,
 ): void {
-  response.cookies.set(COUNTRY_COOKIE, country, {
+  const options = {
     path: "/",
     maxAge: COOKIE_MAX_AGE,
-  });
-  response.cookies.set(LOCALE_COOKIE, locale, {
-    path: "/",
-    maxAge: COOKIE_MAX_AGE,
-  });
+    sameSite: "lax" as const,
+    secure: process.env.NODE_ENV === "production",
+  };
+  response.cookies.set(COUNTRY_COOKIE, country, options);
+  response.cookies.set(LOCALE_COOKIE, locale, options);
 }
 
 function nextWithLocaleContext(
@@ -181,7 +181,6 @@ export function createSpreeMiddleware(
     // Detect country: cookie → geo headers → default
     const country =
       request.cookies.get(COUNTRY_COOKIE)?.value ??
-      request.headers.get("x-vercel-ip-country")?.toLowerCase() ??
       request.headers.get("cf-ipcountry")?.toLowerCase() ??
       defaultCountry;
 
