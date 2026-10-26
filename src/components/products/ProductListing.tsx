@@ -184,9 +184,9 @@ async function ProductListingInner({
       ) : (
         <div className="text-center py-12">
           <EmptyIllustration />
-          <h3 className="mt-4 text-lg font-medium text-foreground">
+          <h2 className="mt-4 text-lg font-medium text-foreground">
             {t("noProductsFound")}
-          </h3>
+          </h2>
           <p className="mt-2 text-muted-foreground">
             {emptyMessage ?? t("tryAdjustingFilters")}
           </p>

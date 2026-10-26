@@ -2,10 +2,14 @@ import type { Category, Media, Product } from "@spree/sdk";
 import { ensureProtocol, getStoreName, getStoreUrl } from "@/lib/store";
 
 /**
- * Default social image path (stored in public/).
- * Replace public/social-image.png with your own 1200x630 OG image.
+ * Alt text for the social sharing image (public/opengraph-image.png).
  */
-export const SOCIAL_IMAGE_PATH = "/social-image.webp";
+export const SOCIAL_IMAGE = {
+  url: "/opengraph-image.png",
+  width: 1200,
+  height: 630,
+  alt: "SPSATT – Artículos publicitarios en San Andrés Tuxtla: MDF, acrílico, neón, láser, impresión 3D y sublimación. Cotiza al 294 942 3064.",
+} as const;
 
 /**
  * Build a full canonical URL from a store URL and a relative path.
@@ -125,8 +129,9 @@ export function buildBreadcrumbJsonLd(
 }
 
 /**
- * Build JSON-LD Organization schema from environment variables.
- * https://schema.org/Organization
+ * Build JSON-LD LocalBusiness schema from environment variables and the
+ * store's public address data.
+ * https://schema.org/LocalBusiness
  */
 export function buildOrganizationJsonLd(): Record<string, unknown> {
   const storeName = getStoreName();
@@ -136,17 +141,51 @@ export function buildOrganizationJsonLd(): Record<string, unknown> {
   const twitter = process.env.STORE_TWITTER;
   const instagram = process.env.STORE_INSTAGRAM;
   const supportEmail = process.env.STORE_SUPPORT_EMAIL;
+  const description =
+    process.env.STORE_META_DESCRIPTION ||
+    "Artículos publicitarios al mayoreo: MDF, acrílico, neón, láser, impresión 3D y sublimación.";
 
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "LocalBusiness",
+    ...(storeUrl ? { "@id": `${storeUrl}/#business` } : {}),
     name: storeName,
+    description,
+    slogan: "Donde las ideas se hacen realidad",
     ...(storeUrl ? { url: storeUrl } : {}),
+    image: `${storeUrl ?? ""}/images/spsatt-og.png`,
+    logo: logoUrl || `${storeUrl ?? ""}/icons/icon-512.png`,
+    telephone: "+52 294 942 3064",
+    priceRange: "$$",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Independencia Ote. 246, Belen Grande",
+      addressLocality: "San Andrés Tuxtla",
+      addressRegion: "Veracruz",
+      postalCode: "95700",
+      addressCountry: "MX",
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "14:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "16:00",
+        closes: "20:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Saturday"],
+        opens: "09:00",
+        closes: "17:00",
+      },
+    ],
   };
-
-  if (logoUrl) {
-    schema.logo = logoUrl;
-  }
 
   const sameAs: string[] = [];
   if (facebook) sameAs.push(facebook);

@@ -113,13 +113,8 @@
     "portfolioEyebrow": "Realizacje",
     "portfolioTitle": "Ostatnie prace",
     "portfolioLead": "Przegląd elementów wykonanych dla lokalnych firm.",
-    "portfolioNeon": "Neon",
-    "portfolioAcrylic": "Akryl",
-    "portfolioLetters": "Litery i szyldy",
-    "portfolioFurniture": "Meble",
-    "portfolioAwards": "Puchary",
-    "portfolioPrint": "Druk cyfrowy",
-    "portfolioOther": "Inne prace",
+    "portfolioNoPhotos": "Ta sekcja nie ma teraz zdjęć.",
+    "portfolioEmpty": "Nie ma teraz prac do pokazania.",
     "portfolioView": "Zobacz realizacje",
     "processEyebrow": "Jak pracujemy",
     "processTitle": "Trzy kroki i jesteś widoczny",
@@ -179,6 +174,7 @@
   },
   "products": {
     "allProducts": "Wszystkie produkty",
+    "metaDescription": "Szyldy, litery przestrzenne, neon, LED, druk cyfrowy i meble reklamowe: poznaj cały katalog produktów SPSATT.",
     "browseCollection": "Przeglądaj naszą pełną kolekcję",
     "searchResultsFor": "Wyniki wyszukiwania dla \"{query}\"",
     "productsFound": "{count, plural, one {# produkt} few {# produkty} other {# produktów}}",
@@ -638,7 +634,9 @@
     "shippingPolicy": "Polityka wysyłki",
     "privacyPolicy": "Polityka prywatności",
     "returnsPolicy": "Polityka zwrotów",
-    "termsOfService": "Regulamin"
+    "termsOfService": "Regulamin",
+    "lastUpdated": "Ostatnia aktualizacja",
+    "storePolicies": "Regulamin sklepu"
   },
   "expressCheckout": {
     "shipping": "Dostawa",

@@ -5,6 +5,7 @@ import {
   getMarketLocaleTargets,
   type MarketLocaleTarget,
 } from "@/i18n/markets";
+import { POLICY_LINKS } from "@/lib/constants/policies";
 import {
   getSitemapCategoryPage,
   getSitemapMarkets,
@@ -38,7 +39,7 @@ interface PageCaches {
  * Store API pages and avoids long-running sitemap responses on large catalogs.
  */
 const URLS_PER_SITEMAP = 10_000;
-const STATIC_PAGES_PER_LOCALE = 3;
+const STATIC_PAGES_PER_LOCALE = 6;
 const ITEMS_PER_PAGE = 100;
 const MAX_PAGES = 1000;
 const MAX_CONCURRENT_PAGE_REQUESTS = 8;
@@ -232,9 +233,8 @@ function resolveBaseUrl(): string | undefined {
     return parsed.origin + parsed.pathname.replace(/\/$/, "");
   } catch {
     console.error(
-      "Sitemap generation skipped: neither NEXT_PUBLIC_SITE_URL nor " +
-        "NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL is set or valid. " +
-        "Sitemaps require absolute http(s) URLs.",
+      "Sitemap generation skipped: NEXT_PUBLIC_SITE_URL is not set or not " +
+        "a valid URL. Sitemaps require absolute http(s) URLs.",
     );
     return undefined;
   }
@@ -269,7 +269,13 @@ function appendStaticEntries(
       changeFrequency: "daily",
       priority: 0.8,
     },
-    { url: `${basePath}/c`, changeFrequency: "weekly", priority: 0.7 },
+    // Legal pages are linked from every footer; there is intentionally no
+    // /c index page (only category permalinks), so it is not listed here.
+    ...POLICY_LINKS.map((policy) => ({
+      url: `${basePath}/policies/${policy.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    })),
   ];
 
   for (const [offset, entry] of staticEntries.entries()) {

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { buildHreflangLanguages } from "@/lib/metadata/alternates";
-import { buildCanonicalUrl } from "@/lib/seo";
-import { getStoreUrl } from "@/lib/store";
+import { normalizeOpenGraphLocale } from "@/lib/metadata/store";
+import { buildCanonicalUrl, SOCIAL_IMAGE } from "@/lib/seo";
+import { getStoreName, getStoreUrl } from "@/lib/store";
 
 interface ProductsMetadataParams {
   country: string;
@@ -24,10 +26,16 @@ export async function generateProductsMetadata({
         path: "/products",
       })
     : undefined;
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: "products",
+  });
+  const title = t("allProducts");
+  const description = t("metaDescription");
 
   return {
-    title: "Products",
-    description: "Browse our full collection of products.",
+    title,
+    description,
     ...(canonicalUrl
       ? {
           alternates: {
@@ -37,10 +45,13 @@ export async function generateProductsMetadata({
         }
       : {}),
     openGraph: {
-      title: "Products",
-      description: "Browse our full collection of products.",
+      title,
+      description,
       ...(canonicalUrl ? { url: canonicalUrl } : {}),
+      siteName: getStoreName(),
+      locale: normalizeOpenGraphLocale(locale),
       type: "website",
+      images: [SOCIAL_IMAGE],
     },
   };
 }

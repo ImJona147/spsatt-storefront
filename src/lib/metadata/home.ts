@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { buildHreflangLanguages } from "@/lib/metadata/alternates";
-import { buildCanonicalUrl, SOCIAL_IMAGE_PATH } from "@/lib/seo";
+import { normalizeOpenGraphLocale } from "@/lib/metadata/store";
+import { buildCanonicalUrl } from "@/lib/seo";
 import {
   getStoreMetaDescription,
+  getStoreName,
   getStoreSeoTitle,
   getStoreUrl,
 } from "@/lib/store";
@@ -46,8 +48,9 @@ export async function generateHomeMetadata({
       title: storeName,
       description,
       ...(canonicalUrl ? { url: canonicalUrl } : {}),
+      siteName: getStoreName(),
+      locale: normalizeOpenGraphLocale(locale),
       type: "website",
-      images: [SOCIAL_IMAGE_PATH],
     },
   };
 }

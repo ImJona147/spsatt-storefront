@@ -100,9 +100,9 @@ export async function Footer({ basePath, locale, categoryLinks }: FooterProps) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-primary-foreground">
+            <h2 className="text-sm font-semibold text-primary-foreground">
               {t("shop")}
-            </h3>
+            </h2>
             <ul className="mt-4 space-y-3">
               <li>
                 <Link
@@ -125,9 +125,9 @@ export async function Footer({ basePath, locale, categoryLinks }: FooterProps) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-primary-foreground">
+            <h2 className="text-sm font-semibold text-primary-foreground">
               {t("account")}
-            </h3>
+            </h2>
             <ul className="mt-4 space-y-3">
               <li>
                 <Link
@@ -167,9 +167,9 @@ export async function Footer({ basePath, locale, categoryLinks }: FooterProps) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-primary-foreground">
+            <h2 className="text-sm font-semibold text-primary-foreground">
               {t("policies")}
-            </h3>
+            </h2>
             <ul className="mt-4 space-y-3">
               {POLICY_LINKS.map((policy) => (
                 <li key={policy.slug}>

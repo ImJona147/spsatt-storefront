@@ -204,9 +204,9 @@ export const FilterBar = memo(function FilterBar({
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground">
+          <h2 className="text-sm font-medium text-muted-foreground">
             {t("productCount", { count: totalCount })}
-          </span>
+          </h2>
           <FilterDropdown
             label={t("sort")}
             isOpen={openDropdownId === "sort"}

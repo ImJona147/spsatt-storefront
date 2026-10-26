@@ -113,13 +113,8 @@
     "portfolioEyebrow": "Referenzen",
     "portfolioTitle": "Aktuelle Arbeiten",
     "portfolioLead": "Eine Auswahl von Stücken, die wir für lokale Unternehmen gefertigt haben.",
-    "portfolioNeon": "Neon",
-    "portfolioAcrylic": "Acryl",
-    "portfolioLetters": "Buchstaben und Schilder",
-    "portfolioFurniture": "Möbel",
-    "portfolioAwards": "Urkunden",
-    "portfolioPrint": "Digitaldruck",
-    "portfolioOther": "Weitere Arbeiten",
+    "portfolioNoPhotos": "Dieser Bereich hat derzeit keine Fotos.",
+    "portfolioEmpty": "Es gibt derzeit keine Arbeiten zu zeigen.",
     "portfolioView": "Arbeiten ansehen",
     "processEyebrow": "So arbeiten wir",
     "processTitle": "Drei Schritte und Sie sind sichtbar",
@@ -179,6 +174,7 @@
   },
   "products": {
     "allProducts": "Alle Produkte",
+    "metaDescription": "Buchstaben, Leuchtreklame, Neon, LED, Digitaldruck und Werbemöbel: Entdecken Sie das komplette SPSATT-Sortiment.",
     "browseCollection": "Entdecken Sie unsere gesamte Kollektion",
     "searchResultsFor": "Suchergebnisse für \"{query}\"",
     "productsFound": "{count, plural, one {# Produkt} other {# Produkte}} gefunden",
@@ -638,7 +634,9 @@
     "shippingPolicy": "Versandrichtlinie",
     "privacyPolicy": "Datenschutzrichtlinie",
     "returnsPolicy": "Rückgaberichtlinie",
-    "termsOfService": "Nutzungsbedingungen"
+    "termsOfService": "Nutzungsbedingungen",
+    "lastUpdated": "Zuletzt aktualisiert",
+    "storePolicies": "Shop-Richtlinien"
   },
   "expressCheckout": {
     "shipping": "Versand",

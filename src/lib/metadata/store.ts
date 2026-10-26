@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { SOCIAL_IMAGE_PATH } from "@/lib/seo";
 import {
   getStoreMetaDescription,
   getStoreName,
@@ -7,9 +6,11 @@ import {
   getStoreUrl,
 } from "@/lib/store";
 
-function normalizeOpenGraphLocale(locale: string): string {
+export function normalizeOpenGraphLocale(locale: string): string {
   const parts = locale.split(/[-_]/);
-  if (parts.length < 2) return locale;
+  if (parts.length < 2) {
+    return parts[0] === "es" ? "es_MX" : parts[0];
+  }
   return `${parts[0].toLowerCase()}_${parts[1].toUpperCase()}`;
 }
 
@@ -38,16 +39,16 @@ export async function generateStoreMetadata({
   return {
     ...metadataBaseSpread,
     title: {
-      template: `%s | ${storeName}`,
+      template: `%s | ${getStoreName()}`,
       default: storeName,
     },
     description: metaDescription,
+    applicationName: getStoreName(),
     ...(metaKeywords ? { keywords: metaKeywords } : {}),
     openGraph: {
       siteName: getStoreName(),
       locale: normalizeOpenGraphLocale(locale),
       type: "website",
-      images: [SOCIAL_IMAGE_PATH],
     },
     twitter: {
       card: "summary_large_image",
@@ -56,6 +57,17 @@ export async function generateStoreMetadata({
             site: twitter.startsWith("@") ? twitter : `@${twitter}`,
           }
         : {}),
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
   };
 }

@@ -5,9 +5,10 @@ import {
   buildLocalizedAlternates,
   translationFingerprint,
 } from "@/lib/metadata/alternates";
-import { stripHtml } from "@/lib/seo";
+import { normalizeOpenGraphLocale } from "@/lib/metadata/store";
+import { SOCIAL_IMAGE, stripHtml } from "@/lib/seo";
 import { DEFAULT_SURFACE } from "@/lib/spree";
-import { getStoreUrl } from "@/lib/store";
+import { getStoreName, getStoreUrl } from "@/lib/store";
 
 interface ProductMetadataParams {
   country: string;
@@ -90,8 +91,10 @@ export async function generateProductMetadata({
       title,
       description,
       ...(localizedAlternates ? { url: localizedAlternates.canonical } : {}),
+      siteName: getStoreName(),
+      locale: normalizeOpenGraphLocale(locale),
       type: "website",
-      ...(ogImage ? { images: [ogImage] } : {}),
+      images: [ogImage ?? SOCIAL_IMAGE],
     },
     other: {
       ...(product.price?.amount

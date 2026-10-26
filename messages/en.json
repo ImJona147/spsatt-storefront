@@ -120,13 +120,8 @@
     "portfolioEyebrow": "Portfolio",
     "portfolioTitle": "Recent work",
     "portfolioLead": "A sample of pieces we've made for local businesses.",
-    "portfolioNeon": "Neon",
-    "portfolioAcrylic": "Acrylic",
-    "portfolioLetters": "Letters and signs",
-    "portfolioFurniture": "Furniture",
-    "portfolioAwards": "Awards",
-    "portfolioPrint": "Digital printing",
-    "portfolioOther": "Other work",
+    "portfolioNoPhotos": "This section has no photos right now.",
+    "portfolioEmpty": "There's no work to show right now.",
     "portfolioView": "View work",
     "processEyebrow": "How we work",
     "processTitle": "Three steps and you're visible",
@@ -186,6 +181,7 @@
   },
   "products": {
     "allProducts": "All Products",
+    "metaDescription": "Channel letters, signs, neon, LED, digital printing and advertising furniture: explore the full SPSATT catalog.",
     "browseCollection": "Browse our complete collection",
     "searchResultsFor": "Search results for \"{query}\"",
     "productsFound": "{count, plural, one {# product} other {# products}} found",
@@ -645,7 +641,9 @@
     "shippingPolicy": "Shipping Policy",
     "privacyPolicy": "Privacy Policy",
     "returnsPolicy": "Returns Policy",
-    "termsOfService": "Terms of Service"
+    "termsOfService": "Terms of Service",
+    "lastUpdated": "Last updated",
+    "storePolicies": "Store policies"
   },
   "expressCheckout": {
     "shipping": "Shipping",

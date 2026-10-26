@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
@@ -75,6 +75,12 @@ export async function generateMetadata({
   const { locale } = await params;
   return generateStoreMetadata({ locale });
 }
+
+export const viewport: Viewport = {
+  themeColor: "#36488F",
+  width: "device-width",
+  initialScale: 1,
+};
 
 /**
  * Market resolution can read request headers when it needs to preserve the

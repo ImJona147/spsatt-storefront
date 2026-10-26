@@ -120,13 +120,8 @@
     "portfolioEyebrow": "Portfolio",
     "portfolioTitle": "Travaux récents",
     "portfolioLead": "Un aperçu des pièces réalisées pour des commerces de la région.",
-    "portfolioNeon": "Néon",
-    "portfolioAcrylic": "Acrylique",
-    "portfolioLetters": "Lettres et enseignes",
-    "portfolioFurniture": "Mobilier",
-    "portfolioAwards": "Trophées",
-    "portfolioPrint": "Impression numérique",
-    "portfolioOther": "Autres travaux",
+    "portfolioNoPhotos": "Cette section n'a pas de photos pour le moment.",
+    "portfolioEmpty": "Il n'y a pas de travaux à afficher pour le moment.",
     "portfolioView": "Voir les travaux",
     "processEyebrow": "Notre méthode",
     "processTitle": "Trois étapes et vous êtes visible",
@@ -186,6 +181,7 @@
   },
   "products": {
     "allProducts": "Tous les produits",
+    "metaDescription": "Enseignes, lettres relief, néon, LED, impression numérique et mobilier publicitaire : découvrez tout le catalogue SPSATT.",
     "browseCollection": "Parcourez notre collection complete",
     "searchResultsFor": "Resultats de recherche pour \"{query}\"",
     "productsFound": "{count, plural, one {# produit} other {# produits}} trouve(s)",
@@ -645,7 +641,9 @@
     "shippingPolicy": "Politique de livraison",
     "privacyPolicy": "Politique de confidentialite",
     "returnsPolicy": "Politique de retour",
-    "termsOfService": "Conditions generales"
+    "termsOfService": "Conditions generales",
+    "lastUpdated": "Dernière mise à jour",
+    "storePolicies": "Politiques de la boutique"
   },
   "expressCheckout": {
     "shipping": "Livraison",
