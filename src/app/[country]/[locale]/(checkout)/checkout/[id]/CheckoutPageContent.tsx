@@ -38,7 +38,7 @@ import {
   trackAddShippingInfo,
   trackBeginCheckout,
 } from "@/lib/analytics/gtm";
-import { getAddresses, updateAddress } from "@/lib/data/addresses";
+import { updateAddress } from "@/lib/data/addresses";
 import {
   applyCode,
   getCheckoutOrder,
@@ -47,6 +47,10 @@ import {
   selectDeliveryRate,
   updateOrderAddresses,
 } from "@/lib/data/checkout";
+import {
+  adoptSoleStandingCompany,
+  getCartAddresses,
+} from "@/lib/data/companies";
 import { isAuthenticated as checkAuth } from "@/lib/data/cookies";
 import { getCountry } from "@/lib/data/countries";
 import { getMarketCountries, resolveMarket } from "@/lib/data/markets";
@@ -111,8 +115,9 @@ function CheckoutPageContentInner({
   const [countries, setCountries] = useState<Country[]>(
     initialData?.countries ?? [],
   );
-  const [savedAddresses, setSavedAddresses] = useState<Address[]>(
-    initialData?.savedAddresses ?? [],
+  // Everything the cart accepts, each entry naming the book it came out of.
+  const [selectableAddresses, setSelectableAddresses] = useState<Address[]>(
+    initialData?.selectableAddresses ?? [],
   );
   const [isAuthenticated, setIsAuthenticated] = useState(
     initialData?.isAuthenticated ?? false,
@@ -206,12 +211,26 @@ function CheckoutPageContentInner({
     if (!paymentError) setError(null);
 
     try {
-      const [cartData, market, addressesData, authStatus] = await Promise.all([
+      const [loadedCart, market, authStatus] = await Promise.all([
         getCheckoutOrder(cartId),
         resolveMarket(urlCountry).catch(() => null),
-        getAddresses(),
         checkAuth(),
       ]);
+
+      // A buyer with one membership never picked a company, so checkout names
+      // it for them — before the addresses are read, since that is what puts
+      // their employer's sites on offer. Does nothing once the cart names one.
+      const cartData =
+        authStatus && loadedCart && loadedCart.current_step !== "complete"
+          ? ((await adoptSoleStandingCompany(loadedCart)) ?? loadedCart)
+          : loadedCart;
+
+      // The list follows the cart: a company named since the last load changes
+      // which addresses may be offered. Guests keep no book and the call needs
+      // a customer JWT, so skip it rather than spend a failing round-trip on
+      // every refresh.
+      const addresses =
+        authStatus && cartData ? await getCartAddresses(cartData.id) : [];
 
       const countriesData = market
         ? await getMarketCountries(market.id).catch(() => ({
@@ -232,7 +251,7 @@ function CheckoutPageContentInner({
 
       setCart(cartData);
       setCountries(countriesData.data);
-      setSavedAddresses(addressesData.data);
+      setSelectableAddresses(addresses);
       setIsAuthenticated(authStatus);
 
       return cartData;
@@ -712,12 +731,15 @@ function CheckoutPageContentInner({
           <AddressSection
             cart={cart}
             countries={countries}
-            savedAddresses={savedAddresses}
+            selectableAddresses={selectableAddresses}
             isAuthenticated={isAuthenticated}
             signInUrl={`${basePath}/account?redirect=${encodeURIComponent(pathname)}`}
             fetchStates={fetchStates}
             onEmailBlur={handleEmailBlur}
             onAutoSave={handleAutoSave}
+            // Editing stays available for the buyer's own entries; the
+            // selector withholds it from the company group, whose rows the
+            // customer address endpoint would refuse to write.
             onUpdateSavedAddress={
               isAuthenticated ? handleUpdateSavedAddress : undefined
             }
