@@ -27,7 +27,7 @@ export async function generateCategoryMetadata({
       "children",
     ]);
   } catch {
-    return { title: "Category Not Found" };
+    return { title: "Categoria no encontrada" };
   }
 
   const title = category.meta_title || category.name;
