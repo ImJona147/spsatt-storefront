@@ -9,36 +9,35 @@ import {
   BUSINESS_WHATSAPP_MESSAGE,
   buildWhatsAppUrl,
 } from "@/lib/constants/business";
-import { getPortfolioCategory, toMedia } from "@/lib/portfolio";
+import { getPortfolioCategories } from "@/lib/data/portfolio";
+import { resolveCategoryPage, toMedia } from "@/lib/portfolio";
 
 interface PortfolioCategoryPageProps {
   params: Promise<{ country: string; locale: string; categoria: string }>;
 }
 
-export function generateStaticParams() {
-  return [
-    { categoria: "letras" },
-    { categoria: "neon" },
-    { categoria: "acrilico" },
-    { categoria: "mobiliario" },
-    { categoria: "reconocimientos" },
-    { categoria: "impresion-digital" },
-    { categoria: "otros" },
-  ];
+export async function generateStaticParams() {
+  const apiCategories = await getPortfolioCategories();
+  return apiCategories
+    .filter((category) => category.active)
+    .map((category) => ({ categoria: category.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PortfolioCategoryPageProps): Promise<Metadata> {
   const { locale, categoria } = await params;
-  const category = getPortfolioCategory(categoria);
-  if (!category) return {};
   const t = await getTranslations({
     locale: locale as Locale,
     namespace: "home",
   });
+  const category = resolveCategoryPage(
+    categoria,
+    await getPortfolioCategories(),
+  );
+  if (!category) return {};
   return {
-    title: t(category.nameKey),
+    title: category.name,
     description: t("portfolioLead"),
   };
 }
@@ -47,16 +46,19 @@ export default async function PortfolioCategoryPage({
   params,
 }: PortfolioCategoryPageProps) {
   const { country, locale, categoria } = await params;
-  const category = getPortfolioCategory(categoria);
-  if (!category) notFound();
-
   const basePath = `/${country}/${locale}`;
   const t = await getTranslations({
     locale: locale as Locale,
     namespace: "home",
   });
-  const title = t(category.nameKey);
-  const images = toMedia(category.photos, title);
+  const category = resolveCategoryPage(
+    categoria,
+    await getPortfolioCategories(),
+  );
+  if (!category) notFound();
+
+  const title = category.name;
+  const images = toMedia(category.photoUrls, title);
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
@@ -74,7 +76,13 @@ export default async function PortfolioCategoryPage({
       <SectionHeading eyebrow={t("portfolioEyebrow")} title={title} />
 
       <div className="mt-10">
-        <PortfolioGallery images={images} title={title} />
+        {category.photoUrls.length > 0 ? (
+          <PortfolioGallery images={images} title={title} />
+        ) : (
+          <p className="rounded-xl border border-border bg-secondary p-6 text-center text-base text-muted-foreground">
+            {t("portfolioNoPhotos")}
+          </p>
+        )}
       </div>
 
       <div className="mt-12 rounded-xl border border-border bg-secondary p-6 text-center">

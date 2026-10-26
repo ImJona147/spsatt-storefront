@@ -1,118 +1,80 @@
 import type { Media } from "@spree/sdk";
 
-export interface PortfolioCategory {
+/** Category as returned by the Store API `portfolio_categories` endpoint. */
+export interface PortfolioCategoryApi {
+  id: string;
+  name: string;
   slug: string;
-  /** i18n key under the `home` namespace for the category name. */
-  nameKey:
-    | "portfolioNeon"
-    | "portfolioAcrylic"
-    | "portfolioLetters"
-    | "portfolioFurniture"
-    | "portfolioAwards"
-    | "portfolioPrint"
-    | "portfolioOther";
-  /** Representative cover used by the home bento tile. */
-  cover: string;
-  photos: string[];
+  position: number;
+  active: boolean;
+  cover_url: string | null;
+  photos_urls: string[];
+}
+
+export interface ResolvedPortfolioCategory {
+  slug: string;
+  name: string;
+  coverUrl: string | null;
+  photoUrls: string[];
+}
+
+/** Cover the admin set, else the first photo, else nothing to show. */
+export function pickCoverUrl(category: PortfolioCategoryApi): string | null {
+  return category.cover_url ?? category.photos_urls[0] ?? null;
 }
 
 /**
- * Portfolio is a curated gallery of finished pieces, kept as static data
- * (photos ship in /public/portafolio). Slugs are stable routes; do not
- * rename without a redirect.
+ * Resolves one fixed home bento tile (spans stay in code). Returns null when
+ * the API does not know the slug or has the category deactivated.
  */
-export const PORTFOLIO_CATEGORIES: PortfolioCategory[] = [
-  {
-    slug: "letras",
-    nameKey: "portfolioLetters",
-    cover: "/portafolio/letras/la-casona.jpg",
-    photos: [
-      "/portafolio/letras/la-casona.jpg",
-      "/portafolio/letras/maranta.jpg",
-      "/portafolio/letras/marisqueria.jpg",
-      "/portafolio/letras/centro-medico.jpg",
-      "/portafolio/letras/tomografias.jpg",
-    ],
-  },
-  {
-    slug: "neon",
-    nameKey: "portfolioNeon",
-    cover: "/portafolio/neon/neon-1.jpg",
-    photos: [
-      "/portafolio/neon/neon-1.jpg",
-      "/portafolio/neon/neon-2.jpg",
-      "/portafolio/neon/neon-3.jpg",
-      "/portafolio/neon/neon-4.jpg",
-      "/portafolio/neon/open.jpg",
-    ],
-  },
-  {
-    slug: "acrilico",
-    nameKey: "portfolioAcrylic",
-    cover: "/portafolio/acrilico/llaveros-1.jpg",
-    photos: [
-      "/portafolio/acrilico/llaveros-1.jpg",
-      "/portafolio/acrilico/llaveros-2.jpg",
-      "/portafolio/acrilico/llaveros-3.jpg",
-      "/portafolio/acrilico/llaveros-4.jpg",
-      "/portafolio/acrilico/medallas.jpg",
-    ],
-  },
-  {
-    slug: "mobiliario",
-    nameKey: "portfolioFurniture",
-    cover: "/portafolio/mobiliario/mesa-venta.jpg",
-    photos: [
-      "/portafolio/mobiliario/mesa-venta.jpg",
-      "/portafolio/mobiliario/mesa-2.jpg",
-    ],
-  },
-  {
-    slug: "reconocimientos",
-    nameKey: "portfolioAwards",
-    cover: "/portafolio/reconocimientos/reconocimiento-1.jpg",
-    photos: [
-      "/portafolio/reconocimientos/reconocimiento-1.jpg",
-      "/portafolio/reconocimientos/reconocimiento-2.jpg",
-    ],
-  },
-  {
-    slug: "impresion-digital",
-    nameKey: "portfolioPrint",
-    cover: "/portafolio/impresion-digital/impresion-digital-1.jpg",
-    photos: [
-      "/portafolio/impresion-digital/impresion-digital-1.jpg",
-      "/portafolio/impresion-digital/vinil.jpg",
-    ],
-  },
-  {
-    slug: "otros",
-    nameKey: "portfolioOther",
-    cover: "/portafolio/otros/corte-laser.jpg",
-    photos: [
-      "/portafolio/otros/corte-laser.jpg",
-      "/portafolio/otros/corte-laser-1.jpg",
-      "/portafolio/otros/oso.jpg",
-      "/portafolio/otros/porton-acabado.jpg",
-      "/portafolio/otros/vaso-1.jpg",
-      "/portafolio/otros/vasos.jpg",
-      "/portafolio/otros/vasos-personlizados.jpg",
-    ],
-  },
-];
+export function resolveHomeTile(
+  tile: { slug: string },
+  apiCategories: PortfolioCategoryApi[],
+): { image: string | null; name: string } | null {
+  const api = apiCategories.find((category) => category.slug === tile.slug);
+  if (!api?.active) return null;
+  return { image: pickCoverUrl(api), name: api.name };
+}
 
-export function getPortfolioCategory(slug: string): PortfolioCategory | null {
-  return (
-    PORTFOLIO_CATEGORIES.find((category) => category.slug === slug) ?? null
-  );
+/** Index grid: active API categories ordered by admin position. */
+export function resolveIndexCategories(
+  apiCategories: PortfolioCategoryApi[],
+): ResolvedPortfolioCategory[] {
+  return apiCategories
+    .filter((category) => category.active)
+    .sort((a, b) => a.position - b.position)
+    .map((category) => ({
+      slug: category.slug,
+      name: category.name,
+      coverUrl: pickCoverUrl(category),
+      photoUrls: category.photos_urls,
+    }));
 }
 
 /**
- * Wraps local photos in the Media shape so the product lightbox can zoom them.
+ * One category page. Returns null (404) when the API does not know the slug
+ * or has the category deactivated; a known category with zero photos is a
+ * real state and renders with an empty gallery.
+ */
+export function resolveCategoryPage(
+  slug: string,
+  apiCategories: PortfolioCategoryApi[],
+): ResolvedPortfolioCategory | null {
+  const api = apiCategories.find((category) => category.slug === slug);
+  if (!api?.active) return null;
+  return {
+    slug: api.slug,
+    name: api.name,
+    coverUrl: pickCoverUrl(api),
+    photoUrls: api.photos_urls,
+  };
+}
+
+/**
+ * Wraps photos in the Media shape so the product lightbox can zoom them.
  *
- * Only `original_url` is set: on the PDP the Spree CDN provides distinct
- * xlarge/large/small renditions, but a local asset has a single file, and
- * every lightbox code path reads xlarge→large→original in that order.
+ * Only `original_url` is set: blob proxy URLs serve a single file, while on
+ * the PDP the Spree CDN provides distinct xlarge/large/small renditions.
  * With all four pointing at the same file the chosen rendition would depend
  * on array order, so leaving the derived sizes null keeps resolution
  * selection deterministic.
