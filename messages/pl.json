@@ -759,5 +759,20 @@
       "signInForPricing": "Zaloguj się, aby zobaczyć ceny",
       "signInToOrder": "Zaloguj się, aby zamówić"
     }
+  },
+  "maintenance": {
+    "eyebrow": "Trwa przerwa techniczna",
+    "title": "Wkrótce wracamy",
+    "message": "Prowadzimy prace w sklepie. Wróć za kilka minut.",
+    "tab": "Konserwacja",
+    "whatsapp": "Napisz do nas na WhatsAppie",
+    "themeToggle": "Przełącz motyw jasny/ciemny",
+    "countdown": {
+      "label": "Wracamy za",
+      "days": "d",
+      "hours": "godz",
+      "minutes": "min",
+      "seconds": "s"
+    }
   }
 }

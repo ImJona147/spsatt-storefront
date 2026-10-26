@@ -176,6 +176,49 @@ body {
   }
 }
 
+/* Maintenance page ambience: slow drift for the background washes and the
+   illustration — one gentle layer of life on an otherwise static screen. */
+@keyframes maintenance-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+.maintenance-float {
+  animation: maintenance-float 14s ease-in-out infinite;
+}
+
+.maintenance-float-slow {
+  animation: maintenance-float 19s ease-in-out infinite reverse;
+}
+
+.maintenance-float-art {
+  animation: maintenance-float 9s ease-in-out infinite;
+}
+
+/* Countdown digit: rises into place whenever its value changes (React
+   remounts the span on a new key), a quiet heartbeat every second. */
+@keyframes countdown-tick {
+  from {
+    opacity: 0;
+    transform: translateY(0.3em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="maintenance-float"] {
+    animation: none !important;
+  }
+}
+
 /* FAQ disclosure rows: hide the default marker, keep the summary keyboard-accessible. */
 .faq-summary::-webkit-details-marker {
   display: none;

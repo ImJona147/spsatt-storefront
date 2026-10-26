@@ -766,5 +766,20 @@
       "signInForPricing": "Sign in for pricing",
       "signInToOrder": "Sign in to order"
     }
+  },
+  "maintenance": {
+    "eyebrow": "Maintenance in progress",
+    "title": "We'll be right back",
+    "message": "We're doing some work on the store. Please check back in a few minutes.",
+    "tab": "Maintenance",
+    "whatsapp": "Message us on WhatsApp",
+    "themeToggle": "Toggle light/dark theme",
+    "countdown": {
+      "label": "We'll be back in",
+      "days": "d",
+      "hours": "h",
+      "minutes": "m",
+      "seconds": "s"
+    }
   }
 }
