@@ -39,6 +39,7 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat
 
 COPY package.json pnpm-lock.yaml ./
+COPY patches/ ./patches/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --no-frozen-lockfile --store-dir /pnpm/store
 
