@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   findMarketForCountry,
   getDefaultMarketLocaleTarget,
+  getMarketDefaultLocale,
   getMarketLocales,
   getMarketLocaleTargets,
   isLocaleEnabledForMarket,
@@ -39,6 +40,39 @@ describe("Market locale routes", () => {
     expect(getMarketLocales(current)).toEqual(["en", "de"]);
     expect(isLocaleEnabledForMarket(current, "DE")).toBe(true);
     expect(isLocaleEnabledForMarket(current, "fr")).toBe(false);
+  });
+
+  it("maps regional Market locales onto their base storefront locale", () => {
+    const mexico = market({
+      id: "market-mx",
+      default: true,
+      default_locale: "es-MX",
+      supported_locales: ["es-419", "es-MX"],
+      country_codes: ["MX"],
+      countries: [country("MX")],
+    });
+
+    expect(getMarketLocales(mexico)).toEqual(["es"]);
+    expect(isLocaleEnabledForMarket(mexico, "es")).toBe(true);
+    expect(isLocaleEnabledForMarket(mexico, "es-MX")).toBe(false);
+    expect(getMarketDefaultLocale(mexico)).toBe("es");
+    expect(getMarketLocaleTargets([mexico])).toEqual([
+      { marketId: "market-mx", country: "mx", locale: "es" },
+    ]);
+  });
+
+  it("ignores regional locales whose base language the storefront lacks", () => {
+    const brazil = market({
+      id: "market-br",
+      default_locale: "pt-BR",
+      supported_locales: ["pt-BR"],
+      country_codes: ["BR"],
+      countries: [country("BR")],
+    });
+
+    expect(getMarketLocales(brazil)).toEqual([]);
+    expect(getMarketDefaultLocale(brazil)).toBeUndefined();
+    expect(isLocaleEnabledForMarket(brazil, "pt")).toBe(false);
   });
 
   it("builds deduplicated country and locale targets across Markets", () => {

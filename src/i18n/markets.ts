@@ -2,13 +2,24 @@ import type { Market } from "@spree/sdk";
 import {
   DEFAULT_LOCALE,
   resolveSupportedLocale,
+  SUPPORTED_LOCALES,
   type SupportedLocale,
 } from "@/i18n/locales";
+import { negotiateLocale } from "@/i18n/normalize";
 
 export interface MarketLocaleTarget {
   marketId: string;
   country: string;
   locale: SupportedLocale;
+}
+
+/** Resolve a Market locale tag to a locale this storefront can render. */
+function renderableLocale(
+  candidate: string | undefined,
+): SupportedLocale | undefined {
+  return negotiateLocale(candidate, SUPPORTED_LOCALES) as
+    | SupportedLocale
+    | undefined;
 }
 
 export function findMarketForCountry(
@@ -31,7 +42,10 @@ export function getMarketLocales(market: Market): SupportedLocale[] {
     market.default_locale,
     ...(market.supported_locales ?? []),
   ]) {
-    const locale = resolveSupportedLocale(candidate);
+    // Market settings store regional tags (es-MX, es-419, en-US); the
+    // storefront renders base locales only, so fall back to the base language
+    // instead of dropping the locale and emptying the Market's routes.
+    const locale = renderableLocale(candidate);
     if (locale && !locales.includes(locale)) locales.push(locale);
   }
 
@@ -53,7 +67,7 @@ export function getMarketDefaultLocale(
   market: Market,
 ): SupportedLocale | undefined {
   const locales = getMarketLocales(market);
-  return resolveSupportedLocale(market.default_locale) ?? locales[0];
+  return renderableLocale(market.default_locale) ?? locales[0];
 }
 
 /** Build every valid country/locale route exposed by the configured Markets. */
