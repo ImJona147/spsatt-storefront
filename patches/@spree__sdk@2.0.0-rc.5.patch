@@ -1,0 +1,32 @@
+diff --git a/dist/index.js b/dist/index.js
+index 9d2e00bc25f41d59263615bc88bfc94fd7fa3791..c069cd13ef299acb4a03403ecec61ac591c0eb78 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1527,21 +1527,25 @@ function multiplyMoney(value, quantity, currency) {
+   const scale = resultScale([parsed.scale], currency);
+   return write(rescale(parsed, scale) * BigInt(quantity), scale);
+ }
++function moneyLocale(locale) {
++  return locale && locale.startsWith("es") ? "es-MX" : locale;
++}
+ function formatMoney(amount, currency, locale, options = {}) {
+   if (!isDecimalString(amount)) return "";
+   const places = decimalPlaces(currency);
+   const maximumPlaces = options.unitPrice ? Math.max(places, 4) : places;
+   const shown = amount.startsWith("-") && roundsToZero(amount.slice(1), maximumPlaces) ? amount.slice(1) : amount;
++  const fraction = shown.includes(".") ? shown.slice(shown.indexOf(".") + 1) : "";
+   const format = (formatLocale) => (
+     // ES2023's Intl typings accept a numeric string; this package targets ES2022.
+     new Intl.NumberFormat(formatLocale, {
+       style: "currency",
+       currency,
+-      minimumFractionDigits: places,
++      minimumFractionDigits: /[1-9]/.test(fraction) ? places : 0,
+       maximumFractionDigits: maximumPlaces
+     }).format(shown)
+   );
+-  for (const formatLocale of locale ? [locale, void 0] : [void 0]) {
++  for (const formatLocale of locale ? [moneyLocale(locale), void 0] : [void 0]) {
+     try {
+       return format(formatLocale);
+     } catch (error) {

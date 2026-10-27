@@ -86,7 +86,7 @@ describe("ProductCard", () => {
     render(<ProductCard product={baseProduct} basePath="/us/en" />);
 
     expect(screen.getByText("Classic T-Shirt")).toBeInTheDocument();
-    expect(screen.getByText("$25.00")).toBeInTheDocument();
+    expect(screen.getByText("$25")).toBeInTheDocument();
   });
 
   it("links to the product page", () => {
@@ -105,9 +105,9 @@ describe("ProductCard", () => {
   it("shows strikethrough price when on sale", () => {
     render(<ProductCard product={saleProduct} basePath="/us/en" />);
 
-    expect(screen.getByText("$15.00")).toBeInTheDocument();
-    expect(screen.getByText("$25.00")).toBeInTheDocument();
-    const strikethrough = screen.getByText("$25.00");
+    expect(screen.getByText("$15")).toBeInTheDocument();
+    expect(screen.getByText("$25")).toBeInTheDocument();
+    const strikethrough = screen.getByText("$25");
     expect(strikethrough).toHaveClass("line-through");
   });
 

@@ -60,7 +60,10 @@
       "@swc/core",
       "esbuild",
       "lefthook"
-    ]
+    ],
+    "patchedDependencies": {
+      "@spree/sdk@2.0.0-rc.5": "patches/@spree__sdk@2.0.0-rc.5.patch"
+    }
   },
   "private": true,
   "scripts": {

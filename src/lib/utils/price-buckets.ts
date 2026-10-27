@@ -15,7 +15,8 @@ function formatCurrency(
   locale?: string,
 ): string {
   try {
-    return new Intl.NumberFormat(locale || "en", {
+    const moneyLocale = locale?.startsWith("es") ? "es-MX" : locale || "en";
+    return new Intl.NumberFormat(moneyLocale, {
       style: "currency",
       currency,
       minimumFractionDigits: 0,

@@ -6,6 +6,11 @@ settings:
 
 pnpmfileChecksum: sha256-wcox1ukPjZeA/J5dqGVh/gFx73o23fH6wYTHWBktoSM=
 
+patchedDependencies:
+  '@spree/sdk@2.0.0-rc.5':
+    hash: 32fd7ef611123b8c735e0de7b303b39215d571b4aee5da5641c2a2eb80ca7d38
+    path: patches/@spree__sdk@2.0.0-rc.5.patch
+
 importers:
 
   .:
@@ -24,7 +29,7 @@ importers:
         version: 10.54.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(@types/node@20.19.41)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(webpack@5.107.2(esbuild@0.28.1))
       '@spree/sdk':
         specifier: 2.0.0-rc.5
-        version: 2.0.0-rc.5(typescript@5.9.3)(zod@3.25.76)
+        version: 2.0.0-rc.5(patch_hash=32fd7ef611123b8c735e0de7b303b39215d571b4aee5da5641c2a2eb80ca7d38)(typescript@5.9.3)(zod@3.25.76)
       '@stripe/react-stripe-js':
         specifier: ^5.6.0
         version: 5.6.1(@stripe/stripe-js@8.11.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -8059,7 +8064,7 @@ snapshots:
       execa: 9.6.1
       picocolors: 1.1.1
 
-  '@spree/sdk@2.0.0-rc.5(typescript@5.9.3)(zod@3.25.76)':
+  '@spree/sdk@2.0.0-rc.5(patch_hash=32fd7ef611123b8c735e0de7b303b39215d571b4aee5da5641c2a2eb80ca7d38)(typescript@5.9.3)(zod@3.25.76)':
     optionalDependencies:
       typescript: 5.9.3
       zod: 3.25.76
