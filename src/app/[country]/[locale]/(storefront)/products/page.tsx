@@ -71,15 +71,17 @@ async function ProductsPageContent({
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         {query ? (
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-foreground">
             {t("searchResultsFor", { query })}
           </h1>
         ) : (
           <>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-foreground">
               {t("allProducts")}
             </h1>
-            <p className="mt-2 text-gray-500">{t("browseCollection")}</p>
+            <p className="mt-2 text-muted-foreground">
+              {t("browseCollection")}
+            </p>
           </>
         )}
       </div>

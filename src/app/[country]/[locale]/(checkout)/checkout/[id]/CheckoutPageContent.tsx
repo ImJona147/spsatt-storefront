@@ -636,12 +636,12 @@ function CheckoutPageContentInner({
   if (loading || (!initialData && authLoading)) {
     return (
       <div className="animate-pulse space-y-6">
-        <div className="h-8 bg-gray-200 rounded w-1/3" />
-        <div className="h-4 bg-gray-200 rounded w-1/4" />
+        <div className="h-8 bg-muted rounded w-1/3" />
+        <div className="h-4 bg-muted rounded w-1/4" />
         <div className="space-y-4 mt-8">
-          <div className="h-12 bg-gray-200 rounded" />
-          <div className="h-12 bg-gray-200 rounded" />
-          <div className="h-12 bg-gray-200 rounded" />
+          <div className="h-12 bg-muted rounded" />
+          <div className="h-12 bg-muted rounded" />
+          <div className="h-12 bg-muted rounded" />
         </div>
       </div>
     );
@@ -651,13 +651,13 @@ function CheckoutPageContentInner({
   if (error && !cart) {
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl font-bold text-foreground mb-4">
           {t("checkoutError")}
         </h1>
-        <p className="text-gray-600 mb-6">{error}</p>
+        <p className="text-muted-foreground mb-6">{error}</p>
         <Link
           href={`${basePath}/cart`}
-          className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-xl hover:brightness-[1.08]"
+          className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-xl hover:brightness-[1.08]"
         >
           {t("returnToCart")}
         </Link>
@@ -672,13 +672,15 @@ function CheckoutPageContentInner({
     return (
       <div className="text-center py-12">
         <EmptyIllustration className="mb-4" />
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl font-bold text-foreground mb-4">
           {t("emptyCart")}
         </h1>
-        <p className="text-gray-600 mb-6">{t("emptyCartDescription")}</p>
+        <p className="text-muted-foreground mb-6">
+          {t("emptyCartDescription")}
+        </p>
         <Link
           href={`${basePath}/products`}
-          className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-xl hover:brightness-[1.08]"
+          className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-xl hover:brightness-[1.08]"
         >
           {tc("continueShopping")}
         </Link>
@@ -700,7 +702,7 @@ function CheckoutPageContentInner({
       {!isAuthenticated && parseFloat(cart.total ?? "0") > 0 && (
         <div className={expressAvailable ? "mb-4" : ""}>
           {expressAvailable && (
-            <h2 className="text-lg font-bold text-gray-900 mb-3">
+            <h2 className="text-lg font-bold text-foreground mb-3">
               Express checkout
             </h2>
           )}
@@ -797,7 +799,7 @@ function CheckoutPageContentInner({
           type="button"
           onClick={validateAndPay}
           disabled={processing}
-          className="w-full mt-8 h-[54px] bg-black text-white text-sm font-bold rounded-sm hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+          className="w-full mt-8 h-[54px] bg-primary text-primary-foreground text-sm font-bold rounded-sm hover:bg-muted/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
         >
           {processing ? (
             <>
