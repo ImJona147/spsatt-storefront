@@ -56,7 +56,7 @@ export const ProductCard = memo(function ProductCard({
   return (
     <div className="group relative">
       {/* Image */}
-      <div className="relative aspect-square bg-muted rounded-md overflow-hidden">
+      <div className="relative aspect-[10/13] bg-muted rounded-md overflow-hidden">
         <ProductImage
           src={imageUrl}
           alt={product.name}

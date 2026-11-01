@@ -235,6 +235,8 @@
     "lightboxClose": "Fermer la visionneuse",
     "lightboxPrev": "Image precedente",
     "lightboxNext": "Image suivante",
+    "lightboxZoomIn": "Zoom avant",
+    "lightboxZoomOut": "Zoom arrière",
     "subcategoriesHeading": "Sous-categories",
     "sort": "Trier",
     "clearAll": "Tout effacer",

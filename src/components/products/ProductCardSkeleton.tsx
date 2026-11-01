@@ -8,7 +8,7 @@ import type * as React from "react";
 export function ProductCardSkeleton(): React.JSX.Element {
   return (
     <div className="animate-pulse">
-      <div className="aspect-square bg-muted rounded-md" />
+      <div className="aspect-[10/13] bg-muted rounded-md" />
       <div className="p-4">
         <div className="h-4 bg-muted rounded w-3/4 mb-2" />
         <div className="h-5 bg-muted rounded w-1/4" />

@@ -235,6 +235,8 @@
     "lightboxClose": "Close lightbox",
     "lightboxPrev": "Previous image",
     "lightboxNext": "Next image",
+    "lightboxZoomIn": "Zoom in",
+    "lightboxZoomOut": "Zoom out",
     "subcategoriesHeading": "Subcategories",
     "sort": "Sort",
     "clearAll": "Clear all",

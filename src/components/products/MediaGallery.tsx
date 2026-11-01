@@ -173,7 +173,7 @@ function MediaGalleryInner({
       <div className="relative min-w-0 flex-1">
         <button
           type="button"
-          className="relative aspect-square bg-muted rounded-xl border border-border overflow-hidden cursor-zoom-in w-full touch-pan-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="relative aspect-square bg-transparent border-0 overflow-hidden cursor-zoom-in w-full touch-pan-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           onClick={() => {
             if (suppressClickRef.current) {
               suppressClickRef.current = false;
@@ -191,7 +191,7 @@ function MediaGalleryInner({
             src={mainImageUrl}
             alt={selectedImage?.alt || productName}
             fill
-            className="object-contain p-4"
+            className="object-contain"
             fetchPriority="high"
             loading="eager"
             priority

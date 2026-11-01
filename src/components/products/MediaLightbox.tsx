@@ -1,14 +1,279 @@
 "use client";
 
 import type { Media } from "@spree/sdk";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 const SWIPE_THRESHOLD_PX = 50;
 const SWIPE_MAX_VERTICAL_PX = 75;
+const MAX_SCALE = 4;
+const ZOOM_STEP = 1.6;
+const TAP_MOVE_TOLERANCE_PX = 10;
+const DOUBLE_TAP_MS = 320;
+
+interface ZoomTransform {
+  scale: number;
+  x: number;
+  y: number;
+}
+
+const IDENTITY: ZoomTransform = { scale: 1, x: 0, y: 0 };
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+/** Keeps the panning offset inside the scaled image so its edges never
+ * drift away from the viewport. */
+function clampTransform(
+  transform: ZoomTransform,
+  surface: HTMLElement | null,
+): ZoomTransform {
+  if (transform.scale <= 1) return IDENTITY;
+  const maxX = surface ? ((transform.scale - 1) * surface.offsetWidth) / 2 : 0;
+  const maxY = surface ? ((transform.scale - 1) * surface.offsetHeight) / 2 : 0;
+  return {
+    scale: transform.scale,
+    x: clamp(transform.x, -maxX, maxX),
+    y: clamp(transform.y, -maxY, maxY),
+  };
+}
+
+function pointerDistance(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+): number {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+interface ZoomableImageProps {
+  src: string;
+  alt: string;
+  canNavigate: boolean;
+  onPrev: () => void;
+  onNext: () => void;
+}
+
+/**
+ * The image surface: pinch, double-tap (touch), double-click (mouse) and the
+ * +/- buttons scale up to 4x; dragging pans while zoomed. Swipe navigation
+ * only runs at 1x, so a pan never changes the slide by accident.
+ *
+ * The parent remounts this with a key per slide, which resets the zoom
+ * whenever the lightbox navigates.
+ */
+function ZoomableImage({
+  src,
+  alt,
+  canNavigate,
+  onPrev,
+  onNext,
+}: ZoomableImageProps) {
+  const t = useTranslations("products");
+  const surfaceRef = useRef<HTMLDivElement>(null);
+  const pointersRef = useRef(new Map<number, { x: number; y: number }>());
+  const pinchRef = useRef<{ distance: number; scale: number } | null>(null);
+  const panRef = useRef<{
+    startX: number;
+    startY: number;
+    x: number;
+    y: number;
+  } | null>(null);
+  const tapRef = useRef<{ at: number; x: number; y: number } | null>(null);
+  const didPinchRef = useRef(false);
+  const [zoom, setZoom] = useState<ZoomTransform>(IDENTITY);
+  const [dragging, setDragging] = useState(false);
+
+  const zoomed = zoom.scale > 1;
+
+  const setScale = (scale: number) => {
+    setZoom((previous) =>
+      clampTransform(
+        { ...previous, scale: clamp(scale, 1, MAX_SCALE) },
+        surfaceRef.current,
+      ),
+    );
+  };
+
+  const toggleZoom = () => {
+    setZoom((previous) =>
+      previous.scale > 1
+        ? IDENTITY
+        : clampTransform({ scale: 2.5, x: 0, y: 0 }, surfaceRef.current),
+    );
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointersRef.current.size === 1) {
+      panRef.current = {
+        startX: e.clientX,
+        startY: e.clientY,
+        x: zoom.x,
+        y: zoom.y,
+      };
+    } else if (pointersRef.current.size === 2) {
+      const [a, b] = [...pointersRef.current.values()];
+      pinchRef.current = { distance: pointerDistance(a, b), scale: zoom.scale };
+      panRef.current = null;
+      didPinchRef.current = true;
+      setDragging(false);
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!pointersRef.current.has(e.pointerId)) return;
+    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (pointersRef.current.size >= 2 && pinchRef.current) {
+      const [a, b] = [...pointersRef.current.values()];
+      const ratio = pointerDistance(a, b) / pinchRef.current.distance;
+      setScale(pinchRef.current.scale * ratio);
+      return;
+    }
+
+    if (pointersRef.current.size === 1 && panRef.current && zoom.scale > 1) {
+      const origin = panRef.current;
+      const dx = e.clientX - origin.startX;
+      const dy = e.clientY - origin.startY;
+      setDragging(true);
+      setZoom((previous) =>
+        clampTransform(
+          { scale: previous.scale, x: origin.x + dx, y: origin.y + dy },
+          surfaceRef.current,
+        ),
+      );
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    pointersRef.current.delete(e.pointerId);
+    if (pointersRef.current.size < 2) pinchRef.current = null;
+    if (pointersRef.current.size > 0) return;
+
+    const pan = panRef.current;
+    panRef.current = null;
+    setDragging(false);
+
+    if (didPinchRef.current) {
+      didPinchRef.current = false;
+      tapRef.current = null;
+      return;
+    }
+    if (!pan) return;
+
+    const dx = e.clientX - pan.startX;
+    const dy = e.clientY - pan.startY;
+    const isTap =
+      Math.abs(dx) < TAP_MOVE_TOLERANCE_PX &&
+      Math.abs(dy) < TAP_MOVE_TOLERANCE_PX;
+
+    if (isTap) {
+      if (e.pointerType === "mouse") return;
+      const now = Date.now();
+      const lastTap = tapRef.current;
+      tapRef.current = { at: now, x: e.clientX, y: e.clientY };
+      if (
+        lastTap &&
+        now - lastTap.at < DOUBLE_TAP_MS &&
+        Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 40
+      ) {
+        tapRef.current = null;
+        toggleZoom();
+      }
+      return;
+    }
+
+    if (zoom.scale > 1 || !canNavigate) return;
+    if (
+      Math.abs(dx) < SWIPE_THRESHOLD_PX ||
+      Math.abs(dy) > SWIPE_MAX_VERTICAL_PX
+    ) {
+      return;
+    }
+    if (dx < 0) {
+      onNext();
+    } else {
+      onPrev();
+    }
+  };
+
+  const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
+    pointersRef.current.delete(e.pointerId);
+    if (pointersRef.current.size > 0) return;
+    pinchRef.current = null;
+    panRef.current = null;
+    didPinchRef.current = false;
+    tapRef.current = null;
+    setDragging(false);
+  };
+
+  return (
+    <div
+      ref={surfaceRef}
+      className="relative w-full h-full max-w-5xl max-h-[85svh] m-4 overflow-hidden touch-none select-none"
+      style={{
+        cursor: zoomed ? (dragging ? "grabbing" : "grab") : "zoom-in",
+      }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onDoubleClick={toggleZoom}
+    >
+      <div
+        className={`absolute inset-0 will-change-transform ${
+          dragging
+            ? ""
+            : "transition-transform duration-200 motion-reduce:transition-none"
+        }`}
+        style={{
+          transform: `translate3d(${zoom.x}px, ${zoom.y}px, 0) scale(${zoom.scale})`,
+        }}
+      >
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-contain pointer-events-none"
+          sizes="100vw"
+          quality={85}
+        />
+      </div>
+
+      <div className="absolute bottom-3 right-3 z-10 flex flex-col gap-1">
+        <button
+          type="button"
+          className="text-white p-3 rounded-lg bg-black/50 hover:bg-white/10 transition-colors disabled:opacity-40"
+          onClick={(e) => {
+            e.stopPropagation();
+            setScale(zoom.scale * ZOOM_STEP);
+          }}
+          disabled={zoom.scale >= MAX_SCALE}
+          aria-label={t("lightboxZoomIn")}
+        >
+          <ZoomIn className="w-6 h-6" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="text-white p-3 rounded-lg bg-black/50 hover:bg-white/10 transition-colors disabled:opacity-40"
+          onClick={(e) => {
+            e.stopPropagation();
+            setScale(zoom.scale / ZOOM_STEP);
+          }}
+          disabled={!zoomed}
+          aria-label={t("lightboxZoomOut")}
+        >
+          <ZoomOut className="w-6 h-6" aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 interface MediaLightboxProps {
   images: Media[];
@@ -27,6 +292,9 @@ interface MediaLightboxProps {
  * focus moved to the close button on open and restored on close so
  * screen-reader and keyboard users can't get stuck in the page behind
  * the overlay.
+ *
+ * The full-size source is the original upload, not Spree's square-cropped
+ * xlarge rendition, so zooming shows the framing the merchant uploaded.
  */
 export function MediaLightbox({
   images,
@@ -38,9 +306,8 @@ export function MediaLightbox({
   const t = useTranslations("products");
   const current = images[activeIndex];
   const src =
-    current?.xlarge_url || current?.large_url || current?.original_url || null;
+    current?.original_url || current?.xlarge_url || current?.large_url || null;
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   // Tracks whether a pointerdown happened on the backdrop itself (vs.
   // bubbled up from a child). Without this, the synthetic click fired
   // by the opening tap on the parent <button> in MediaGallery lands on
@@ -55,39 +322,6 @@ export function MediaLightbox({
   const goNext = useCallback(() => {
     onNavigate(activeIndex === images.length - 1 ? 0 : activeIndex + 1);
   }, [activeIndex, images.length, onNavigate]);
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    if (!touch) return;
-    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-  }, []);
-
-  const handleTouchEnd = useCallback(
-    (e: React.TouchEvent) => {
-      const start = touchStartRef.current;
-      touchStartRef.current = null;
-      if (!start || images.length <= 1) return;
-      const touch = e.changedTouches[0];
-      if (!touch) return;
-      const dx = touch.clientX - start.x;
-      const dy = touch.clientY - start.y;
-      if (
-        Math.abs(dx) < SWIPE_THRESHOLD_PX ||
-        Math.abs(dy) > SWIPE_MAX_VERTICAL_PX
-      ) {
-        return;
-      }
-      // Swallow the synthetic backdrop click that follows touchend so a
-      // swipe navigates without also dismissing the lightbox.
-      pressedOnBackdropRef.current = false;
-      if (dx < 0) {
-        goNext();
-      } else {
-        goPrev();
-      }
-    },
-    [goNext, goPrev, images.length],
-  );
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -129,7 +363,7 @@ export function MediaLightbox({
       role="dialog"
       aria-modal="true"
       aria-label={t("openImageZoom")}
-      className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center touch-pan-y"
+      className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
       onPointerDown={(e) => {
         pressedOnBackdropRef.current = e.target === e.currentTarget;
       }}
@@ -139,8 +373,6 @@ export function MediaLightbox({
         }
         pressedOnBackdropRef.current = false;
       }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
     >
       <button
         ref={closeButtonRef}
@@ -182,15 +414,14 @@ export function MediaLightbox({
         </>
       )}
 
-      <div className="relative w-full h-full max-w-5xl max-h-[85svh] m-4">
-        <Image
-          src={src}
-          alt={current?.alt || productName}
-          fill
-          className="object-contain pointer-events-none"
-          sizes="100vw"
-        />
-      </div>
+      <ZoomableImage
+        key={activeIndex}
+        src={src}
+        alt={current?.alt || productName}
+        canNavigate={images.length > 1}
+        onPrev={goPrev}
+        onNext={goNext}
+      />
 
       {images.length > 1 && (
         <div className="absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 text-white bg-black/50 px-3 py-1 rounded-lg text-sm tabular-nums">

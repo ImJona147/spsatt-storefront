@@ -228,6 +228,8 @@
     "lightboxClose": "Lightbox schließen",
     "lightboxPrev": "Vorheriges Bild",
     "lightboxNext": "Nächstes Bild",
+    "lightboxZoomIn": "Vergrößern",
+    "lightboxZoomOut": "Verkleinern",
     "subcategoriesHeading": "Unterkategorien",
     "sort": "Sortieren",
     "clearAll": "Alle löschen",

@@ -235,6 +235,8 @@
     "lightboxClose": "Cerrar visor",
     "lightboxPrev": "Imagen anterior",
     "lightboxNext": "Imagen siguiente",
+    "lightboxZoomIn": "Acercar",
+    "lightboxZoomOut": "Alejar",
     "subcategoriesHeading": "Subcategorías",
     "sort": "Ordenar",
     "clearAll": "Limpiar todo",
