@@ -159,10 +159,10 @@ export function buildOrganizationJsonLd(): Record<string, unknown> {
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Independencia Ote. 246, Belen Grande",
+      streetAddress: "C. Independencia 245, Centro",
       addressLocality: "San Andrés Tuxtla",
       addressRegion: "Veracruz",
-      postalCode: "95700",
+      postalCode: "95780",
       addressCountry: "MX",
     },
     openingHoursSpecification: [

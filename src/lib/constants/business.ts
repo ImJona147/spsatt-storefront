@@ -7,9 +7,9 @@ export const BUSINESS_PHONE_DISPLAY = "294 942 3064";
 export const BUSINESS_PHONE_TEL = "+522949423064";
 export const BUSINESS_EMAIL = "contacto@spsatt.com.mx";
 export const BUSINESS_ADDRESS =
-  "Independencia Ote. 246, Belén Grande, 95700 San Andrés Tuxtla, Veracruz";
+  "C. Independencia 245, Centro, 95780 San Andrés Tuxtla, Ver.";
 
-/** SPSATT pin on Google Maps (owner-provided place URL), 95700 San Andrés Tuxtla. */
+/** SPSATT pin on Google Maps (owner-provided place URL), 95780 San Andrés Tuxtla. */
 export const BUSINESS_COORDS = {
   lat: 18.446339,
   lng: -95.210548,
