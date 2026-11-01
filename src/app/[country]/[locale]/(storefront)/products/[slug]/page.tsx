@@ -107,7 +107,11 @@ export default async function ProductPage({
           />
         )}
       </div>
-      <ProductDetails product={product} basePath={basePath} />
+      <ProductDetails
+        product={product}
+        basePath={basePath}
+        category={breadcrumbCategory}
+      />
     </>
   );
 }

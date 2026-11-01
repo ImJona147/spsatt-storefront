@@ -1,6 +1,6 @@
 "use client";
 
-import type { Media, Product, Variant } from "@spree/sdk";
+import type { Category, Media, Product, Variant } from "@spree/sdk";
 import { CircleCheckBig, CircleMinus, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -9,6 +9,7 @@ import { QuantityPickerField } from "@/components/cart/QuantityPickerField";
 import { HiddenPricePrompt } from "@/components/products/HiddenPricePrompt";
 import { MediaGallery } from "@/components/products/MediaGallery";
 import { ProductCustomFields } from "@/components/products/ProductCustomFields";
+import { SectionLabel } from "@/components/products/SectionLabel";
 import { VariantPicker } from "@/components/products/VariantPicker";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
@@ -22,22 +23,18 @@ import { strikethroughAmount } from "@/lib/utils/price";
 interface ProductDetailsProps {
   product: Product;
   basePath: string;
+  category?: Category;
 }
 
-/** Section marker shared with the home eyebrow: short rule + uppercase label. */
-function SectionLabel({ children }: { children: string }) {
-  return (
-    <h2 className="flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-primary">
-      <span aria-hidden className="h-px w-8 bg-primary" />
-      {children}
-    </h2>
-  );
-}
-
-export function ProductDetails({ product, basePath }: ProductDetailsProps) {
+export function ProductDetails({
+  product,
+  basePath,
+  category,
+}: ProductDetailsProps) {
   const { addItem } = useCart();
   const { currency } = useStore();
   const t = useTranslations("products");
+  const tc = useTranslations("common");
   const tw = useTranslations("wholesale");
   const formatMoney = useFormatMoney();
   // Non-null inside a HiddenPricingProvider (wholesale `prices_hidden`, guest
@@ -172,14 +169,23 @@ export function ProductDetails({ product, basePath }: ProductDetailsProps) {
 
           {/* Product Info */}
           <div>
-            {/* The breadcrumb above already names the category; the title
-                carries the page on its own. */}
+            {category && (
+              <Link
+                href={`${basePath}/c/${category.permalink}`}
+                className="mb-3 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-primary transition-colors hover:text-primary/70 dark:text-[oklch(0.64_0.14_270)]"
+              >
+                <span aria-hidden className="h-px w-8 bg-primary" />
+                {category.name}
+              </Link>
+            )}
+
             <h1 className="text-[1.875rem] leading-[1.12] font-bold tracking-tight text-balance text-foreground sm:text-4xl">
               {product.name}
             </h1>
 
-            {/* Price + stock: one compact decision block */}
-            <div className="mt-5 rounded-xl bg-secondary px-4 py-3.5">
+            {/* Price reads as the second line of the title, with availability
+                beside it, not as a boxed panel competing with the buy box. */}
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
               <div
                 className="flex flex-wrap items-baseline gap-x-3 gap-y-1"
                 aria-live="polite"
@@ -205,20 +211,18 @@ export function ProductDetails({ product, basePath }: ProductDetailsProps) {
                 )}
               </div>
 
-              {/* Stock status: color never carries the state alone */}
-              <div className="mt-2.5">
-                {inStock ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2.5 py-1 text-sm font-medium text-emerald-700 dark:text-emerald-400">
-                    <CircleCheckBig className="size-4" aria-hidden="true" />
-                    {t("inStock")}
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 rounded-md bg-background px-2.5 py-1 text-sm font-medium text-muted-foreground">
-                    <CircleMinus className="size-4" aria-hidden="true" />
-                    {t("outOfStock")}
-                  </span>
-                )}
-              </div>
+              {/* Text and icon carry the state, not color alone */}
+              {inStock ? (
+                <span className="inline-flex items-center gap-1.5 rounded-md bg-success/12 px-2.5 py-1 text-[13px] font-semibold text-success">
+                  <CircleCheckBig className="size-4" aria-hidden="true" />
+                  {t("inStock")}
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted px-2.5 py-1 text-[13px] font-medium text-muted-foreground">
+                  <CircleMinus className="size-4" aria-hidden="true" />
+                  {t("outOfStock")}
+                </span>
+              )}
             </div>
 
             {/* Variant Picker */}
@@ -233,8 +237,10 @@ export function ProductDetails({ product, basePath }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Buy box: quantity + CTA on a solid card surface */}
-            <div className="mt-6 rounded-xl border border-border bg-card p-4">
+            {/* Buy box: the only card in the column, so the purchase controls
+                read as one unit. The visible label lets the stepper stand on
+                its own on mobile, where the CTA lives in the bottom bar. */}
+            <div className="mt-6 rounded-lg border border-border bg-secondary/40 p-4 sm:p-5">
               {pricesHidden ? (
                 // Guest on a prices-hidden channel: no pricing, no ordering —
                 // route them through the wholesale sign-in first.
@@ -244,16 +250,21 @@ export function ProductDetails({ product, basePath }: ProductDetailsProps) {
                   </Link>
                 </Button>
               ) : (
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <QuantityPickerField
-                    quantity={quantity}
-                    onQuantityChange={setQuantity}
-                    size="lg"
-                    className="h-13 w-full sm:w-auto"
-                  />
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+                  <div className="flex w-full flex-col gap-2 sm:w-auto">
+                    <span className="text-xs font-semibold uppercase tracking-widest text-foreground">
+                      {tc("quantity")}
+                    </span>
+                    <QuantityPickerField
+                      quantity={quantity}
+                      onQuantityChange={setQuantity}
+                      size="lg"
+                      className="h-13 w-full sm:w-auto"
+                    />
+                  </div>
                   {/* Mobile's CTA lives in the fixed bottom bar; desktop
                       gets the full-width button inside the buy box. */}
-                  <div className="hidden lg:block flex-1">
+                  <div className="hidden flex-1 lg:block">
                     {addToCartButton("w-full justify-center")}
                   </div>
                 </div>
@@ -266,7 +277,7 @@ export function ProductDetails({ product, basePath }: ProductDetailsProps) {
                 <SectionLabel>{t("description")}</SectionLabel>
                 {/* Description is admin-authored HTML from the Spree CMS backend (trusted source) */}
                 <div
-                  className="mt-4 text-muted-foreground prose prose-sm dark:prose-invert max-w-none"
+                  className="mt-4 text-foreground prose prose-sm dark:prose-invert max-w-none"
                   dangerouslySetInnerHTML={{
                     __html: product.description_html,
                   }}
@@ -277,32 +288,34 @@ export function ProductDetails({ product, basePath }: ProductDetailsProps) {
             {/* Custom Fields */}
             <ProductCustomFields customFields={product.custom_fields} />
 
-            {/* Product Details */}
-            <section className="mt-6 border-t border-border pt-6">
-              <SectionLabel>{t("details")}</SectionLabel>
-              <dl className="mt-4">
-                {sku && (
-                  <div className="flex gap-4 border-t border-border py-2.5 first:border-t-0 first:pt-0">
-                    <dt className="w-28 shrink-0 pt-0.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      {t("sku")}
-                    </dt>
-                    <dd className="text-sm font-medium text-foreground">
-                      {sku}
-                    </dd>
-                  </div>
-                )}
-                {selectedVariant?.options_text && (
-                  <div className="flex gap-4 border-t border-border py-2.5">
-                    <dt className="w-28 shrink-0 pt-0.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      {t("options")}
-                    </dt>
-                    <dd className="text-sm font-medium text-foreground">
-                      {selectedVariant.options_text}
-                    </dd>
-                  </div>
-                )}
-              </dl>
-            </section>
+            {/* Product Details: only when there is a row to show */}
+            {(sku || selectedVariant?.options_text) && (
+              <section className="mt-6 border-t border-border pt-6">
+                <SectionLabel>{t("details")}</SectionLabel>
+                <dl className="mt-4">
+                  {sku && (
+                    <div className="flex gap-4 border-t border-border py-2.5 first:border-t-0 first:pt-0">
+                      <dt className="flex-0 shrink-0 py-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        {t("sku")}
+                      </dt>
+                      <dd className="text-sm font-medium text-foreground">
+                        {sku}
+                      </dd>
+                    </div>
+                  )}
+                  {selectedVariant?.options_text && (
+                    <div className="flex gap-4 border-t border-border py-2.5">
+                      <dt className="flex-0 shrink-0 py-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        {t("options")}
+                      </dt>
+                      <dd className="text-sm font-medium text-foreground">
+                        {selectedVariant.options_text}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              </section>
+            )}
           </div>
         </div>
       </div>
@@ -310,7 +323,7 @@ export function ProductDetails({ product, basePath }: ProductDetailsProps) {
       {/* Fixed mobile buy bar: price + CTA, never covering the last content
           (the container above reserves pb-28 for it). */}
       {!pricesHidden && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-sm lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background lg:hidden">
           <div className="flex items-center gap-3 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
             <div className="min-w-0">
               {displayPrice ? (

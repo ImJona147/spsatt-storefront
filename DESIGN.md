@@ -89,7 +89,7 @@ Dial: ENERGY 2 / RHYTHM 2 / MOTION 1
 
 **Key Characteristics:**
 
-- Primary del tema `IMPORTANTE.MD` como color de acción y superficie de marca; sin acentos de color adicionales en UI.
+- Primary del tema `IMPORTANTE.MD` como color de acción y superficie de marca; el verde de disponibilidad es el único acento semántico extra.
 - Serif itálica (Fraunces) para display y eslogan; Inter para todo lo transaccional.
 - Componentes robustos: relleno generoso, bordes finos, radio suave y constante.
 - Profundidad por capas sutiles: tono sobre tono, sombra mínima, elevación en hover.
@@ -97,7 +97,7 @@ Dial: ENERGY 2 / RHYTHM 2 / MOTION 1
 
 ## Colors
 
-La paleta es azul de marca + oro de acción sobre neutros claros u oscuros, nunca más de eso.
+La paleta es azul de marca sobre neutros claros u oscuros, más un verde semántico reservado a disponibilidad; el oro quedó revocado.
 
 ### Primary
 
@@ -114,11 +114,14 @@ La paleta es azul de marca + oro de acción sobre neutros claros u oscuros, nunc
 - **Card** (oklch(1 0 0)) superficies elevadas; **Lavado** (oklch(0.9611 0.0070 268.5473)) superficies secundarias y chips.
 - **Gris Humo** (oklch(0.5544 0.0407 257.4166)) texto secundario; **Borde** (oklch(0.9288 0.0126 255.5078)) bordes finos de 1px.
 - **Rojo Alerta** (oklch(0.5858 0.2220 17.5846)) solo errores y estados destructivos.
+- **Verde Disponible** (oklch(0.4800 0.1300 156); en modo oscuro oklch(0.7800 0.1500 156)): exclusivo del estado de stock. Texto e icono en `--success`, fondo en `--success` al 12%; nunca en botones ni ornamentos.
 - Modo oscuro: fondo oklch(0.1509 0.0109 276.1744), texto oklch(0.9842 0.0034 247.8575).
 
 ### Named Rules
 
 **The Token Rule.** Todo color de UI proviene de los tokens semánticos del tema shadcn (`IMPORTANTE.MD`). Prohibido `bg-white`, `text-gray-*`, hex sueltos ni oro: cualquier valor fijo rompe el modo oscuro o se pelea con el tema.
+
+**The Availability Rule.** El verde solo comunica disponibilidad. Nunca se usa como acento decorativo, fondo de botón ni color de marca: si el estado no es stock, el color es primary o neutro.
 
 **The Dark Mode Rule.** El modo oscuro es igual de canónico que el claro: la clase `.dark` resuelve los tokens y next-themes (attribute class) con el toggle del topbar controla el estado. Ningún componente puede asumir fondo claro.
 
@@ -221,6 +224,7 @@ Radio base 0.6rem (tema `--radius`), escala: 0.2rem (sm), 0.4rem (md), 0.6rem (l
 - **Do** resolver profundidad con tono y borde de 1px; sombra solo en hover, drawer o diálogo.
 - **Do** mantener el toggle claro/oscuro en el topbar, junto a región, búsqueda y cuenta.
 - **Do** verificar contraste AA en cada modo (texto sobre primary siempre en primary-foreground).
+- **Do** usar el verde de disponibilidad solo en el indicador de stock, con icono y texto además del color.
 
 ### Don't:
 

@@ -1,5 +1,6 @@
 import type { CustomField } from "@spree/sdk";
 import { useTranslations } from "next-intl";
+import { SectionLabel } from "@/components/products/SectionLabel";
 
 interface ProductCustomFieldsProps {
   customFields?: Array<CustomField>;
@@ -45,26 +46,21 @@ export function ProductCustomFields({
   }
 
   return (
-    <div className="mt-6 border-t border-border pt-6">
-      <h2 className="flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-primary">
-        <span aria-hidden className="h-px w-8 bg-primary" />
-        {t("properties")}
-      </h2>
+    <section className="mt-6 border-t border-border pt-6">
+      <SectionLabel>{t("properties")}</SectionLabel>
       <dl className="mt-4">
         {customFields.map((field) => (
           <div
             key={field.id}
-            className="flex gap-4 border-t border-border py-2.5 first:border-t-0 first:pt-0"
+            className="flex gap-3 border-b border-border py-2 first:border-b-0 first:pt-0"
           >
-            <dt className="w-28 shrink-0 pt-0.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <dt className="flex-0 shrink-0 py-1 text-xs font-semibold text-foreground">
               {field.label}
             </dt>
-            <dd className="min-w-0 text-sm font-medium text-foreground">
-              {renderValue(field, t)}
-            </dd>
+            <dd className="text-sm text-foreground">{renderValue(field, t)}</dd>
           </div>
         ))}
       </dl>
-    </div>
+    </section>
   );
 }
