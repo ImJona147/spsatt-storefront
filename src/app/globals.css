@@ -425,4 +425,14 @@ input[type="search"]::-webkit-search-cancel-button {
   html {
     @apply font-sans;
   }
+  a,
+  button,
+  input,
+  label,
+  select,
+  summary,
+  textarea,
+  [role="button"] {
+    touch-action: manipulation;
+  }
 }

@@ -120,9 +120,10 @@ function ProfileForm({
               <FieldLabel htmlFor="email">{t("emailAddress")}</FieldLabel>
               <Input
                 type="email"
+                autoComplete="email"
+                spellCheck={false}
                 id="email"
                 required
-                autoComplete="email"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })

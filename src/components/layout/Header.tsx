@@ -1,4 +1,4 @@
-import type { Category } from "@spree/sdk";
+import type { Category, Collection } from "@spree/sdk";
 import { User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { RegionPreferences } from "@/components/layout/RegionPreferences";
 import { SearchToggle } from "@/components/layout/SearchToggle";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { isWholesaleEnabled } from "@/lib/spree";
+import { isMarketplaceEnabled, isWholesaleEnabled } from "@/lib/spree";
 import { getStoreName } from "@/lib/store";
 
 const storeName = getStoreName();
@@ -23,18 +23,22 @@ interface HeaderProps {
 
 interface HeaderMobileMenuProps {
   rootCategories: Category[];
+  collections?: Collection[];
   basePath: string;
 }
 
 export function HeaderMobileMenu({
   rootCategories,
+  collections,
   basePath,
 }: HeaderMobileMenuProps) {
   return (
     <MobileMenu
       rootCategories={rootCategories}
+      collections={collections}
       basePath={basePath}
       wholesaleEnabled={isWholesaleEnabled()}
+      marketplaceEnabled={isMarketplaceEnabled()}
     />
   );
 }
@@ -46,6 +50,7 @@ export async function Header({
 }: HeaderProps) {
   const t = await getTranslations({ locale, namespace: "header" });
   const wholesaleEnabled = isWholesaleEnabled();
+  const marketplaceEnabled = isMarketplaceEnabled();
 
   return (
     <SearchToggle
@@ -66,6 +71,20 @@ export async function Header({
       }
       rightStart={
         <div className="hidden lg:flex lg:items-center lg:gap-1">
+          <Link
+            href={`${basePath}/collections`}
+            className="px-2 py-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors whitespace-nowrap"
+          >
+            {t("collections")}
+          </Link>
+          {marketplaceEnabled && (
+            <Link
+              href={`${basePath}/sellers`}
+              className="px-2 py-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors whitespace-nowrap"
+            >
+              {t("sellers")}
+            </Link>
+          )}
           {/* Trade portal entry point — understated, secondary to the catalog nav.
               Only shown when the wholesale addon is enabled. */}
           {wholesaleEnabled && (

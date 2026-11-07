@@ -1,8 +1,6 @@
-diff --git a/dist/index.js b/dist/index.js
-index 9d2e00bc25f41d59263615bc88bfc94fd7fa3791..c069cd13ef299acb4a03403ecec61ac591c0eb78 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -1527,21 +1527,25 @@ function multiplyMoney(value, quantity, currency) {
+@@ -1527,21 +1527,25 @@
    const scale = resultScale([parsed.scale], currency);
    return write(rescale(parsed, scale) * BigInt(quantity), scale);
  }

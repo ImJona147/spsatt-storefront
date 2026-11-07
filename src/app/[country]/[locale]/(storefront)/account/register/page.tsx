@@ -157,9 +157,10 @@ export default function RegisterPage() {
               <FieldLabel htmlFor="email">{ta("email")}</FieldLabel>
               <Input
                 type="email"
+                autoComplete="email"
+                spellCheck={false}
                 id="email"
                 name="email"
-                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
