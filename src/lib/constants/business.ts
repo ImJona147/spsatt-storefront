@@ -5,7 +5,7 @@
  */
 export const BUSINESS_PHONE_DISPLAY = "294 942 3064";
 export const BUSINESS_PHONE_TEL = "+522949423064";
-export const BUSINESS_EMAIL = "contacto@spsatt.com.mx";
+export const BUSINESS_EMAIL = "spsat@outlook.com";
 export const BUSINESS_ADDRESS =
   "C. Independencia 245, Centro, 95780 San Andrés Tuxtla, Ver.";
 
