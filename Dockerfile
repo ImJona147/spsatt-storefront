@@ -112,10 +112,20 @@ RUN --mount=type=secret,id=sentry_auth_token,required=false \
 FROM node:${NODE_VERSION} AS runner
 WORKDIR /app
 
+# Declarar los ARG requeridos en la etapa runner
+ARG SPREE_API_URL
+ARG NEXT_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_DEFAULT_COUNTRY
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3001
 ENV HOSTNAME=0.0.0.0
+
+# Exponer las variables de entorno para ejecucion y verificacion
+ENV SPREE_API_URL=$SPREE_API_URL \
+    NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
+    NEXT_PUBLIC_DEFAULT_COUNTRY=$NEXT_PUBLIC_DEFAULT_COUNTRY
 
 RUN addgroup --system --gid 1001 nodejs \
  && adduser --system --uid 1001 nextjs
