@@ -3,19 +3,9 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { FeaturedProducts } from "@/components/products/FeaturedProducts";
-import { ProductCardSkeleton } from "@/components/products/ProductCardSkeleton";
+import { ProductCarouselSkeleton } from "@/components/products/LazyProductCarousel";
 import { Button } from "@/components/ui/button";
 import { resolveCurrency } from "@/lib/data/markets";
-
-function CarouselSkeleton() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {[...Array(4)].map((_, i) => (
-        <ProductCardSkeleton key={i} />
-      ))}
-    </div>
-  );
-}
 
 interface FeaturedProductsSectionProps {
   basePath: string;
@@ -64,7 +54,7 @@ export async function FeaturedProductsSection({
           </Link>
         </Button>
       </div>
-      <Suspense fallback={<CarouselSkeleton />}>
+      <Suspense fallback={<ProductCarouselSkeleton />}>
         <FeaturedProductsWithCurrency
           basePath={basePath}
           locale={locale}

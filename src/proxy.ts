@@ -11,12 +11,14 @@ const STOREFRONT_ROUTES = new Set([
   "c",
   "cart",
   "checkout",
+  "collections",
   "confirm-payment",
   "order-placed",
   "pagina-no-encontrada",
   "policies",
   "portafolio",
   "products",
+  "sellers",
   "wholesale",
 ]);
 

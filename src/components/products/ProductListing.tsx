@@ -12,6 +12,7 @@ import { ListingFilterBar } from "@/components/products/ListingFilterBar";
 import { ProductListingSkeleton } from "@/components/products/ProductListingSkeleton";
 import { EmptyIllustration } from "@/components/ui/empty-illustration";
 import { PRODUCT_CARD_FIELDS } from "@/lib/data/cached";
+import { getActiveFilterCount } from "@/lib/utils/filters";
 import {
   type ListingSearchParams,
   listingKey,
@@ -96,6 +97,8 @@ async function ProductListingInner({
   const t = await getTranslations({ locale, namespace: "products" });
 
   const queryParams = buildProductQueryParams(state.filters, state.query);
+  const isFiltered =
+    Boolean(state.query) || getActiveFilterCount(state.filters) > 0;
 
   // Base SDK list params for the current filter/sort/query state.
   // The client island reuses this when fetching subsequent pages.
@@ -188,7 +191,8 @@ async function ProductListingInner({
             {t("noProductsFound")}
           </h2>
           <p className="mt-2 text-muted-foreground">
-            {emptyMessage ?? t("tryAdjustingFilters")}
+            {/* The page's own empty message only fits an unfiltered list. */}
+            {(!isFiltered && emptyMessage) || t("tryAdjustingFilters")}
           </p>
         </div>
       )}

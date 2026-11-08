@@ -102,7 +102,7 @@ function renderSection(cart: Cart) {
       isAuthenticated
       fetchStates={async () => []}
       onUpdateBillingAddress={async () => true}
-      onPaymentComplete={async () => {}}
+      onPaymentComplete={async () => true}
       processing={false}
       setProcessing={() => {}}
     />,
@@ -153,7 +153,7 @@ describe("PaymentSection session management", () => {
         isAuthenticated
         fetchStates={async () => []}
         onUpdateBillingAddress={async () => true}
-        onPaymentComplete={async () => {}}
+        onPaymentComplete={async () => true}
         processing={false}
         setProcessing={() => {}}
       />,

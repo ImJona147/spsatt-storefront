@@ -1,4 +1,4 @@
-import type { Order } from "@spree/sdk";
+import type { Order, OrderGroup } from "@spree/sdk";
 import { formatMoney } from "@spree/sdk";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
@@ -9,9 +9,14 @@ import { LineItemCard } from "@/components/order/LineItemCard";
 import { OrderTotals } from "@/components/order/OrderTotals";
 import { PaymentInfo } from "@/components/order/PaymentInfo";
 import { formatDateTime } from "@/lib/utils/format";
+import { toPurchase } from "@/lib/utils/purchase";
 
 interface OrderDetailProps {
-  order: Order;
+  /**
+   * What the checkout produced: one order, or — when the basket reached
+   * several sellers — the group holding one order per seller.
+   */
+  order: Order | OrderGroup;
   basePath: string;
   locale: string;
 }
@@ -25,96 +30,104 @@ export async function OrderDetail({
     locale: locale as Locale,
     namespace: "orders",
   });
-  const hasFulfillments = order.fulfillments && order.fulfillments.length > 0;
+  // One purchase, however many orders it divided into: the parcels below are
+  // every seller's, and the totals are the whole checkout's.
+  const purchase = toPurchase(order);
 
   return (
     <div>
       <Link
         href={`${basePath}/account/orders`}
-        className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="text-sm text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1"
       >
-        <ChevronLeft className="size-4" aria-hidden />
+        <ChevronLeft className="w-4 h-4" />
         {t("backToOrders")}
       </Link>
 
-      <header className="mb-5">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-          {t("orderTitle", { number: order.number })}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("placedOn", { date: formatDateTime(order.completed_at, locale) })}
-        </p>
-      </header>
+      <h1 className="text-2xl font-bold text-foreground">
+        {t("orderTitle", { number: purchase.number })}
+      </h1>
+      <p className="text-sm text-muted-foreground mt-1 mb-6">
+        {t("placedOn", { date: formatDateTime(purchase.completed_at, locale) })}
+      </p>
 
-      {hasFulfillments ? (
-        order.fulfillments.map((fulfillment) => {
-          const manifestItemIds = new Set(
-            fulfillment.items?.map((i) => i.item_id) ?? [],
-          );
-          const fulfillmentLineItems =
-            manifestItemIds.size > 0
-              ? (order.items || []).filter((item) =>
-                  manifestItemIds.has(item.id),
-                )
-              : order.items || [];
+      {/* Walked per seller order: a parcel with no manifest falls back to its
+          own seller's items, and a seller order with no parcels yet still
+          lists its items rather than vanishing behind another seller's. */}
+      {purchase.segments.map((segment) =>
+        segment.fulfillments.length > 0 ? (
+          segment.fulfillments.map((fulfillment) => {
+            const manifestItemIds = new Set(
+              fulfillment.items?.map((i) => i.item_id) ?? [],
+            );
+            const fulfillmentLineItems =
+              manifestItemIds.size > 0
+                ? segment.items.filter((item) => manifestItemIds.has(item.id))
+                : segment.items;
 
-          return (
-            <FulfillmentBlock
-              key={fulfillment.id}
-              fulfillment={fulfillment}
-              shipAddress={order.shipping_address}
-              basePath={basePath}
-              lineItems={fulfillmentLineItems}
-            />
-          );
-        })
-      ) : (
-        <div className="mb-4 overflow-hidden rounded-xl border bg-card">
-          <div className="divide-y divide-border">
-            {order.items?.map((item) => (
-              <div key={item.id} className="px-4 py-4 sm:px-6">
-                <LineItemCard item={item} basePath={basePath} />
-              </div>
-            ))}
+            return (
+              <FulfillmentBlock
+                key={fulfillment.id}
+                fulfillment={fulfillment}
+                shipAddress={
+                  segment.shipping_address ?? purchase.shipping_address
+                }
+                basePath={basePath}
+                lineItems={fulfillmentLineItems}
+              />
+            );
+          })
+        ) : (
+          <div
+            key={segment.id}
+            className="bg-card rounded-xl border border-border overflow-hidden mb-4"
+          >
+            <div className="divide-y divide-border">
+              {segment.items.map((item) => (
+                <div key={item.id} className="px-6 py-4">
+                  <LineItemCard item={item} basePath={basePath} />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        ),
       )}
 
-      {order.customer_note && (
-        <div className="mb-4 rounded-xl border bg-card p-4 sm:p-6">
-          <h2 className="mb-2 text-sm font-semibold text-foreground">
+      {purchase.customer_note && (
+        <div className="bg-card rounded-xl border border-border p-6 mb-4">
+          <h3 className="text-sm font-semibold text-foreground mb-2">
             {t("specialInstructions")}
-          </h2>
-          <p className="text-sm text-foreground">{order.customer_note}</p>
+          </h3>
+          <p className="text-sm text-foreground">{purchase.customer_note}</p>
         </div>
       )}
 
-      <div className="mb-4 overflow-hidden rounded-xl border bg-card">
-        <div className="grid grid-cols-1 divide-y divide-border lg:grid-cols-2 lg:divide-x lg:divide-y-0">
-          {order.billing_address && (
-            <div className="p-4 sm:p-6">
-              <h2 className="mb-2 text-sm font-semibold text-foreground">
+      <div className="bg-card rounded-xl border border-border overflow-hidden mb-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-border">
+          {purchase.billing_address && (
+            <div className="px-6 py-4">
+              <h3 className="text-sm font-semibold text-foreground mb-2">
                 {t("billingAddress")}
-              </h2>
-              <AddressBlock address={order.billing_address} />
+              </h3>
+              <AddressBlock address={purchase.billing_address} />
             </div>
           )}
-          {order.payments && order.payments.length > 0 && (
-            <div className="p-4 sm:p-6">
-              <h2 className="mb-2 text-sm font-semibold text-foreground">
+          {purchase.payments.length > 0 && (
+            <div className="px-6 py-4">
+              <h3 className="text-sm font-semibold text-foreground mb-2">
                 {t("paymentInformation")}
-              </h2>
-              {order.payments
+              </h3>
+              {purchase.payments
                 .filter((p) => p.status !== "void" && p.status !== "invalid")
                 .map((payment) => (
                   <div key={payment.id} className="mb-3 last:mb-0">
                     <PaymentInfo
                       payment={payment}
-                      currency={order.currency}
-                      giftCardTotal={order.gift_card_total}
+                      currency={purchase.currency}
+                      giftCardTotal={purchase.totals.gift_card_total}
                     />
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {formatMoney(payment.amount, order.currency, locale)}
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {formatMoney(payment.amount, purchase.currency, locale)}
                     </p>
                   </div>
                 ))}
@@ -123,8 +136,8 @@ export async function OrderDetail({
         </div>
       </div>
 
-      <div className="rounded-xl border bg-card p-4 sm:p-6">
-        <OrderTotals order={order} />
+      <div className="bg-card rounded-xl border border-border p-6">
+        <OrderTotals order={purchase.totals} />
       </div>
     </div>
   );

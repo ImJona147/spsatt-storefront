@@ -1,6 +1,6 @@
 "use server";
 
-import type { Category, Media, Product } from "@spree/sdk";
+import type { Category, Collection, Media, Product, Seller } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
 import { getClient } from "@/lib/spree";
 
@@ -18,7 +18,15 @@ export type SitemapCategory = Category & {
   updated_at?: string;
 };
 
-export type SitemapResource = "products" | "categories";
+export type SitemapCollection = Pick<Collection, "id" | "permalink">;
+
+export type SitemapSeller = Pick<Seller, "id" | "slug">;
+
+export type SitemapResource =
+  | "products"
+  | "categories"
+  | "collections"
+  | "sellers";
 
 export async function getSitemapMarkets(options: LocaleOptions) {
   "use cache: remote";
@@ -36,14 +44,36 @@ export async function getSitemapResourceCount(
   cacheLife("tenMinutes");
   cacheTag("sitemap", resource, `sitemap-market:${marketId}`);
 
-  const response =
-    resource === "products"
-      ? await getClient().products.list({ page: 1, limit: 1 }, options)
-      : await getClient().categories.list(
-          { page: 1, limit: 1, parent_id_not_null: true },
+  const client = getClient();
+  const query = { page: 1, limit: 1 };
+  let count: number;
+  switch (resource) {
+    case "products":
+      count = (await client.products.list(query, options)).meta.count;
+      break;
+    case "categories":
+      count = (
+        await client.categories.list(
+          { ...query, parent_id_not_null: true },
           options,
-        );
-  return Math.max(0, response.meta.count);
+        )
+      ).meta.count;
+      break;
+    case "collections":
+      count = (
+        await client.collections.list(
+          { ...query, fields: ["permalink"] },
+          options,
+        )
+      ).meta.count;
+      break;
+    case "sellers":
+      count = (
+        await client.sellers.list({ ...query, fields: ["slug"] }, options)
+      ).meta.count;
+      break;
+  }
+  return Math.max(0, count);
 }
 
 export async function getSitemapProductPage(
@@ -73,6 +103,38 @@ export async function getSitemapCategoryPage(
   cacheTag("sitemap", "categories", `sitemap-market:${marketId}`);
   const response = await getClient().categories.list(
     { page, limit, parent_id_not_null: true },
+    options,
+  );
+  return response.data;
+}
+
+export async function getSitemapSellerPage(
+  marketId: string,
+  page: number,
+  limit: number,
+  options: LocaleOptions,
+): Promise<SitemapSeller[]> {
+  "use cache: remote";
+  cacheLife("tenMinutes");
+  cacheTag("sitemap", "sellers", `sitemap-market:${marketId}`);
+  const response = await getClient().sellers.list(
+    { page, limit, sort: "id", fields: ["slug"] },
+    options,
+  );
+  return response.data;
+}
+
+export async function getSitemapCollectionPage(
+  marketId: string,
+  page: number,
+  limit: number,
+  options: LocaleOptions,
+): Promise<SitemapCollection[]> {
+  "use cache: remote";
+  cacheLife("tenMinutes");
+  cacheTag("sitemap", "collections", `sitemap-market:${marketId}`);
+  const response = await getClient().collections.list(
+    { page, limit, sort: "id", fields: ["permalink"] },
     options,
   );
   return response.data;

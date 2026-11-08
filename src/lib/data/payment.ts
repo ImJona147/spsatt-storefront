@@ -11,10 +11,10 @@ import {
 } from "@/lib/spree";
 import { getCart } from "./cart";
 import {
+  getCompletedOrder,
   resolveSurfaceForCart,
   resolveSurfaceForCartVerified,
 } from "./checkout";
-import { getOrder } from "./orders";
 import { actionResult } from "./utils";
 
 function checkoutTag(surface: Surface): string {
@@ -93,6 +93,22 @@ export async function createDirectPayment(
   }, "Failed to create payment");
 }
 
+/** Reads a payment session, e.g. to see whether it is still open after a failed completion. */
+export async function getCheckoutPaymentSession(
+  cartId: string,
+  sessionId: string,
+) {
+  return actionResult(async () => {
+    const surface = await resolveSurfaceForCart(cartId);
+    const options = await getCartOptions(surface);
+    const id = await requireCartId(surface);
+    const session = await getClientForSurface(
+      surface,
+    ).carts.paymentSessions.get(id, sessionId, options);
+    return { session };
+  }, "Failed to load payment session");
+}
+
 export async function completeCheckoutPaymentSession(
   cartId: string,
   sessionId: string,
@@ -111,12 +127,21 @@ export async function completeCheckoutPaymentSession(
 }
 
 /**
- * Completes the order. Treats 403 and 422 as success:
- * - 403 = cart already completed (e.g. webhook handler completed it)
- * - 422 = state_lock_version conflict (concurrent request)
+ * Completes the order. A 403 means the cart was already completed (e.g. by a
+ * webhook handler), so it counts as success. A 422 counts as success only when
+ * the order exists: it is also how the API refuses a cart that cannot be
+ * placed (out of stock, undeliverable), and that refusal must reach the buyer.
  *
  * When the order was already completed (403/422), fetch it from the API
  * so the caller always gets the order data for caching on the thank-you page.
+ *
+ * A marketplace cart splits across sellers, so completion answers with an
+ * OrderGroup rather than a single Order. Both come back untouched — the group
+ * is what the customer bought, and taking one order out of it would drop the
+ * other sellers' items from the confirmation.
+ *
+ * Either way the order is fetched so the caller has it to cache for the
+ * thank-you page.
  */
 export async function completeCheckoutOrder(
   cartId: string,
@@ -125,8 +150,6 @@ export async function completeCheckoutOrder(
   const surface = knownSurface ?? (await resolveSurfaceForCart(cartId));
   try {
     const options = await getCartOptions(surface);
-    // A marketplace cart that reached several sellers completes as an
-    // OrderGroup; the thank-you page renders every seller's order from it.
     const order: Order | OrderGroup = await getClientForSurface(
       surface,
     ).carts.complete(cartId, options);
@@ -139,11 +162,20 @@ export async function completeCheckoutOrder(
       if (status === 403 || status === 422) {
         // Order already completed — try to fetch it so the thank-you page
         // can cache and display it without a second round-trip.
-        const completedOrder = await getOrder(cartId, undefined, surface).catch(
+        const completedOrder = await getCompletedOrder(cartId, surface).catch(
           () => null,
         );
         updateTag(checkoutTag(surface));
         updateTag(cartTag(surface));
+        if (status === 422 && !completedOrder) {
+          return {
+            success: false as const,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to complete order",
+          };
+        }
         return { success: true as const, order: completedOrder };
       }
     }
@@ -188,7 +220,7 @@ export async function confirmPaymentAndCompleteCart(
     if (!cart) {
       // Cart not found — the order may already be completed (e.g. by webhook).
       // Try fetching it as a completed order before giving up.
-      const completedOrder = await getOrder(cartId, undefined, surface).catch(
+      const completedOrder = await getCompletedOrder(cartId, surface).catch(
         () => null,
       );
       return { success: true, order: completedOrder };

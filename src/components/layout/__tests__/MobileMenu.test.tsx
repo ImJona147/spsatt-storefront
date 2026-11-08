@@ -14,6 +14,8 @@ vi.mock("next-intl", () => ({
       contact: "Contact",
       myAccount: "My Account",
       wholesale: "Wholesale",
+      sellers: "Sellers",
+      collections: "Collections",
     })[key] ?? key,
 }));
 
@@ -72,5 +74,88 @@ describe("MobileMenu", () => {
     expect(
       within(menu).getByRole("link", { name: "My Account" }),
     ).toHaveAttribute("href", "/us/en/account");
+  });
+
+  it("links to the seller directory only when the marketplace is enabled", async () => {
+    const user = userEvent.setup();
+
+    const { unmount } = render(
+      <MobileMenu
+        rootCategories={[]}
+        basePath="/us/en"
+        wholesaleEnabled={false}
+        marketplaceEnabled
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Open menu" }));
+    expect(
+      within(screen.getByRole("dialog", { name: "Menu" })).getByRole("link", {
+        name: "Sellers",
+      }),
+    ).toHaveAttribute("href", "/us/en/sellers");
+    unmount();
+
+    render(
+      <MobileMenu
+        rootCategories={[]}
+        basePath="/us/en"
+        wholesaleEnabled={false}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Open menu" }));
+    expect(
+      within(screen.getByRole("dialog", { name: "Menu" })).queryByRole("link", {
+        name: "Sellers",
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("lists collections in their own panel, like a category's children", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MobileMenu
+        rootCategories={[]}
+        collections={[
+          { id: "coll_1", name: "On Sale", permalink: "on-sale" },
+          { id: "coll_2", name: "New Arrivals", permalink: "new-arrivals" },
+        ]}
+        basePath="/us/en"
+        wholesaleEnabled={false}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Open menu" }));
+    const menu = screen.getByRole("dialog", { name: "Menu" });
+    await user.click(within(menu).getByRole("button", { name: "Collections" }));
+
+    expect(within(menu).getByRole("link", { name: "On Sale" })).toHaveAttribute(
+      "href",
+      "/us/en/collections/on-sale",
+    );
+    expect(
+      within(menu).getByRole("link", { name: "New Arrivals" }),
+    ).toHaveAttribute("href", "/us/en/collections/new-arrivals");
+    expect(
+      within(menu).getByRole("link", { name: "viewAllCategory" }),
+    ).toHaveAttribute("href", "/us/en/collections");
+  });
+
+  it("falls back to a plain Collections link when none were loaded", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MobileMenu
+        rootCategories={[]}
+        basePath="/us/en"
+        wholesaleEnabled={false}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Open menu" }));
+
+    expect(
+      within(screen.getByRole("dialog", { name: "Menu" })).getByRole("link", {
+        name: "Collections",
+      }),
+    ).toHaveAttribute("href", "/us/en/collections");
   });
 });

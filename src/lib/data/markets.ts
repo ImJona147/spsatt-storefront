@@ -2,6 +2,7 @@
 
 import type { Market } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
+import { DEFAULT_LOCALE, resolveSupportedLocale } from "@/i18n/locales";
 import { getClient } from "@/lib/spree";
 import { getDefaultCountry, getDefaultLocale } from "@/lib/store";
 
@@ -59,6 +60,17 @@ export async function getMarkets(options?: {
   return cachedListMarkets(resolvedOptions);
 }
 
+/**
+ * List Markets for the configured default country and locale. Kept as an
+ * alias for callers that only need the storefront shell (404, metadata).
+ */
+export async function getStorefrontMarkets(): Promise<{ data: Market[] }> {
+  return getMarkets({
+    country: getDefaultCountry(),
+    locale: resolveSupportedLocale(getDefaultLocale()) ?? DEFAULT_LOCALE,
+  });
+}
+
 export async function resolveMarket(country: string) {
   return cachedResolveMarket(country, defaultOptions(country));
 }
@@ -75,7 +87,7 @@ export async function getMarketCountries(marketId: string) {
 export async function resolveCurrency(
   country: string,
 ): Promise<string | undefined> {
-  const { data: markets } = await getMarkets(defaultOptions(country));
+  const { data: markets } = await getStorefrontMarkets();
   const iso = country.toLowerCase();
   for (const market of markets) {
     const match = market.countries?.some((c) => c.iso.toLowerCase() === iso);

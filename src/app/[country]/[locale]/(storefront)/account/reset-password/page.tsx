@@ -43,8 +43,8 @@ function AuthAside() {
 export default function ResetPasswordPage() {
   const t = useTranslations("resetPassword");
   const ta = useTranslations("account");
-  const router = useRouter();
   const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const basePath = extractBasePath(pathname);
   const token = searchParams.get("token");

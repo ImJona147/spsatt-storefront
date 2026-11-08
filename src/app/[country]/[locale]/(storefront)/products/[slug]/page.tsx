@@ -6,13 +6,18 @@ import { FetchErrorState } from "@/components/errors/FetchErrorState";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { SignalNotFound } from "@/components/not-found/SignalNotFound";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getCachedProduct, PRODUCT_PAGE_EXPAND } from "@/lib/data/cached";
+import {
+  getCachedProduct,
+  MARKETPLACE_PRODUCT_PAGE_EXPAND,
+  PRODUCT_PAGE_EXPAND,
+} from "@/lib/data/cached";
 import { generateProductMetadata } from "@/lib/metadata/product";
 import {
   buildBreadcrumbJsonLd,
   buildCanonicalUrl,
   buildProductJsonLd,
 } from "@/lib/seo";
+import { isMarketplaceEnabled } from "@/lib/spree";
 import { getStoreUrl } from "@/lib/store";
 import { ProductDetails } from "./ProductDetails";
 
@@ -53,10 +58,16 @@ export default async function ProductPage({
   const { country, locale, slug } = await params;
   const { category_id } = await searchParams;
   const basePath = `/${country}/${locale}`;
+  const marketplaceEnabled = isMarketplaceEnabled();
 
   let product;
   try {
-    product = await getCachedProduct(slug, PRODUCT_PAGE_EXPAND);
+    product = await getCachedProduct(
+      slug,
+      marketplaceEnabled
+        ? MARKETPLACE_PRODUCT_PAGE_EXPAND
+        : PRODUCT_PAGE_EXPAND,
+    );
   } catch (error) {
     // A 404 that survives the transient-retry window is a real missing
     // product; anything else (5xx, network) gets a retryable error state
@@ -84,6 +95,10 @@ export default async function ProductPage({
     category_id,
   );
 
+  // The client component needs only the seller's name and slug; leaving the
+  // expanded record on the product would serialize all of it to the browser.
+  const { seller, ...clientProduct } = product;
+
   return (
     <>
       {canonicalUrl && (
@@ -108,9 +123,10 @@ export default async function ProductPage({
         )}
       </div>
       <ProductDetails
-        product={product}
+        product={clientProduct}
         basePath={basePath}
         category={breadcrumbCategory}
+        seller={seller ? { name: seller.name, slug: seller.slug } : null}
       />
     </>
   );

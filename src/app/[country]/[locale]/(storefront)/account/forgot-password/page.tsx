@@ -145,6 +145,7 @@ export default function ForgotPasswordPage() {
               <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
               <Input
                 type="email"
+                spellCheck={false}
                 id="email"
                 name="email"
                 autoComplete="email"

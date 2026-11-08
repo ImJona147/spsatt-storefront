@@ -1,6 +1,6 @@
 "use client";
 
-import type { Category, Media, Product, Variant } from "@spree/sdk";
+import type { Category, Media, Product, Seller, Variant } from "@spree/sdk";
 import { CircleCheckBig, CircleMinus, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -24,17 +24,21 @@ interface ProductDetailsProps {
   product: Product;
   basePath: string;
   category?: Category;
+  /** Marketplace seller to credit under the title; omit to hide the line. */
+  seller?: Pick<Seller, "name" | "slug"> | null;
 }
 
 export function ProductDetails({
   product,
   basePath,
   category,
+  seller,
 }: ProductDetailsProps) {
   const { addItem } = useCart();
   const { currency } = useStore();
   const t = useTranslations("products");
   const tc = useTranslations("common");
+  const ts = useTranslations("sellers");
   const tw = useTranslations("wholesale");
   const formatMoney = useFormatMoney();
   // Non-null inside a HiddenPricingProvider (wholesale `prices_hidden`, guest
@@ -183,6 +187,22 @@ export function ProductDetails({
               {product.name}
             </h1>
 
+            {seller && (
+              <p className="mt-2 text-sm text-muted-foreground">
+                {ts.rich("soldBy", {
+                  name: seller.name,
+                  link: (chunks) => (
+                    <Link
+                      href={`${basePath}/sellers/${seller.slug}`}
+                      className="font-medium text-foreground underline-offset-4 hover:underline"
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </p>
+            )}
+
             {/* Price reads as the second line of the title, with availability
                 beside it, not as a boxed panel competing with the buy box. */}
             <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -211,8 +231,11 @@ export function ProductDetails({
                 )}
               </div>
 
-              {/* Text and icon carry the state, not color alone */}
-              {inStock ? (
+              {/* Text and icon carry the state, not color alone. Stock with no
+                  price cannot be bought, so it reads as out of stock like the
+                  button; a guest who must sign in for prices gets no button,
+                  so stock alone decides. */}
+              {inStock && (isPurchasable || pricesHidden) ? (
                 <span className="inline-flex items-center gap-1.5 rounded-md bg-success/12 px-2.5 py-1 text-[13px] font-semibold text-success">
                   <CircleCheckBig className="size-4" aria-hidden="true" />
                   {t("inStock")}

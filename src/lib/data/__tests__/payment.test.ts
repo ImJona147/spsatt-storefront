@@ -7,8 +7,12 @@ const mockClient = {
     complete: vi.fn(),
     paymentSessions: {
       create: vi.fn(),
+      get: vi.fn(),
       complete: vi.fn(),
     },
+  },
+  orders: {
+    get: vi.fn(),
   },
 };
 
@@ -39,6 +43,7 @@ import {
   completeCheckoutPaymentSession,
   confirmPaymentAndCompleteCart,
   createCheckoutPaymentSession,
+  getCheckoutPaymentSession,
 } from "@/lib/data/payment";
 
 const mockSession = {
@@ -56,6 +61,9 @@ const mockOrder = {
 describe("payment server actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockClient.orders.get.mockRejectedValue(
+      Object.assign(new Error("Not found"), { status: 404 }),
+    );
   });
 
   describe("createCheckoutPaymentSession", () => {
@@ -100,6 +108,31 @@ describe("payment server actions", () => {
         success: false,
         error: "Gateway unavailable",
       });
+    });
+  });
+
+  describe("getCheckoutPaymentSession", () => {
+    it("returns success with session", async () => {
+      mockClient.carts.paymentSessions.get.mockResolvedValue(mockSession);
+
+      const result = await getCheckoutPaymentSession("cart-1", "session-1");
+
+      expect(mockClient.carts.paymentSessions.get).toHaveBeenCalledWith(
+        "cart-1",
+        "session-1",
+        { spreeToken: "order-token-123", token: undefined },
+      );
+      expect(result).toEqual({ success: true, session: mockSession });
+    });
+
+    it("returns error on failure", async () => {
+      mockClient.carts.paymentSessions.get.mockRejectedValue(
+        new Error("Not found"),
+      );
+
+      const result = await getCheckoutPaymentSession("cart-1", "session-1");
+
+      expect(result).toEqual({ success: false, error: "Not found" });
     });
   });
 
@@ -162,15 +195,31 @@ describe("payment server actions", () => {
       expect(result).toEqual({ success: true, order: null });
     });
 
-    it("treats 422 as success (state_lock_version conflict)", async () => {
+    it("treats 422 as success when the order was placed by a concurrent request", async () => {
       const spreeError = Object.assign(new Error("Unprocessable Content"), {
         status: 422,
       });
       mockClient.carts.complete.mockRejectedValue(spreeError);
+      mockClient.orders.get.mockResolvedValue(mockOrder);
 
       const result = await completeCheckoutOrder("cart-1");
 
-      expect(result).toEqual({ success: true, order: null });
+      expect(result).toEqual({ success: true, order: mockOrder });
+    });
+
+    it("returns the refusal when a 422 left no order behind", async () => {
+      const spreeError = Object.assign(
+        new Error("Regional Mug cannot be delivered to the selected address"),
+        { status: 422 },
+      );
+      mockClient.carts.complete.mockRejectedValue(spreeError);
+
+      const result = await completeCheckoutOrder("cart-1");
+
+      expect(result).toEqual({
+        success: false,
+        error: "Regional Mug cannot be delivered to the selected address",
+      });
     });
 
     it("returns error on non-403 failure", async () => {

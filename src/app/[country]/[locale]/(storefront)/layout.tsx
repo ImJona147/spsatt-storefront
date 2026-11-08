@@ -1,10 +1,13 @@
-import type { Category } from "@spree/sdk";
+import type { Category, Collection } from "@spree/sdk";
 import Link from "next/link";
 import { connection } from "next/server";
 import { cache, Suspense } from "react";
 import { Footer, FooterCategoryLinks } from "@/components/layout/Footer";
 import { Header, HeaderMobileMenu } from "@/components/layout/Header";
+import { MainContent, SkipLink } from "@/components/layout/SkipLink";
 import { getCategories } from "@/lib/data/categories";
+import { getCollections } from "@/lib/data/collections";
+import { withTimeout } from "@/lib/utils/with-timeout";
 
 interface StorefrontLayoutProps {
   children: React.ReactNode;
@@ -18,6 +21,12 @@ interface StorefrontNavigationProps {
 }
 
 const EMPTY_CATEGORIES: Category[] = [];
+const EMPTY_COLLECTIONS: Collection[] = [];
+
+/** Collections listed in the menu; the rest are one "View all" away. */
+const NAV_COLLECTION_LIMIT = 24;
+/** How long the mobile menu waits for collections before rendering without. */
+const NAV_COLLECTION_DEADLINE_MS = 2000;
 
 function MobileNavigationFallback() {
   return (
@@ -60,6 +69,35 @@ const getRootCategories = cache(async (country: string, locale: string) => {
     });
 });
 
+/**
+ * Collections for the menu, in the merchant's order. Optional chrome like the
+ * categories: a failure, or a response slower than the deadline, leaves a
+ * plain "Collections" link rather than holding up the menu.
+ */
+const getNavCollections = cache(async (country: string, locale: string) => {
+  await connection();
+
+  const collections = getCollections(
+    {
+      limit: NAV_COLLECTION_LIMIT,
+      sort: "position",
+      fields: ["id", "name", "permalink"],
+    },
+    { country, locale },
+  )
+    .then((res) => res.data)
+    .catch((error) => {
+      console.error("StorefrontLayout: failed to load collections", error);
+      return EMPTY_COLLECTIONS;
+    });
+
+  return withTimeout(
+    collections,
+    NAV_COLLECTION_DEADLINE_MS,
+    EMPTY_COLLECTIONS,
+  );
+});
+
 function CategoryLinks({
   categories,
   basePath,
@@ -88,10 +126,17 @@ async function StorefrontMobileNavigation({
   country,
   locale,
 }: StorefrontNavigationProps) {
-  const rootCategories = await getRootCategories(country, locale);
+  const [rootCategories, collections] = await Promise.all([
+    getRootCategories(country, locale),
+    getNavCollections(country, locale),
+  ]);
 
   return (
-    <HeaderMobileMenu rootCategories={rootCategories} basePath={basePath} />
+    <HeaderMobileMenu
+      rootCategories={rootCategories}
+      collections={collections}
+      basePath={basePath}
+    />
   );
 }
 
@@ -132,6 +177,7 @@ export default async function StorefrontLayout({
 
   return (
     <>
+      <SkipLink />
       <Header
         basePath={basePath}
         locale={locale as Locale}
@@ -152,7 +198,7 @@ export default async function StorefrontLayout({
           locale={locale}
         />
       </Suspense>
-      <main className="flex-1">{children}</main>
+      <MainContent className="flex-1">{children}</MainContent>
       <Footer
         basePath={basePath}
         locale={locale as Locale}
