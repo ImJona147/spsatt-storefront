@@ -1,8 +1,8 @@
 "use server";
 
+import { getClient } from "@/lib/spree";
 import type { Category, Collection, Media, Product, Seller } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
-import { getClient } from "@/lib/spree";
 
 interface LocaleOptions {
   locale: string;
@@ -32,7 +32,12 @@ export async function getSitemapMarkets(options: LocaleOptions) {
   "use cache: remote";
   cacheLife("hours");
   cacheTag("markets", "sitemap");
-  return (await getClient().markets.list(options)).data;
+  try {
+    return (await getClient().markets.list(options)).data;
+  } catch (error) {
+    console.warn("Sitemap: Error al obtener mercados:", error);
+    return [];
+  }
 }
 
 export async function getSitemapResourceCount(
@@ -44,36 +49,45 @@ export async function getSitemapResourceCount(
   cacheLife("tenMinutes");
   cacheTag("sitemap", resource, `sitemap-market:${marketId}`);
 
-  const client = getClient();
-  const query = { page: 1, limit: 1 };
-  let count: number;
-  switch (resource) {
-    case "products":
-      count = (await client.products.list(query, options)).meta.count;
-      break;
-    case "categories":
-      count = (
-        await client.categories.list(
-          { ...query, parent_id_not_null: true },
-          options,
-        )
-      ).meta.count;
-      break;
-    case "collections":
-      count = (
-        await client.collections.list(
-          { ...query, fields: ["permalink"] },
-          options,
-        )
-      ).meta.count;
-      break;
-    case "sellers":
-      count = (
-        await client.sellers.list({ ...query, fields: ["slug"] }, options)
-      ).meta.count;
-      break;
+  try {
+    const client = getClient();
+    const query = { page: 1, limit: 1 };
+    let count = 0;
+
+    switch (resource) {
+      case "products":
+        count = (await client.products.list(query, options)).meta.count;
+        break;
+      case "categories":
+        count = (
+          await client.categories.list(
+            { ...query, parent_id_not_null: true },
+            options,
+          )
+        ).meta.count;
+        break;
+      case "collections":
+        count = (
+          await client.collections.list(
+            { ...query, fields: ["permalink"] },
+            options,
+          )
+        ).meta.count;
+        break;
+      case "sellers":
+        count = (
+          await client.sellers.list({ ...query, fields: ["slug"] }, options)
+        ).meta.count;
+        break;
+    }
+    return Math.max(0, count);
+  } catch (error) {
+    console.warn(
+      `Sitemap: omitiendo conteo para '${resource}' por fallo de red:`,
+      error,
+    );
+    return 0;
   }
-  return Math.max(0, count);
 }
 
 export async function getSitemapProductPage(
@@ -85,11 +99,16 @@ export async function getSitemapProductPage(
   "use cache: remote";
   cacheLife("tenMinutes");
   cacheTag("sitemap", "products", `sitemap-market:${marketId}`);
-  const response = await getClient().products.list(
-    { page, limit, expand: ["media"] },
-    options,
-  );
-  return response.data as SitemapProduct[];
+  try {
+    const response = await getClient().products.list(
+      { page, limit, expand: ["media"] },
+      options,
+    );
+    return (response.data || []) as SitemapProduct[];
+  } catch (error) {
+    console.warn("Sitemap: Error al consultar páginas de productos:", error);
+    return [];
+  }
 }
 
 export async function getSitemapCategoryPage(
@@ -101,11 +120,16 @@ export async function getSitemapCategoryPage(
   "use cache: remote";
   cacheLife("tenMinutes");
   cacheTag("sitemap", "categories", `sitemap-market:${marketId}`);
-  const response = await getClient().categories.list(
-    { page, limit, parent_id_not_null: true },
-    options,
-  );
-  return response.data;
+  try {
+    const response = await getClient().categories.list(
+      { page, limit, parent_id_not_null: true },
+      options,
+    );
+    return response.data || [];
+  } catch (error) {
+    console.warn("Sitemap: Error al consultar páginas de categorías:", error);
+    return [];
+  }
 }
 
 export async function getSitemapSellerPage(
@@ -117,11 +141,16 @@ export async function getSitemapSellerPage(
   "use cache: remote";
   cacheLife("tenMinutes");
   cacheTag("sitemap", "sellers", `sitemap-market:${marketId}`);
-  const response = await getClient().sellers.list(
-    { page, limit, sort: "id", fields: ["slug"] },
-    options,
-  );
-  return response.data;
+  try {
+    const response = await getClient().sellers.list(
+      { page, limit, sort: "id", fields: ["slug"] },
+      options,
+    );
+    return response.data || [];
+  } catch (error) {
+    console.warn("Sitemap: Error al consultar vendedores:", error);
+    return [];
+  }
 }
 
 export async function getSitemapCollectionPage(
@@ -133,9 +162,14 @@ export async function getSitemapCollectionPage(
   "use cache: remote";
   cacheLife("tenMinutes");
   cacheTag("sitemap", "collections", `sitemap-market:${marketId}`);
-  const response = await getClient().collections.list(
-    { page, limit, sort: "id", fields: ["permalink"] },
-    options,
-  );
-  return response.data;
+  try {
+    const response = await getClient().collections.list(
+      { page, limit, sort: "id", fields: ["permalink"] },
+      options,
+    );
+    return response.data || [];
+  } catch (error) {
+    console.warn("Sitemap: Error al consultar colecciones:", error);
+    return [];
+  }
 }

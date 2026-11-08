@@ -1,8 +1,3 @@
-import { MessageCircle } from "lucide-react";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { PortfolioGallery } from "@/components/portfolio/PortfolioGallery";
 import {
@@ -11,16 +6,37 @@ import {
 } from "@/lib/constants/business";
 import { getPortfolioCategories } from "@/lib/data/portfolio";
 import { resolveCategoryPage, toMedia } from "@/lib/portfolio";
+import { MessageCircle } from "lucide-react";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface PortfolioCategoryPageProps {
   params: Promise<{ country: string; locale: string; categoria: string }>;
 }
 
 export async function generateStaticParams() {
-  const apiCategories = await getPortfolioCategories();
-  return apiCategories
-    .filter((category) => category.active)
-    .map((category) => ({ categoria: category.slug }));
+  try {
+    const apiCategories = await getPortfolioCategories();
+    const activeCategories = apiCategories.filter(
+      (category) => category.active,
+    );
+
+    if (activeCategories.length > 0) {
+      return activeCategories.map((category) => ({
+        categoria: category.slug || String(category.id),
+      }));
+    }
+  } catch (error) {
+    console.warn(
+      "SPSATT Build: No se pudieron prerrenderizar las categorías del portafolio:",
+      error,
+    );
+  }
+
+  // Fallback obligatorio para Next.js 16 cuando la BD está vacía o falla la red en el build
+  return [{ categoria: "general" }];
 }
 
 export async function generateMetadata({
@@ -31,10 +47,15 @@ export async function generateMetadata({
     locale: locale as Locale,
     namespace: "home",
   });
-  const category = resolveCategoryPage(
-    categoria,
-    await getPortfolioCategories(),
-  );
+
+  let categories: Awaited<ReturnType<typeof getPortfolioCategories>> = [];
+  try {
+    categories = await getPortfolioCategories();
+  } catch {
+    categories = [];
+  }
+
+  const category = resolveCategoryPage(categoria, categories);
   if (!category) return {};
   return {
     title: category.name,
@@ -51,10 +72,15 @@ export default async function PortfolioCategoryPage({
     locale: locale as Locale,
     namespace: "home",
   });
-  const category = resolveCategoryPage(
-    categoria,
-    await getPortfolioCategories(),
-  );
+
+  let categories: Awaited<ReturnType<typeof getPortfolioCategories>> = [];
+  try {
+    categories = await getPortfolioCategories();
+  } catch {
+    categories = [];
+  }
+
+  const category = resolveCategoryPage(categoria, categories);
   if (!category) notFound();
 
   const title = category.name;
