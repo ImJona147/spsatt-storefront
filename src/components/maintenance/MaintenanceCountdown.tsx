@@ -31,7 +31,7 @@ const pad = (value: number) => String(value).padStart(2, "0");
 
 /**
  * Live "back at" countdown for the maintenance page: a scored panel with
- * Fraunces numerals, a primary header rule and a rising tick on every digit
+ * Inter numerals, a primary header rule and a rising tick on every digit
  * change. Renders nothing until it has a real future date; when the moment
  * passes mid-session it refreshes the route once so an already-reopened
  * store recovers without a manual reload.

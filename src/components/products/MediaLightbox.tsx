@@ -4,7 +4,13 @@ import type { Media } from "@spree/sdk";
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 
 const SWIPE_THRESHOLD_PX = 50;
@@ -12,7 +18,6 @@ const SWIPE_MAX_VERTICAL_PX = 75;
 const MAX_SCALE = 4;
 const ZOOM_STEP = 1.6;
 const TAP_MOVE_TOLERANCE_PX = 10;
-const DOUBLE_TAP_MS = 320;
 
 interface ZoomTransform {
   scale: number;
@@ -58,8 +63,8 @@ interface ZoomableImageProps {
 }
 
 /**
- * The image surface: pinch, double-tap (touch), double-click (mouse) and the
- * +/- buttons scale up to 4x; dragging pans while zoomed. Swipe navigation
+ * The image surface: single tap/click, pinch and the +/- buttons scale up to
+ * 4x; dragging pans while zoomed. Swipe navigation
  * only runs at 1x, so a pan never changes the slide by accident.
  *
  * The parent remounts this with a key per slide, which resets the zoom
@@ -82,7 +87,6 @@ function ZoomableImage({
     x: number;
     y: number;
   } | null>(null);
-  const tapRef = useRef<{ at: number; x: number; y: number } | null>(null);
   const didPinchRef = useRef(false);
   const [zoom, setZoom] = useState<ZoomTransform>(IDENTITY);
   const [dragging, setDragging] = useState(false);
@@ -107,6 +111,7 @@ function ZoomableImage({
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest("button")) return;
     e.currentTarget.setPointerCapture(e.pointerId);
     pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointersRef.current.size === 1) {
@@ -161,7 +166,6 @@ function ZoomableImage({
 
     if (didPinchRef.current) {
       didPinchRef.current = false;
-      tapRef.current = null;
       return;
     }
     if (!pan) return;
@@ -173,18 +177,7 @@ function ZoomableImage({
       Math.abs(dy) < TAP_MOVE_TOLERANCE_PX;
 
     if (isTap) {
-      if (e.pointerType === "mouse") return;
-      const now = Date.now();
-      const lastTap = tapRef.current;
-      tapRef.current = { at: now, x: e.clientX, y: e.clientY };
-      if (
-        lastTap &&
-        now - lastTap.at < DOUBLE_TAP_MS &&
-        Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 40
-      ) {
-        tapRef.current = null;
-        toggleZoom();
-      }
+      toggleZoom();
       return;
     }
 
@@ -208,14 +201,13 @@ function ZoomableImage({
     pinchRef.current = null;
     panRef.current = null;
     didPinchRef.current = false;
-    tapRef.current = null;
     setDragging(false);
   };
 
   return (
     <div
       ref={surfaceRef}
-      className="relative w-full h-full max-w-5xl max-h-[85svh] m-4 overflow-hidden touch-none select-none"
+      className="media-lightbox-image relative m-4 h-full max-h-[85svh] w-full max-w-5xl touch-none select-none overflow-hidden"
       style={{
         cursor: zoomed ? (dragging ? "grabbing" : "grab") : "zoom-in",
       }}
@@ -248,7 +240,7 @@ function ZoomableImage({
       <div className="absolute bottom-3 right-3 z-10 flex flex-col gap-1">
         <button
           type="button"
-          className="text-white p-3 rounded-lg bg-black/50 hover:bg-white/10 transition-colors disabled:opacity-40"
+          className="min-h-11 min-w-11 rounded-lg border border-border bg-background/90 p-2.5 text-foreground transition-colors hover:bg-accent disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={(e) => {
             e.stopPropagation();
             setScale(zoom.scale * ZOOM_STEP);
@@ -256,11 +248,11 @@ function ZoomableImage({
           disabled={zoom.scale >= MAX_SCALE}
           aria-label={t("lightboxZoomIn")}
         >
-          <ZoomIn className="w-6 h-6" aria-hidden="true" />
+          <ZoomIn className="size-5" aria-hidden="true" />
         </button>
         <button
           type="button"
-          className="text-white p-3 rounded-lg bg-black/50 hover:bg-white/10 transition-colors disabled:opacity-40"
+          className="min-h-11 min-w-11 rounded-lg border border-border bg-background/90 p-2.5 text-foreground transition-colors hover:bg-accent disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={(e) => {
             e.stopPropagation();
             setScale(zoom.scale / ZOOM_STEP);
@@ -268,7 +260,7 @@ function ZoomableImage({
           disabled={!zoomed}
           aria-label={t("lightboxZoomOut")}
         >
-          <ZoomOut className="w-6 h-6" aria-hidden="true" />
+          <ZoomOut className="size-5" aria-hidden="true" />
         </button>
       </div>
     </div>
@@ -308,6 +300,14 @@ export function MediaLightbox({
   const src =
     current?.original_url || current?.xlarge_url || current?.large_url || null;
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const closeTimerRef = useRef<number | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const closeViewer = useCallback(() => {
+    if (isClosing) return;
+    setIsClosing(true);
+    closeTimerRef.current = window.setTimeout(onClose, 160);
+  }, [isClosing, onClose]);
   // Tracks whether a pointerdown happened on the backdrop itself (vs.
   // bubbled up from a child). Without this, the synthetic click fired
   // by the opening tap on the parent <button> in MediaGallery lands on
@@ -325,13 +325,13 @@ export function MediaLightbox({
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") closeViewer();
       if (e.key === "ArrowLeft") goPrev();
       if (e.key === "ArrowRight") goNext();
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose, goPrev, goNext]);
+  }, [closeViewer, goPrev, goNext]);
 
   // Focus management: capture the previously focused element when the
   // lightbox mounts, move focus into the dialog, then restore it on
@@ -344,12 +344,31 @@ export function MediaLightbox({
     };
   }, []);
 
-  // Lock background scroll while the overlay is open.
-  useEffect(() => {
+  useEffect(
+    () => () => {
+      if (closeTimerRef.current !== null) {
+        window.clearTimeout(closeTimerRef.current);
+      }
+    },
+    [],
+  );
+
+  useLayoutEffect(() => {
     const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+    const currentPaddingRight = Number.parseFloat(
+      window.getComputedStyle(document.body).paddingRight,
+    );
+
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${currentPaddingRight + scrollbarWidth}px`;
+    }
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
     };
   }, []);
 
@@ -363,13 +382,14 @@ export function MediaLightbox({
       role="dialog"
       aria-modal="true"
       aria-label={t("openImageZoom")}
-      className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+      data-state={isClosing ? "closing" : "open"}
+      className="media-lightbox fixed inset-0 z-[100] flex items-center justify-center bg-background"
       onPointerDown={(e) => {
         pressedOnBackdropRef.current = e.target === e.currentTarget;
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget && pressedOnBackdropRef.current) {
-          onClose();
+          closeViewer();
         }
         pressedOnBackdropRef.current = false;
       }}
@@ -377,39 +397,39 @@ export function MediaLightbox({
       <button
         ref={closeButtonRef}
         type="button"
-        className="absolute z-10 text-white p-3 hover:bg-white/10 rounded-lg transition-colors top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))]"
+        className="absolute top-[max(1rem,env(safe-area-inset-top))] right-[max(1rem,env(safe-area-inset-right))] z-10 min-h-11 min-w-11 rounded-lg border border-border bg-background/90 p-2.5 text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         onClick={(e) => {
           e.stopPropagation();
-          onClose();
+          closeViewer();
         }}
         aria-label={t("lightboxClose")}
       >
-        <X className="w-8 h-8" aria-hidden="true" />
+        <X className="size-5" aria-hidden="true" />
       </button>
 
       {images.length > 1 && (
         <>
           <button
             type="button"
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white p-3 hover:bg-white/10 rounded-lg transition-colors"
+            className="absolute left-4 top-1/2 z-10 min-h-11 min-w-11 -translate-y-1/2 rounded-lg border border-border bg-background/90 p-2.5 text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={(e) => {
               e.stopPropagation();
               goPrev();
             }}
             aria-label={t("lightboxPrev")}
           >
-            <ChevronLeft className="w-8 h-8" aria-hidden="true" />
+            <ChevronLeft className="size-5" aria-hidden="true" />
           </button>
           <button
             type="button"
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white p-3 hover:bg-white/10 rounded-lg transition-colors"
+            className="absolute right-4 top-1/2 z-10 min-h-11 min-w-11 -translate-y-1/2 rounded-lg border border-border bg-background/90 p-2.5 text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={(e) => {
               e.stopPropagation();
               goNext();
             }}
             aria-label={t("lightboxNext")}
           >
-            <ChevronRight className="w-8 h-8" aria-hidden="true" />
+            <ChevronRight className="size-5" aria-hidden="true" />
           </button>
         </>
       )}
@@ -424,7 +444,7 @@ export function MediaLightbox({
       />
 
       {images.length > 1 && (
-        <div className="absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 text-white bg-black/50 px-3 py-1 rounded-lg text-sm tabular-nums">
+        <div className="absolute bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 rounded-lg border border-border bg-background/90 px-3 py-1 text-sm tabular-nums text-foreground">
           {activeIndex + 1} / {images.length}
         </div>
       )}

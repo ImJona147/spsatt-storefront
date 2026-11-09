@@ -98,7 +98,7 @@ export function StripePaymentForm({
         appearance: {
           theme: "stripe",
           variables: {
-            fontFamily: 'Geist, "Geist Fallback", system-ui, sans-serif',
+            fontFamily: "Inter, system-ui, sans-serif",
             fontSizeBase: "14px",
             colorPrimary: "#171717",
             borderRadius: "6px",

@@ -117,7 +117,7 @@ export default async function SellerPage({
       >
         <h2
           id="seller-products"
-          className="mb-4 text-xl font-semibold text-gray-900"
+          className="mb-4 text-xl font-semibold text-foreground"
         >
           {t("products")}
         </h2>

@@ -1,40 +1,68 @@
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
 import Image from "next/image";
+import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
 
 interface ClientLogo {
   src: string;
   alt: string;
-  /** Dark-ink logos need a flip so they stay visible on dark surfaces. */
-  invertInDark?: boolean;
 }
 
-const logos: ClientLogo[] = [
-  { src: "/bussines/google.svg", alt: "Google" },
-  { src: "/bussines/meta.svg", alt: "Meta" },
-  { src: "/bussines/spotify.svg", alt: "Spotify" },
-  { src: "/bussines/adidas.svg", alt: "Adidas", invertInDark: true },
-  { src: "/bussines/rarras.svg", alt: "Rarras" },
-];
+async function getClientLogos(): Promise<ClientLogo[]> {
+  try {
+    const files = await readdir(join(process.cwd(), "public", "bussines"), {
+      withFileTypes: true,
+    });
+    return files
+      .filter(
+        (file) =>
+          file.isFile() && /\.(avif|jpe?g|png|svg|webp)$/i.test(file.name),
+      )
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((file) => ({
+        src: `/bussines/${file.name}`,
+        alt: formatOrganizationName(file.name),
+      }));
+  } catch {
+    return [];
+  }
+}
 
-function LogoStrip({ decorative = false }: { decorative?: boolean }) {
+function formatOrganizationName(fileName: string): string {
+  const name = fileName.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
+  if (name.length <= 4) return name.toUpperCase();
+  return name.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function LogoStrip({
+  logos,
+  decorative = false,
+}: {
+  logos: ClientLogo[];
+  decorative?: boolean;
+}) {
   return (
     <div
-      className="flex shrink-0 items-center gap-16 px-10"
+      className="flex shrink-0 items-center gap-10 px-6"
       aria-hidden={decorative || undefined}
     >
       {logos.map((logo) => (
-        <Image
+        <div
           key={logo.src}
-          src={logo.src}
-          alt={decorative ? "" : logo.alt}
-          width={120}
-          height={40}
-          unoptimized
-          decoding="async"
-          className={`h-8 w-auto opacity-70 transition-opacity duration-300 hover:opacity-100 md:h-9 dark:opacity-60 dark:hover:opacity-90 ${
-            logo.invertInDark ? "dark:invert" : ""
-          }`}
-        />
+          className="relative h-7 w-28 shrink-0 md:h-8 md:w-32"
+        >
+          <Image
+            src={logo.src}
+            alt={decorative ? "" : logo.alt}
+            title={logo.alt}
+            fill
+            sizes="(min-width: 768px) 128px, 112px"
+            unoptimized
+            decoding="async"
+            className="object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 dark:opacity-85 dark:hover:opacity-100"
+          />
+        </div>
       ))}
     </div>
   );
@@ -45,6 +73,8 @@ interface ClientsSectionProps {
 }
 
 export async function ClientsSection({ locale }: ClientsSectionProps) {
+  await connection();
+  const logos = await getClientLogos();
   const t = await getTranslations({
     locale: locale as Locale,
     namespace: "home",
@@ -55,24 +85,26 @@ export async function ClientsSection({ locale }: ClientsSectionProps) {
       aria-labelledby="clients-caption"
       className="border-y border-border bg-card"
     >
-      <div className="container mx-auto px-4 pt-10 sm:px-6 md:pt-12 lg:px-8">
+      <div className="container mx-auto px-4 pt-4 sm:px-6 md:pt-5 lg:px-8">
         <p
           id="clients-caption"
-          className="flex items-center justify-center gap-4 text-xs font-semibold tracking-[0.1em] text-foreground/70 uppercase"
+          className="flex items-center justify-center gap-3 text-center text-xs font-semibold tracking-[0.08em] text-foreground/80 uppercase"
         >
-          <span aria-hidden className="h-px w-10 bg-border md:w-16" />
+          <span aria-hidden className="h-px w-6 shrink-0 bg-border md:w-16" />
           {t("clientsTitle")}
-          <span aria-hidden className="h-px w-10 bg-border md:w-16" />
+          <span aria-hidden className="h-px w-6 shrink-0 bg-border md:w-16" />
         </p>
       </div>
-      <div className="marquee-mask overflow-hidden pb-10 [mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)]">
-        <div className="marquee-track py-6">
-          <LogoStrip />
-          <LogoStrip decorative />
-          <LogoStrip decorative />
-          <LogoStrip decorative />
+      {logos.length > 0 && (
+        <div className="marquee-mask overflow-hidden pb-3 mask-[linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)]">
+          <div className="marquee-track py-2">
+            <LogoStrip logos={logos} />
+            <LogoStrip logos={logos} decorative />
+            <LogoStrip logos={logos} decorative />
+            <LogoStrip logos={logos} decorative />
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

@@ -45,6 +45,8 @@ export function PortfolioGallery({ images, title }: PortfolioGalleryProps) {
                 alt={image.alt || `${title} ${index + 1}`}
                 fill
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : undefined}
                 className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none"
               />
               <span

@@ -17,7 +17,7 @@ export function SkipLink(): React.JSX.Element {
   return (
     <a
       href={`#${MAIN_CONTENT_ID}`}
-      className="fixed top-2 left-2 z-[100] -translate-y-[200%] rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-900 shadow-lg focus:translate-y-0 focus:[outline:2px_solid_black]"
+      className="fixed top-2 left-2 z-[100] -translate-y-[200%] rounded-md bg-background px-4 py-2 text-sm font-medium text-foreground shadow-lg focus:translate-y-0 focus-visible:outline-2 focus-visible:outline-ring"
     >
       {t("skipToContent")}
     </a>

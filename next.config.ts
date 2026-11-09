@@ -82,9 +82,9 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    qualities: [25, 50, 75, 85, 100],
+    qualities: [25, 50, 70, 75, 85, 100],
     dangerouslyAllowLocalIP: true, // Allow localhost images in development
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1600, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
       // Derived from SPREE_IMAGES_URL (if set) or SPREE_API_URL.

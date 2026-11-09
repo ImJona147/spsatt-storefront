@@ -16,6 +16,7 @@ import { useStore } from "@/contexts/StoreContext";
 import { useFormatMoney } from "@/hooks/useFormatMoney";
 import { trackQuickSearch, trackSelectItem } from "@/lib/analytics/gtm";
 import { type QuickSearchResults, quickSearch } from "@/lib/data/search";
+import { collectionName } from "@/lib/i18n/collection-labels";
 
 interface SearchBarProps {
   basePath: string;
@@ -69,6 +70,7 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
   const router = useRouter();
   const { currency } = useStore();
   const t = useTranslations("products");
+  const tc = useTranslations("collections");
   const formatMoney = useFormatMoney();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<QuickSearchResults>(EMPTY_RESULTS);
@@ -221,8 +223,8 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
           type="button"
           onClick={() => handleSuggestionClick(suggestion)}
           tabIndex={-1}
-          className={`w-full flex items-center gap-3 p-3 text-left hover:bg-gray-50 transition-colors ${
-            index === selectedIndex ? "bg-gray-50" : ""
+          className={`w-full flex items-center gap-3 p-3 text-left hover:bg-accent transition-colors ${
+            index === selectedIndex ? "bg-accent" : ""
           }`}
         >
           {content}
@@ -245,7 +247,7 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
         <li
           id={headingId}
           role="presentation"
-          className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-gray-500"
+          className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
         >
           {heading}
         </li>
@@ -260,12 +262,18 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
     results.sellers.length > 0;
 
   // Categories and collections share one row layout: thumbnail and name.
-  const renderGroupingOption = (s: Suggestion): React.JSX.Element =>
-    renderOption(
+  const renderGroupingOption = (s: Suggestion): React.JSX.Element => {
+    const name =
+      s.kind === "collection"
+        ? collectionName(tc, s.item)
+        : s.kind === "category"
+          ? s.item.name
+          : "";
+    return renderOption(
       s,
       s.kind === "category" || s.kind === "collection" ? (
         <>
-          <div className="relative w-8 h-8 bg-gray-100 rounded flex-shrink-0 overflow-hidden">
+          <div className="relative w-8 h-8 bg-muted rounded flex-shrink-0 overflow-hidden">
             <ProductImage
               src={s.item.square_image_url || s.item.image_url}
               alt=""
@@ -274,12 +282,11 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
               iconClassName="w-4 h-4"
             />
           </div>
-          <p className="text-sm font-medium text-gray-900 truncate">
-            {s.item.name}
-          </p>
+          <p className="text-sm font-medium text-foreground truncate">{name}</p>
         </>
       ) : null,
     );
+  };
 
   return (
     <div className="relative">
@@ -313,12 +320,12 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
       {/* Suggestions dropdown */}
       {showSuggestions && (
         <div
-          className="fixed left-0 right-0 mt-1 max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain bg-white border-b border-gray-200 z-50"
+          className="fixed left-0 right-0 mt-1 max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain bg-background border-b border-border z-50"
           onMouseDown={handleSuggestionsMouseDown}
         >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             {loading ? (
-              <div className="p-4 text-center text-gray-500 text-sm">
+              <div className="p-4 text-center text-muted-foreground text-sm">
                 {t("searching")}
               </div>
             ) : suggestions.length > 0 ? (
@@ -338,7 +345,7 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
                       s,
                       s.kind === "product" ? (
                         <>
-                          <div className="relative w-10 h-10 bg-gray-100 rounded flex-shrink-0 overflow-hidden">
+                          <div className="relative w-10 h-10 bg-muted rounded flex-shrink-0 overflow-hidden">
                             <ProductImage
                               src={s.item.thumbnail_url}
                               alt={s.item.name}
@@ -348,11 +355,11 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">
+                            <p className="text-sm font-medium text-foreground truncate">
                               {s.item.name}
                             </p>
                             {s.item.price?.amount && (
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-muted-foreground">
                                 {formatMoney(
                                   s.item.price.amount,
                                   s.item.price.currency,
@@ -382,7 +389,7 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
                           s,
                           s.kind === "seller" ? (
                             <>
-                              <div className="relative w-8 h-8 bg-gray-100 rounded-full flex-shrink-0 overflow-hidden">
+                              <div className="relative w-8 h-8 bg-muted rounded-full flex-shrink-0 overflow-hidden">
                                 <SellerImage
                                   src={
                                     s.item.square_logo_url || s.item.logo_url
@@ -394,7 +401,7 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
                                   iconClassName="w-4 h-4"
                                 />
                               </div>
-                              <p className="text-sm font-medium text-gray-900 truncate">
+                              <p className="text-sm font-medium text-foreground truncate">
                                 {s.item.name}
                               </p>
                             </>
@@ -406,11 +413,11 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
                 </div>
                 {/* The results page lists products only */}
                 {trimmedQuery && results.products.length > 0 && (
-                  <div className="border-t border-gray-100">
+                  <div className="border-t border-border">
                     <button
                       type="button"
                       onClick={viewAllResults}
-                      className="w-full p-3 text-sm text-primary hover:bg-gray-50 text-center font-medium"
+                      className="w-full p-3 text-sm text-primary hover:bg-accent text-center font-medium"
                     >
                       {t("viewAllResultsFor", { query: trimmedQuery })}
                     </button>
@@ -418,7 +425,7 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
                 )}
               </>
             ) : trimmedQuery.length >= 2 ? (
-              <div className="p-4 text-center text-gray-500 text-sm">
+              <div className="p-4 text-center text-muted-foreground text-sm">
                 {t("noSearchResults")}
               </div>
             ) : null}

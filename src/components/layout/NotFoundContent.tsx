@@ -15,11 +15,11 @@ export function NotFoundContent({
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-      <p className="text-sm font-semibold text-gray-500">404</p>
-      <h1 className="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">
+      <p className="text-sm font-semibold text-muted-foreground">404</p>
+      <h1 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">
         {t("title")}
       </h1>
-      <p className="mt-4 text-gray-600">{t("description")}</p>
+      <p className="mt-4 text-muted-foreground">{t("description")}</p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
         <Button asChild>
           <Link href={basePath}>{t("backHome")}</Link>

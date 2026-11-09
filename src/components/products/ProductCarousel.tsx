@@ -9,7 +9,7 @@ import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/autoplay";
 import "swiper/css/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ProductCard } from "@/components/products/ProductCard";
 
@@ -26,10 +26,13 @@ interface ProductCarouselProps {
    * the top of the page should, so several carousels don't compete.
    */
   prioritizeFirst?: boolean;
+  /** Use compact title and price spacing while preserving the portrait image. */
+  compactCards?: boolean;
 }
 
 const NAV_BUTTON_BASE =
-  "absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center cursor-pointer rounded-lg bg-card border border-border text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors";
+  "absolute z-10 size-11 flex items-center justify-center cursor-pointer rounded-lg bg-card border border-border text-foreground hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring transition-colors";
+const NAV_BUTTON_CENTER = "top-1/2 -translate-y-1/2";
 
 export function ProductCarousel({
   products,
@@ -38,22 +41,40 @@ export function ProductCarousel({
   listId = "featured-products",
   listName = "Featured Products",
   prioritizeFirst = true,
+  compactCards = false,
 }: ProductCarouselProps): ReactElement {
   const t = useTranslations("products");
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
-  const [autoplayOn, setAutoplayOn] = useState(true);
+  const [isLocked, setIsLocked] = useState(products.length <= 1);
+  const [swiper, setSwiper] = useState<Swiper | null>(null);
+  const [reducedMotion, setReducedMotion] = useState(true);
+  const [autoplayPaused, setAutoplayPaused] = useState(false);
+  const loop = products.length >= 8;
+  const rewind = compactCards && !loop;
+  const canWrap = loop || rewind;
 
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setAutoplayOn(!media.matches);
+    const sync = () => setReducedMotion(media.matches);
     sync();
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
   }, []);
+
+  useEffect(() => {
+    if (!swiper || swiper.destroyed) return;
+
+    if (reducedMotion || isLocked || autoplayPaused) {
+      if (swiper.autoplay.running) swiper.autoplay.stop();
+    } else if (!swiper.autoplay.running) {
+      swiper.autoplay.paused = false;
+      swiper.autoplay.start();
+    }
+  }, [swiper, reducedMotion, isLocked, autoplayPaused]);
 
   const handleBeforeInit = useCallback((swiper: Swiper) => {
     if (typeof swiper.params.navigation === "object") {
@@ -65,6 +86,7 @@ export function ProductCarousel({
   const updateNavState = useCallback((swiper: Swiper) => {
     setIsBeginning(swiper.isBeginning);
     setIsEnd(swiper.isEnd);
+    setIsLocked(swiper.isLocked);
   }, []);
 
   if (products.length === 0) {
@@ -75,14 +97,17 @@ export function ProductCarousel({
     );
   }
 
+  const hidePrev = isLocked || (!canWrap && isBeginning);
+  const hideNext = isLocked || (!canWrap && isEnd);
+
   return (
-    <div className="relative">
+    <div className="relative min-w-0">
       <button
         ref={prevRef}
         type="button"
         aria-label={t("carouselPrev")}
-        disabled={isBeginning}
-        className={`${NAV_BUTTON_BASE} -left-5 ${isBeginning ? "opacity-0" : ""}`}
+        disabled={hidePrev}
+        className={`${NAV_BUTTON_BASE} ${NAV_BUTTON_CENTER} ${compactCards ? "left-2" : "-left-5"} ${hidePrev ? "invisible" : ""}`}
       >
         <ChevronLeft className="w-5 h-5" />
       </button>
@@ -90,27 +115,25 @@ export function ProductCarousel({
         ref={nextRef}
         type="button"
         aria-label={t("carouselNext")}
-        disabled={isEnd}
-        className={`${NAV_BUTTON_BASE} -right-5 ${isEnd ? "opacity-0" : ""}`}
+        disabled={hideNext}
+        className={`${NAV_BUTTON_BASE} ${NAV_BUTTON_CENTER} ${compactCards ? "right-2" : "-right-5"} ${hideNext ? "invisible" : ""}`}
       >
         <ChevronRight className="w-5 h-5" />
       </button>
       <SwiperComponent
         modules={[Autoplay, Navigation]}
-        spaceBetween={24}
-        slidesPerView={1}
-        speed={600}
-        loop={products.length >= 8}
-        autoplay={
-          autoplayOn
-            ? {
-                delay: 5000,
-                pauseOnMouseEnter: true,
-                disableOnInteraction: false,
-              }
-            : false
-        }
+        spaceBetween={compactCards ? 8 : 24}
+        slidesPerView={compactCards ? 2 : 1}
+        speed={reducedMotion ? 0 : 600}
+        loop={loop}
+        rewind={rewind}
+        autoplay={{
+          delay: 5000,
+          pauseOnMouseEnter: true,
+          disableOnInteraction: false,
+        }}
         navigation={{
+          addIcons: false,
           prevEl: prevRef.current,
           nextEl: nextRef.current,
         }}
@@ -119,12 +142,15 @@ export function ProductCarousel({
         onReachBeginning={updateNavState}
         onReachEnd={updateNavState}
         onAfterInit={updateNavState}
+        onLock={updateNavState}
+        onUnlock={updateNavState}
+        onSwiper={setSwiper}
         breakpoints={{
-          640: { slidesPerView: 2, spaceBetween: 24 },
-          768: { slidesPerView: 3, spaceBetween: 24 },
-          1024: { slidesPerView: 4, spaceBetween: 24 },
+          640: { slidesPerView: 2, spaceBetween: compactCards ? 12 : 24 },
+          768: { slidesPerView: 3, spaceBetween: compactCards ? 12 : 24 },
+          1024: { slidesPerView: 4, spaceBetween: compactCards ? 16 : 24 },
         }}
-        className="product-carousel"
+        className={`product-carousel${compactCards ? " product-carousel-compact" : ""}`}
       >
         {products.map((product, index) => (
           <SwiperSlide key={product.id} className="p-1">
@@ -135,6 +161,7 @@ export function ProductCarousel({
               listId={listId}
               listName={listName}
               currency={currency}
+              compact={compactCards}
               fetchPriority={
                 prioritizeFirst && index === 0 ? "high" : undefined
               }
@@ -142,6 +169,20 @@ export function ProductCarousel({
           </SwiperSlide>
         ))}
       </SwiperComponent>
+      {compactCards && !isLocked && !reducedMotion && (
+        <button
+          type="button"
+          aria-label={t(autoplayPaused ? "carouselPlay" : "carouselPause")}
+          onClick={() => setAutoplayPaused((paused) => !paused)}
+          className={`${NAV_BUTTON_BASE} top-2 right-2`}
+        >
+          {autoplayPaused ? (
+            <Play aria-hidden size={16} />
+          ) : (
+            <Pause aria-hidden size={16} />
+          )}
+        </button>
+      )}
     </div>
   );
 }

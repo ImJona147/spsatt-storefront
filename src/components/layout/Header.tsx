@@ -73,14 +73,14 @@ export async function Header({
         <div className="hidden lg:flex lg:items-center lg:gap-1">
           <Link
             href={`${basePath}/collections`}
-            className="px-2 py-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors whitespace-nowrap"
+            className="px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
           >
             {t("collections")}
           </Link>
           {marketplaceEnabled && (
             <Link
               href={`${basePath}/sellers`}
-              className="px-2 py-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors whitespace-nowrap"
+              className="px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
             >
               {t("sellers")}
             </Link>

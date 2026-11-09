@@ -1,7 +1,8 @@
 import type { Collection, Product } from "@spree/sdk";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
 import { connection } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
 import { LazyProductCarousel } from "@/components/products/LazyProductCarousel";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import {
   cachedListCollectionProducts,
   getCollections,
 } from "@/lib/data/collections";
+import { collectionName } from "@/lib/i18n/collection-labels";
 import { getAccessToken } from "@/lib/spree";
 
 /** Collections promoted on the home page, in the merchant's order. */
@@ -18,7 +20,7 @@ const HOME_COLLECTION_LIMIT = 3;
 const HOME_COLLECTION_CANDIDATES = 12;
 /** Spare shelves loaded in case a collection has nothing sold in this market. */
 const HOME_COLLECTION_SPARES = 2;
-const PRODUCTS_PER_CAROUSEL = 8;
+const PRODUCTS_PER_SHELF = 8;
 
 interface CollectionCarouselsSectionProps {
   basePath: string;
@@ -63,24 +65,49 @@ export async function CollectionCarouselsSection({
     locale: locale as Locale,
     namespace: "home",
   });
+  const tc = await getTranslations({
+    locale: locale as Locale,
+    namespace: "collections",
+  });
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+    <div className="mx-auto w-full max-w-none space-y-6 px-2 pt-10 pb-6 sm:px-3 sm:pt-12 md:space-y-8 lg:px-4">
       {shelves.map(({ collection, products }, index) => {
         const headingId = `home-collection-${collection.id}`;
+        const name = collectionName(tc, collection);
         return (
           <section
             key={collection.id}
             aria-labelledby={headingId}
-            className="featured-products"
+            className="featured-products grid items-stretch gap-2 rounded-xl border border-border bg-card p-2 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-3 sm:p-3 lg:grid-cols-[9rem_minmax(0,1fr)]"
           >
-            <div className="flex items-center justify-between mb-8">
-              <h2 id={headingId} className="text-2xl font-bold text-gray-900">
-                {collection.name}
+            <div className="flex flex-col items-center justify-center border-b border-border px-2 pb-2 text-center sm:min-h-full sm:border-r sm:border-b-0 sm:pb-0 sm:pr-3">
+              <h2
+                id={headingId}
+                className="text-lg font-semibold tracking-tight text-foreground sm:text-xl"
+              >
+                {name}
               </h2>
-              <Button variant="link" asChild>
-                <Link href={`${basePath}/collections/${collection.permalink}`}>
-                  {t("viewAll")} &rarr;
+              <span className="mt-2 text-sm font-medium text-muted-foreground">
+                {t("collectionProductsCount", {
+                  count: collection.products_count,
+                })}
+              </span>
+              <Button
+                variant="link"
+                size="sm"
+                className="mt-1 h-8 px-0 text-xs"
+                asChild
+              >
+                <Link
+                  href={`${basePath}/collections/${collection.permalink}`}
+                  className="group"
+                >
+                  {t("viewAll")}
+                  <ArrowRight
+                    aria-hidden
+                    className="size-4 transition-transform group-hover:translate-x-0.5"
+                  />
                 </Link>
               </Button>
             </div>
@@ -89,8 +116,9 @@ export async function CollectionCarouselsSection({
               basePath={basePath}
               currency={currency}
               listId={`collection-${collection.id}`}
-              listName={`Collection: ${collection.name}`}
+              listName={`Collection: ${name}`}
               prioritizeFirst={index === 0}
+              compactCards
             />
           </section>
         );
@@ -111,7 +139,7 @@ async function loadShelves(
         {
           limit: HOME_COLLECTION_CANDIDATES,
           sort: "position",
-          fields: ["id", "name", "permalink", "products_count"],
+          fields: ["id", "name", "permalink", "products_count", "description"],
         },
         options,
       ),
@@ -124,7 +152,7 @@ async function loadShelves(
         .map(async (collection) => {
           const { data: products } = await cachedListCollectionProducts(
             collection.id,
-            { limit: PRODUCTS_PER_CAROUSEL, fields: PRODUCT_CARD_FIELDS },
+            { limit: PRODUCTS_PER_SHELF, fields: PRODUCT_CARD_FIELDS },
             options,
             userToken,
           );

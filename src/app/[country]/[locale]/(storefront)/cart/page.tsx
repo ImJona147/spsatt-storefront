@@ -100,7 +100,7 @@ export default function CartPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items */}
         <div className="lg:col-span-2">
-          <div className="bg-card rounded-xl border border-gray-200 divide-y">
+          <div className="bg-card rounded-xl border border-border divide-y">
             {cart.items.map((item) => (
               <div key={item.id} className="p-6 flex gap-6">
                 {/* Image */}
@@ -157,7 +157,7 @@ export default function CartPage() {
 
         {/* Order Summary */}
         <div className="lg:col-span-1">
-          <div className="bg-card rounded-xl border border-gray-200 p-6 sticky top-24">
+          <div className="bg-card rounded-xl border border-border p-6 sticky top-24">
             <h2 className="text-lg font-medium text-foreground">
               {tc("orderSummary")}
             </h2>

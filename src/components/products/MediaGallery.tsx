@@ -5,30 +5,29 @@ import { ZoomIn } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useCallback, useRef, useState } from "react";
-import { ProductImage } from "@/components/ui/product-image";
+import { BLUR_PLACEHOLDER, ProductImage } from "@/components/ui/product-image";
 
 const SWIPE_THRESHOLD_PX = 50;
 const SWIPE_MAX_VERTICAL_PX = 75;
 
-/** Tiny 10×10 neutral gray PNG used as a blur placeholder while images load. */
-const BLUR_PLACEHOLDER =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIElEQVQYV2P4////MwwMDAxMDAwMDGQJMJCvkGwNZCsEAGebBwVss9lRAAAAAElFTkSuQmCC";
-
 /** Lazy-loaded lightbox — only pulled into the bundle when a user zooms. */
-const LazyMediaLightbox = dynamic(
-  () =>
-    import("@/components/products/MediaLightbox").then((mod) => ({
-      default: mod.MediaLightbox,
-    })),
-  {
-    ssr: false,
-    // Minimal fullscreen overlay so the zoom click gives immediate
-    // feedback on slow networks while the chunk downloads.
-    loading: () => (
-      <div className="fixed inset-0 z-[100] bg-black/90" aria-hidden="true" />
-    ),
-  },
-);
+const loadMediaLightbox = () =>
+  import("@/components/products/MediaLightbox").then((mod) => ({
+    default: mod.MediaLightbox,
+  }));
+
+const LazyMediaLightbox = dynamic(loadMediaLightbox, {
+  ssr: false,
+  // Minimal fullscreen overlay so the zoom click gives immediate
+  // feedback on slow networks while the chunk downloads.
+  loading: () => (
+    <div
+      data-state="open"
+      className="media-lightbox fixed inset-0 z-[100] bg-background"
+      aria-hidden="true"
+    />
+  ),
+});
 
 interface MediaGalleryProps {
   images: Media[];
@@ -160,7 +159,7 @@ function MediaGalleryInner({
   );
 
   return (
-    <div className="flex flex-col-reverse gap-3 lg:flex-row lg:items-start lg:gap-4">
+    <div className="flex flex-col-reverse items-center gap-3 lg:flex-row lg:items-start lg:justify-center lg:gap-4">
       {/* Thumbnail rail: horizontal strip on mobile, vertical column on desktop */}
       {images.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:pb-0 lg:overflow-visible">
@@ -170,10 +169,12 @@ function MediaGalleryInner({
 
       {/* Main image, framed on a washed surface so it reads as an object,
           not a banner swallowing the column */}
-      <div className="relative min-w-0 flex-1">
+      <div className="relative mx-auto min-w-0 w-[min(82%,32rem)] flex-none lg:mx-0 lg:w-[min(calc(100%-5.5rem),32rem)]">
         <button
           type="button"
-          className="relative aspect-square bg-transparent border-0 overflow-hidden cursor-zoom-in w-full touch-pan-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="relative aspect-square w-full overflow-hidden rounded-xl border-0 bg-muted/40 cursor-zoom-in touch-pan-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          onPointerEnter={() => void loadMediaLightbox()}
+          onFocus={() => void loadMediaLightbox()}
           onClick={() => {
             if (suppressClickRef.current) {
               suppressClickRef.current = false;
@@ -196,7 +197,7 @@ function MediaGalleryInner({
             loading="eager"
             priority
             quality={85}
-            sizes="(max-width: 1024px) 100vw, 40vw"
+            sizes="(max-width: 640px) 82vw, (max-width: 1024px) 32rem, 32rem"
             placeholder="blur"
             blurDataURL={BLUR_PLACEHOLDER}
             iconClassName="w-24 h-24"

@@ -3,6 +3,10 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { cachedGetCollection } from "@/lib/data/collections";
 import {
+  collectionName,
+  translatedCollectionDescription,
+} from "@/lib/i18n/collection-labels";
+import {
   buildLocalizedAlternates,
   translationFingerprint,
 } from "@/lib/metadata/alternates";
@@ -26,11 +30,14 @@ export async function generateCollectionMetadata({
   const collection = await cachedGetCollection(permalink, { country, locale });
   if (!collection) return { title: t("collectionNotFound") };
 
-  const title = collection.meta_title || collection.name;
+  const displayName = collectionName(t, collection);
+  const translatedDescription = translatedCollectionDescription(t, collection);
+  const title = collection.meta_title || displayName;
   const description =
     collection.meta_description ||
+    translatedDescription?.slice(0, 160) ||
     collection.description?.slice(0, 160) ||
-    t("metaDescription", { name: collection.name });
+    t("metaDescription", { name: displayName });
   const image = collection.image_url;
 
   // Permalinks are translatable, so each locale's alternate is resolved from
@@ -75,7 +82,7 @@ export async function generateCollectionMetadata({
       description,
       ...(localizedAlternates ? { url: localizedAlternates.canonical } : {}),
       type: "website",
-      ...(image ? { images: [{ url: image, alt: collection.name }] } : {}),
+      ...(image ? { images: [{ url: image, alt: displayName }] } : {}),
     },
     twitter: {
       card: image ? "summary_large_image" : "summary",

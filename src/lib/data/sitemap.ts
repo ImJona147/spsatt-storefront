@@ -1,8 +1,8 @@
 "use server";
 
-import { getClient } from "@/lib/spree";
 import type { Category, Collection, Media, Product, Seller } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
+import { getClient } from "@/lib/spree";
 
 interface LocaleOptions {
   locale: string;

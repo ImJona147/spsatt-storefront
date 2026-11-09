@@ -13,6 +13,9 @@ import { ProductCarouselSkeleton } from "@/components/products/LazyProductCarous
 import { resolveCurrency } from "@/lib/data/markets";
 import { generateHomeMetadata } from "@/lib/metadata/home";
 
+// Next.js 16.4.1 reports an invariant while validating the streamed home page.
+export const instant = false;
+
 interface HomePageProps {
   params: Promise<{
     country: string;
@@ -35,7 +38,13 @@ export default async function HomePage({ params }: HomePageProps) {
   return (
     <div>
       <HeroSection basePath={basePath} locale={locale} />
-      <ClientsSection locale={locale} />
+      <Suspense
+        fallback={
+          <div aria-hidden className="h-22 border-y border-border bg-card" />
+        }
+      >
+        <ClientsSection locale={locale} />
+      </Suspense>
       <Suspense
         fallback={
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">

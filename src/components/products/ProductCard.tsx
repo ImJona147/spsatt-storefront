@@ -20,6 +20,8 @@ interface ProductCardProps {
   fetchPriority?: "high" | "low" | "auto";
   /** Optional currency used for analytics; omit to skip the select_item event. */
   currency?: string;
+  /** Denser product presentation for homepage collection shelves. */
+  compact?: boolean;
 }
 
 export const ProductCard = memo(function ProductCard({
@@ -31,6 +33,7 @@ export const ProductCard = memo(function ProductCard({
   listName,
   fetchPriority,
   currency,
+  compact = false,
 }: ProductCardProps) {
   const t = useTranslations("products");
   const imageUrl = product.thumbnail_url || null;
@@ -56,13 +59,13 @@ export const ProductCard = memo(function ProductCard({
   return (
     <div className="group relative">
       {/* Image */}
-      <div className="relative aspect-[10/13] bg-muted rounded-md overflow-hidden">
+      <div className="relative aspect-[10/13] overflow-hidden rounded-md bg-muted">
         <ProductImage
           src={imageUrl}
           alt={product.name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 300px"
+          className="object-cover transition-transform duration-200 ease-out group-hover:scale-[1.025] motion-reduce:transition-none"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
           iconClassName="w-16 h-16"
           fetchPriority={fetchPriority}
         />
@@ -74,8 +77,10 @@ export const ProductCard = memo(function ProductCard({
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
+      <div className={compact ? "p-2" : "p-4"}>
+        <h3
+          className={`${compact ? "text-xs" : "text-sm"} font-medium text-foreground transition-colors group-hover:text-primary line-clamp-2`}
+        >
           {/* Stretched link: the ::after overlay keeps the whole card clickable
               without wrapping the content in an <a> — HiddenPricePrompt renders
               its own link, and anchors can't nest. */}
@@ -88,9 +93,13 @@ export const ProductCard = memo(function ProductCard({
           </Link>
         </h3>
 
-        <div className="mt-2 flex items-center gap-2">
+        <div
+          className={`${compact ? "mt-1 flex-wrap gap-x-2 gap-y-0.5" : "mt-2 gap-2"} flex items-center`}
+        >
           {displayPrice ? (
-            <span className="text-lg font-semibold text-foreground">
+            <span
+              className={`${compact ? "text-sm" : "text-lg"} font-semibold text-foreground`}
+            >
               {displayPrice}
             </span>
           ) : (
@@ -99,7 +108,9 @@ export const ProductCard = memo(function ProductCard({
             <HiddenPricePrompt />
           )}
           {onSale && strikethroughPrice && (
-            <span className="text-sm text-muted-foreground line-through">
+            <span
+              className={`${compact ? "text-xs" : "text-sm"} text-muted-foreground line-through`}
+            >
               {strikethroughPrice}
             </span>
           )}

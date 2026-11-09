@@ -7,11 +7,14 @@ import type * as React from "react";
  */
 export function ProductCardSkeleton(): React.JSX.Element {
   return (
-    <div className="animate-pulse">
-      <div className="aspect-[10/13] bg-muted rounded-md" />
+    <div
+      aria-hidden="true"
+      className="animate-pulse motion-reduce:animate-none"
+    >
+      <div className="aspect-[10/13] overflow-hidden rounded-md bg-muted/70" />
       <div className="p-4">
-        <div className="h-4 bg-muted rounded w-3/4 mb-2" />
-        <div className="h-5 bg-muted rounded w-1/4" />
+        <div className="mb-2 h-4 w-3/4 rounded-sm bg-muted" />
+        <div className="h-5 w-1/4 rounded-sm bg-muted" />
       </div>
     </div>
   );

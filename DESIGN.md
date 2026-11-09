@@ -15,7 +15,7 @@ colors:
   foreground-dark: "oklch(0.9842 0.0034 247.8575)"
 typography:
   display:
-    fontFamily: "Fraunces, Georgia, serif"
+    fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "clamp(2.25rem, 4.5vw, 3.25rem)"
     fontWeight: 600
     lineHeight: 1.1
@@ -79,7 +79,7 @@ components:
 
 La promesa de SPSATT es que una idea se vuelve una pieza física. El sistema la traduce con el tema shadcn comprometido de `IMPORTANTE.MD`: un azul profundo (primary) para acciones y superficies de marca, y neutros claros u oscuros que el modo oscuro resuelve solo.
 
-La voz tipográfica nace de la portada de Facebook real de SPSATT: titulares en serif itálica que llevan el eslogan "Donde las ideas se hacen realidad", apoyados por Inter, que hace el trabajo diario de comercio: precios, formularios, navegación. La personalidad de los componentes es robusta y segura: superficies sólidas, esquinas suaves, bordes finos, sin fragilidad.
+La tipografía usa Inter de forma consistente: limpia en titulares, especificaciones y controles. El peso y el tamaño marcan la jerarquía sin depender de una serif o de cursivas. La personalidad de los componentes es robusta y segura: superficies sólidas, esquinas suaves, bordes finos, sin fragilidad.
 
 El oro de la identidad (degradado #FFF0B8 a #E9C35A a #B8861F) se revocó para UI por decisión del usuario: queda solo en el arte del logotipo y en la portada original, nunca en botones, acentos ni ornamentos.
 
@@ -90,7 +90,7 @@ Dial: ENERGY 2 / RHYTHM 2 / MOTION 1
 **Key Characteristics:**
 
 - Primary del tema `IMPORTANTE.MD` como color de acción y superficie de marca; el verde de disponibilidad es el único acento semántico extra.
-- Serif itálica (Fraunces) para display y eslogan; Inter para todo lo transaccional.
+- Inter para titulares, navegación y contenido de producto; peso y escala marcan la jerarquía.
 - Componentes robustos: relleno generoso, bordes finos, radio suave y constante.
 - Profundidad por capas sutiles: tono sobre tono, sombra mínima, elevación en hover.
 - Todo color sale de tokens semánticos shadcn: nada de `bg-white` ni `text-gray-*` en componentes.
@@ -127,15 +127,13 @@ La paleta es azul de marca sobre neutros claros u oscuros, más un verde semánt
 
 ## Typography
 
-**Display Font:** Fraunces (con fallback Georgia, serif)
-**Body Font:** Inter (con fallback system-ui, sans-serif)
-**Label Font:** Inter (mismas familias, en mayúsculas con tracking)
+**Display, Body y Label:** Inter (con fallback system-ui, sans-serif)
 
-**Character:** La serif itálica de Fraunces es la voz de la marca (titulares y eslogan, con carácter de portada impresa); Inter es la voz de la tienda (legible en español, densa en datos, sin discusiones). Motivo de elección: Fraunces tiene itálica real y variable (opsz) que rinde bien en web sin pesar; Inter está fijada en el tema comprometido de `IMPORTANTE.MD` y es legible a tamaños de UI.
+**Character:** Inter mantiene una lectura limpia en español y en especificaciones densas. La tienda usa una sola familia tipográfica; los titulares se distinguen por tamaño, peso y espaciado.
 
 ### Hierarchy
 
-- **Display** (600, clamp(2.25rem, 4.5vw, 3.25rem), 1.1): titulares de hero y categoría. En itálica (500-600 italic) cuando lleva el eslogan "Donde las ideas se hacen realidad".
+- **Display** (600, clamp(2.25rem, 4.5vw, 3.25rem), 1.1): titulares de hero y categoría, en Inter recta.
 - **Headline** (600, 1.75rem, 1.2): títulos de sección.
 - **Title** (600, 1.125rem, 1.3): títulos de tarjeta y producto.
 - **Body** (400, 1rem, 1.5): descripciones, copy de formulario, listas. Medida máxima de lectura 65-75ch.
@@ -143,7 +141,7 @@ La paleta es azul de marca sobre neutros claros u oscuros, más un verde semánt
 
 ### Named Rules
 
-**The Italic Tagline Rule.** El eslogan en serif itálica aparece una sola vez por pantalla, en el hero o su equivalente. Si está en todos lados, no es una voz, es un patrón.
+**The Straight Type Rule.** La UI usa Inter recta en todas las superficies; no aplica una familia display separada ni cursivas decorativas.
 
 ## Layout
 
@@ -205,12 +203,12 @@ Radio base 0.6rem (tema `--radius`), escala: 0.2rem (sm), 0.4rem (md), 0.6rem (l
 ### Auth Split (login / registro / olvido / restablecer)
 
 - Layout de dos columnas en desktop (`md:grid-cols-2`, `max-w-5xl`, `min-h-[60svh]`, centrado vertical). Formulario `max-w-md` a la izquierda; ilustración a la derecha con glow `bg-primary/10 blur-3xl`, oculta en móvil (`hidden md:flex`, `aria-hidden`).
-- **H1:** Fraunces (`font-display`), `text-3xl sm:text-4xl`, `font-semibold tracking-tight`, color `--foreground`.
+- **H1:** Inter (`font-display`), `text-3xl sm:text-4xl`, `font-semibold tracking-tight`, color `--foreground`.
 - **Lead:** una sola línea de `text-sm sm:text-base` en `--muted-foreground`, `mt-2.5`, copy específico de la acción (no genérico tipo "Bienvenido").
 - **Ritmo compacto** para laptops 1366×768: contenedor `py-6 sm:py-8`, formulario `mt-5 space-y-3`, sin doble margen (el `Field` ya aplica `gap-2`).
 - **Campos:** labels `FieldLabel`, placeholders reales del mercado (`gerencia@tuempresa.mx`, `Laura`, `Hernández`), no `you@example.com`. Eye toggle con `aria-label` Mostrar/Ocultar contraseña.
 - **Checklist de contraseña** (registro y restablecer): 5 reglas en vivo bajo el campo, check `--primary` al cumplir, círculo `--muted-foreground` pendiente; botón deshabilitado hasta reglas + coincidencia. Indicador de coincidencia con `aria-live`.
-- **Estados de resultado** (éxito o enlace inválido) viven en la misma grilla Auth Split: icono en `bg-primary/10 text-primary` (nunca verde fijo), título Fraunces, cuerpo muted, acción outline o primary y link de vuelta. Sin card centrada suelta.
+- **Estados de resultado** (éxito o enlace inválido) viven en la misma grilla Auth Split: icono en `bg-primary/10 text-primary` (nunca verde fijo), título Inter, cuerpo muted, acción outline o primary y link de vuelta. Sin card centrada suelta.
 - **Ilustraciones:** login y restablecer usan `login.svg` (llave/monitor); registro `register.svg`; olvido `questions.svg`. Siempre `text-primary` + glow, sin fondos fijos que rompan dark.
 - Tokens shadcn en cada estado; nada de `green-100`, `gray-*` ni `bg-white`.
 
@@ -220,7 +218,7 @@ Radio base 0.6rem (tema `--radius`), escala: 0.2rem (sm), 0.4rem (md), 0.6rem (l
 
 - **Do** usar los tokens semánticos shadcn (background, foreground, primary, muted, border) en todo componente; el modo oscuro se resuelve solo.
 - **Do** usar el botón primary (bg-primary con texto primary-foreground) para la acción principal de la pantalla.
-- **Do** usar Fraunces en itálica una sola vez por pantalla, para el eslogan o el titular de mayor peso emocional.
+- **Do** usar Inter recta en toda la tienda y diferenciar titulares por escala y peso.
 - **Do** resolver profundidad con tono y borde de 1px; sombra solo en hover, drawer o diálogo.
 - **Do** mantener el toggle claro/oscuro en el topbar, junto a región, búsqueda y cuenta.
 - **Do** verificar contraste AA en cada modo (texto sobre primary siempre en primary-foreground).

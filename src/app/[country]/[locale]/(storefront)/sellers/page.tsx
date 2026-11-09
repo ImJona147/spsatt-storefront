@@ -103,13 +103,13 @@ export default async function SellersPage({
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{t("title")}</h1>
-        <p className="mt-2 text-gray-500">{t("subtitle")}</p>
+        <h1 className="text-3xl font-bold text-foreground">{t("title")}</h1>
+        <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
       </div>
 
       {sellers.length > 0 ? (
         <>
-          <p className="mb-4 text-sm text-gray-500">
+          <p className="mb-4 text-sm text-muted-foreground">
             {t("sellerCount", { count })}
           </p>
           <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -128,25 +128,25 @@ export default async function SellersPage({
           {pages > 1 && (
             <nav
               aria-label={t("pagination")}
-              className="mt-10 flex items-center justify-between border-t border-gray-200 pt-6 text-sm"
+              className="mt-10 flex items-center justify-between border-t border-border pt-6 text-sm"
             >
               {page > 1 ? (
                 <Link
                   href={pageHref(page - 1)}
-                  className="font-medium text-gray-900 hover:underline"
+                  className="font-medium text-foreground hover:underline"
                 >
                   &larr; {t("previous")}
                 </Link>
               ) : (
                 <span />
               )}
-              <span className="text-gray-500">
+              <span className="text-muted-foreground">
                 {t("pageOf", { page, pages })}
               </span>
               {page < pages ? (
                 <Link
                   href={pageHref(page + 1)}
-                  className="font-medium text-gray-900 hover:underline"
+                  className="font-medium text-foreground hover:underline"
                 >
                   {t("next")} &rarr;
                 </Link>
@@ -159,22 +159,22 @@ export default async function SellersPage({
       ) : count > 0 ? (
         // Sellers exist, but the requested page is past the last one.
         <div className="py-16 text-center">
-          <h2 className="text-lg font-medium text-gray-900">
+          <h2 className="text-lg font-medium text-foreground">
             {t("pageOutOfRange", { page })}
           </h2>
           <Link
             href={pageHref(1)}
-            className="mt-2 inline-block text-sm font-medium text-gray-900 hover:underline"
+            className="mt-2 inline-block text-sm font-medium text-foreground hover:underline"
           >
             {t("backToFirstPage")}
           </Link>
         </div>
       ) : (
         <div className="py-16 text-center">
-          <h2 className="text-lg font-medium text-gray-900">
+          <h2 className="text-lg font-medium text-foreground">
             {t("noSellers")}
           </h2>
-          <p className="mt-2 text-gray-500">{t("noSellersHint")}</p>
+          <p className="mt-2 text-muted-foreground">{t("noSellersHint")}</p>
         </div>
       )}
     </div>

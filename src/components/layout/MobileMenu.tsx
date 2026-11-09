@@ -15,6 +15,7 @@ import {
   SheetFooter,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { collectionName } from "@/lib/i18n/collection-labels";
 
 type PanelType =
   | { kind: "main" }
@@ -42,6 +43,7 @@ export function MobileMenu({
   marketplaceEnabled = false,
 }: MobileMenuProps) {
   const t = useTranslations("header");
+  const tc = useTranslations("collections");
   const [open, setOpen] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [panelStack, setPanelStack] = useState<PanelType[]>([{ kind: "main" }]);
@@ -236,7 +238,7 @@ export function MobileMenu({
                   className={categoryButtonClass}
                 >
                   <span>{t("collections")}</span>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </button>
               ) : (
                 <Link
@@ -358,7 +360,7 @@ export function MobileMenu({
                           onClick={() => handleOpenChange(false)}
                           className={linkClass}
                         >
-                          {collection.name}
+                          {collectionName(tc, collection)}
                         </Link>
                       ))
                     : panel.category.children?.map((child) =>

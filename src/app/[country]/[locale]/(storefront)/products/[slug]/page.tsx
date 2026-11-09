@@ -5,12 +5,14 @@ import { Suspense } from "react";
 import { FetchErrorState } from "@/components/errors/FetchErrorState";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { SignalNotFound } from "@/components/not-found/SignalNotFound";
+import { RelatedProductsSection } from "@/components/products/RelatedProductsSection";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   getCachedProduct,
   MARKETPLACE_PRODUCT_PAGE_EXPAND,
   PRODUCT_PAGE_EXPAND,
 } from "@/lib/data/cached";
+import { resolveCurrency } from "@/lib/data/markets";
 import { generateProductMetadata } from "@/lib/metadata/product";
 import {
   buildBreadcrumbJsonLd,
@@ -94,6 +96,7 @@ export default async function ProductPage({
     product.categories || [],
     category_id,
   );
+  const currency = await resolveCurrency(country);
 
   // The client component needs only the seller's name and slug; leaving the
   // expanded record on the product would serialize all of it to the browser.
@@ -125,8 +128,18 @@ export default async function ProductPage({
       <ProductDetails
         product={clientProduct}
         basePath={basePath}
+        locale={locale}
         category={breadcrumbCategory}
         seller={seller ? { name: seller.name, slug: seller.slug } : null}
+      />
+      <RelatedProductsSection
+        categoryId={breadcrumbCategory?.id}
+        categoryPermalink={breadcrumbCategory?.permalink}
+        categoryName={breadcrumbCategory?.name}
+        basePath={basePath}
+        locale={locale}
+        currentProductId={product.id}
+        currency={currency}
       />
     </>
   );

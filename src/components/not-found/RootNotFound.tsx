@@ -1,6 +1,6 @@
 "use client";
 
-import { Fraunces, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import { usePathname } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import "../../app/globals.css";
@@ -22,18 +22,6 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
 });
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  display: "swap",
-});
-const frauncesItalic = Fraunces({
-  variable: "--font-fraunces-italic",
-  subsets: ["latin"],
-  display: "swap",
-  style: "italic",
-});
-
 const MESSAGES = { de, en, es, fr, pl } as const;
 
 /**
@@ -50,7 +38,7 @@ export function RootNotFound() {
 
   return (
     <div
-      className={`${inter.variable} ${fraunces.variable} ${frauncesItalic.variable} flex min-h-screen flex-col bg-background font-sans text-foreground antialiased`}
+      className={`${inter.variable} flex min-h-screen flex-col bg-background font-sans text-foreground antialiased`}
     >
       <NextIntlClientProvider
         locale={locale}

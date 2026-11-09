@@ -24,6 +24,7 @@ interface ProductDetailsProps {
   product: Product;
   basePath: string;
   category?: Category;
+  locale?: string;
   /** Marketplace seller to credit under the title; omit to hide the line. */
   seller?: Pick<Seller, "name" | "slug"> | null;
 }
@@ -32,6 +33,7 @@ export function ProductDetails({
   product,
   basePath,
   category,
+  locale = "es",
   seller,
 }: ProductDetailsProps) {
   const { addItem } = useCart();
@@ -176,7 +178,7 @@ export function ProductDetails({
             {category && (
               <Link
                 href={`${basePath}/c/${category.permalink}`}
-                className="mb-3 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-primary transition-colors hover:text-primary/70 dark:text-[oklch(0.64_0.14_270)]"
+                className="mb-3 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-primary transition-colors hover:text-primary/80"
               >
                 <span aria-hidden className="h-px w-8 bg-primary" />
                 {category.name}

@@ -110,6 +110,7 @@
     "wholesaleBenefitOrdersTitle": "Bestellverlauf",
     "wholesaleBenefitOrdersDescription": "Sehen Sie vergangene Bestellungen ein und bestellen Sie Ihre Standardartikel mit wenigen Klicks nach.",
     "heroEyebrow": "Werbelösungen aus San Andrés Tuxtla",
+    "collectionProductsCount": "{count} Produkte",
     "heroTitle": "Werbung, die Ihr Unternehmen sichtbar macht.",
     "heroCtaCatalog": "Katalog ansehen",
     "heroCtaQuote": "Angebot anfordern",
@@ -237,10 +238,14 @@
     "noProductsMatchingFilters": "Keine Produkte gefunden, die Ihren Filtern entsprechen.",
     "carouselPrev": "Vorherige Produkte",
     "carouselNext": "Nächste Produkte",
+    "carouselPause": "Karussell pausieren",
+    "carouselPlay": "Karussell fortsetzen",
     "lightboxClose": "Lightbox schließen",
     "lightboxPrev": "Vorheriges Bild",
     "lightboxNext": "Nächstes Bild",
     "subcategoriesHeading": "Unterkategorien",
+    "relatedProducts": "Das könnte Ihnen auch gefallen",
+    "viewCategory": "Kategorie ansehen",
     "sort": "Sortieren",
     "clearAll": "Alle löschen",
     "clearAllFiltersCount": "Alle Filter löschen ({count})",
@@ -803,7 +808,17 @@
     "pageOf": "Seite {page} von {pages}",
     "pagination": "Seitennavigation der Kollektionen",
     "pageOutOfRange": "Seite {page} gibt es nicht.",
-    "backToFirstPage": "Zur ersten Seite"
+    "backToFirstPage": "Zur ersten Seite",
+    "names": {
+      "new-arrivals": "Neuheiten",
+      "on-sale": "Im Angebot",
+      "best-sellers": "Bestseller"
+    },
+    "descriptions": {
+      "new-arrivals": "Die neuesten Stücke im Shop.",
+      "on-sale": "Aktuelle Angebote aus dem Katalog.",
+      "best-sellers": "Die beliebtesten Stücke unserer Kundschaft."
+    }
   },
   "sellers": {
     "title": "Verkäufer",
