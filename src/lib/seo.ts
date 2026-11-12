@@ -40,6 +40,10 @@ export function buildProductJsonLd(
     "@type": "Product",
     name: product.name,
     url: canonicalUrl,
+    brand: {
+      "@type": "Brand",
+      name: getStoreName(),
+    },
   };
 
   if (product.description) {
@@ -161,7 +165,7 @@ export function buildOrganizationJsonLd(): Record<string, unknown> {
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "C. Independencia 245, Centro",
+      streetAddress: "C. Independencia 246, Centro",
       addressLocality: "San Andrés Tuxtla",
       addressRegion: "Veracruz",
       postalCode: "95780",

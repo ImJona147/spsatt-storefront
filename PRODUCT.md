@@ -21,7 +21,7 @@ Fabricación propia con amplia cobertura de materiales y tecnología: reconocimi
 ## Operating Context
 
 - Mercado/región: México (`NEXT_PUBLIC_DEFAULT_COUNTRY=mx`), sitio `https://spsatt.com.mx`.
-- Local físico y contacto: C. Independencia 245, Centro, 95780 San Andrés Tuxtla, Ver. Teléfono/canal de cotización (confirmado: es el canal de cotizaciones, confirmar si es WhatsApp en implementación): 294 942 3064. Horario: lunes a viernes 9 a.m.–2 p.m. y 4–8 p.m.; sábado 9 a.m.–5 p.m.; domingo cerrado.
+- Local físico y contacto: C. Independencia 246, Centro, 95780 San Andrés Tuxtla, Ver. Teléfono/canal de cotización (confirmado: es el canal de cotizaciones, confirmar si es WhatsApp en implementación): 294 942 3064. Horario: lunes a viernes 9 a.m.–2 p.m. y 4–8 p.m.; sábado 9 a.m.–5 p.m.; domingo cerrado.
 - Backend/headless: Spree Commerce API en `https://dash.spsatt.com.mx` (`@spree/sdk`); catálogo, categorías, políticas y stock viven allí, no en este repo.
 - Moneda: resuelta por país desde la API de Spree Markets (`resolveCurrency`); fallback del cliente `USD`.
 - Idiomas: 5 paquetes i18n (`es`, `en`, `de`, `fr`, `pl`); el runtime usa `es` por defecto (`NEXT_PUBLIC_DEFAULT_LOCALE=es`). La comunicación con el cliente del proyecto es siempre en español.

@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
-import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
 import { LazyProductCarousel } from "@/components/products/LazyProductCarousel";
 import { Button } from "@/components/ui/button";
 import { PRODUCT_CARD_FIELDS } from "@/lib/data/cached";
@@ -35,30 +34,24 @@ interface CollectionShelf {
 }
 
 /**
- * The home page's product shelves: one carousel per collection. Falls back to
- * the generic Featured Products carousel when the store has no collection
- * with products to show, or collections fail to load.
+ * The home page's product shelves: one carousel per collection. Renders
+ * nothing when the store has no collection with products, or when
+ * collections fail to load.
  */
 export async function CollectionCarouselsSection({
   basePath,
   locale,
   country,
   currency,
-}: CollectionCarouselsSectionProps): Promise<React.JSX.Element> {
+}: CollectionCarouselsSectionProps): Promise<React.JSX.Element | null> {
   // The shelves read the session token to price B2B catalogs, so this boundary
   // is dynamic: without this, prerendering calls cookies() after the static
-  // shell is done and the section falls back for no reason.
+  // shell is done and the section renders nothing for no reason.
   await connection();
   const shelves = await loadShelves(locale, country);
 
   if (shelves.length === 0) {
-    return (
-      <FeaturedProductsSection
-        basePath={basePath}
-        locale={locale}
-        country={country}
-      />
-    );
+    return null;
   }
 
   const t = await getTranslations({
