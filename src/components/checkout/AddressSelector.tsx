@@ -187,7 +187,7 @@ export function AddressSelector({
               <div key={group.key}>
                 {showHeading && (
                   <p
-                    className={`px-4 py-2 bg-gray-50 text-xs font-medium uppercase tracking-wide text-gray-500 ${
+                    className={`px-4 py-2 bg-muted text-xs font-medium uppercase tracking-wide text-muted-foreground ${
                       groupIndex > 0 ? "border-t" : ""
                     }`}
                   >
@@ -209,8 +209,8 @@ export function AddressSelector({
                       key={address.id}
                       className={`flex items-start gap-3 px-4 py-3.5 cursor-pointer transition-colors ${
                         selectedAddressId === address.id
-                          ? "bg-blue-50"
-                          : "bg-white hover:bg-gray-50"
+                          ? "bg-primary/10"
+                          : "bg-card hover:bg-muted"
                       } ${groupIndex > 0 || index > 0 ? "border-t" : ""}`}
                     >
                       <RadioGroupItem
@@ -224,15 +224,15 @@ export function AddressSelector({
                         heading above, so without this two warehouses differ
                         only by their street. */}
                         {address.label && (
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-sm font-medium text-foreground">
                             {address.label}
                           </p>
                         )}
                         {(address.full_name || company) && (
-                          <span className="text-sm text-gray-900">
+                          <span className="text-sm text-foreground">
                             {address.full_name}
                             {company && (
-                              <span className="text-gray-500">
+                              <span className="text-muted-foreground">
                                 {address.full_name ? ", " : ""}
                                 {company}
                               </span>
@@ -243,7 +243,7 @@ export function AddressSelector({
                         company site names no person, and plenty of countries
                         have no subdivision, so interleaving separators by hand
                         leaves stray commas and double spaces. */}
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {[
                             address.address1,
                             address.address2,
@@ -267,7 +267,7 @@ export function AddressSelector({
                             e.preventDefault();
                             onEditAddress(address);
                           }}
-                          className="text-xs text-gray-500 underline underline-offset-2 hover:text-gray-900 flex-shrink-0"
+                          className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground flex-shrink-0"
                         >
                           {tc("edit")}
                         </button>
@@ -283,13 +283,16 @@ export function AddressSelector({
           <label
             className={`flex items-center gap-3 px-4 py-3.5 cursor-pointer border-t transition-colors ${
               selectedAddressId === "new"
-                ? "bg-blue-50"
-                : "bg-white hover:bg-gray-50"
+                ? "bg-primary/10"
+                : "bg-card hover:bg-muted"
             }`}
           >
             <RadioGroupItem value="new" />
-            <MapPin className="w-5 h-5 text-gray-400" strokeWidth={1.5} />
-            <span className="text-sm text-gray-900">
+            <MapPin
+              className="w-5 h-5 text-muted-foreground"
+              strokeWidth={1.5}
+            />
+            <span className="text-sm text-foreground">
               {t("useDifferentAddress")}
             </span>
           </label>

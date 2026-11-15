@@ -104,13 +104,13 @@ export function CouponCode({
           {couponPromotions.map((promotion) => (
             <div
               key={promotion.id}
-              className="flex items-center justify-between rounded-sm border border-gray-200 bg-gray-50 px-3 py-2"
+              className="flex items-center justify-between rounded-sm border border-border bg-muted px-3 py-2"
             >
               <div className="flex items-center gap-2 text-sm">
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-foreground">
                   {promotion.code || promotion.name}
                 </span>
-                <span className="text-gray-500">
+                <span className="text-muted-foreground">
                   {formatMoney(promotion.amount, cart.currency)}
                 </span>
               </div>
@@ -121,7 +121,7 @@ export function CouponCode({
                   aria-label={t("removeCoupon", {
                     code: promotion.code || promotion.name,
                   })}
-                  className="text-gray-400 hover:text-gray-600 cursor-pointer p-0.5"
+                  className="text-muted-foreground hover:text-muted-foreground cursor-pointer p-0.5"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -134,12 +134,12 @@ export function CouponCode({
       {/* Applied gift card */}
       {appliedGiftCard && (
         <div className="space-y-2 mb-3">
-          <div className="flex items-center justify-between rounded-sm border border-gray-200 bg-gray-50 px-3 py-2">
+          <div className="flex items-center justify-between rounded-sm border border-border bg-muted px-3 py-2">
             <div className="flex items-center gap-2 text-sm">
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-foreground">
                 {t("giftCardCode", { code: appliedGiftCard.code })}
               </span>
-              <span className="text-gray-500">
+              <span className="text-muted-foreground">
                 -{formatMoney(cart.gift_card_total, cart.currency)}
               </span>
             </div>
@@ -147,7 +147,7 @@ export function CouponCode({
               onClick={handleRemoveGiftCard}
               disabled={removing === appliedGiftCard.id}
               aria-label={t("removeGiftCard")}
-              className="text-gray-400 hover:text-gray-600 cursor-pointer p-0.5"
+              className="text-muted-foreground hover:text-muted-foreground cursor-pointer p-0.5"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -176,7 +176,7 @@ export function CouponCode({
         </form>
       )}
 
-      {error && <p className="text-xs text-red-600 mt-1.5">{error}</p>}
+      {error && <p className="text-xs text-destructive mt-1.5">{error}</p>}
     </div>
   );
 }

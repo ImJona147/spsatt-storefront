@@ -46,27 +46,27 @@ export function useCheckout() {
 
 function CheckoutSummarySkeleton() {
   return (
-    <div className="animate-pulse space-y-4">
+    <div aria-hidden="true" className="space-y-4 motion-safe:animate-pulse motion-reduce:animate-none">
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-gray-200 rounded-lg" />
+        <div className="h-16 w-16 rounded-lg bg-muted" />
         <div className="flex-1 space-y-2">
-          <div className="h-4 bg-gray-200 rounded w-3/4" />
-          <div className="h-3 bg-gray-200 rounded w-1/2" />
+          <div className="h-4 w-3/4 rounded bg-muted" />
+          <div className="h-3 w-1/2 rounded bg-muted" />
         </div>
-        <div className="h-4 bg-gray-200 rounded w-16" />
+        <div className="h-4 w-16 rounded bg-muted" />
       </div>
-      <div className="border-t border-gray-200 pt-4 space-y-3">
+      <div className="space-y-3 border-t border-border pt-4">
         <div className="flex justify-between">
-          <div className="h-4 bg-gray-200 rounded w-20" />
-          <div className="h-4 bg-gray-200 rounded w-16" />
+          <div className="h-4 w-20 rounded bg-muted" />
+          <div className="h-4 w-16 rounded bg-muted" />
         </div>
         <div className="flex justify-between">
-          <div className="h-4 bg-gray-200 rounded w-16" />
-          <div className="h-4 bg-gray-200 rounded w-12" />
+          <div className="h-4 w-16 rounded bg-muted" />
+          <div className="h-4 w-12 rounded bg-muted" />
         </div>
-        <div className="flex justify-between pt-3 border-t border-gray-200">
-          <div className="h-5 bg-gray-200 rounded w-14" />
-          <div className="h-6 bg-gray-200 rounded w-24" />
+        <div className="flex justify-between border-t border-border pt-3">
+          <div className="h-5 w-14 rounded bg-muted" />
+          <div className="h-6 w-24 rounded bg-muted" />
         </div>
       </div>
     </div>

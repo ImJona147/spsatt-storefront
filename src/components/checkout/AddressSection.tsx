@@ -59,6 +59,7 @@ const REQUIRED_ADDRESS_FIELDS: (keyof AddressFormData)[] = [
   "address1",
   "city",
   "postal_code",
+  "phone",
   "country_code",
 ];
 
@@ -284,9 +285,9 @@ export function AddressSection({
     <>
       {/* Errors */}
       {errors && errors.length > 0 && (
-        <div className="rounded-sm border border-red-300 bg-red-50 px-4 py-3 mb-4">
+        <div className="rounded-sm border border-destructive/50 bg-destructive/10 px-4 py-3 mb-4">
           {errors.map((err, i) => (
-            <p key={i} className="text-sm text-red-700">
+            <p key={i} className="text-sm text-destructive">
               {err}
             </p>
           ))}
@@ -296,13 +297,13 @@ export function AddressSection({
       {/* Contact section */}
       <div className="mb-6">
         <div className="flex items-baseline justify-between mb-3">
-          <h2 className="text-lg font-bold text-gray-900">
+          <h2 className="text-lg font-bold text-foreground">
             {t("contactInformation")}
           </h2>
           {!isAuthenticated && (
             <Link
               href={signInUrl}
-              className="text-[13px] text-gray-700 underline underline-offset-2 hover:text-black"
+              className="text-[13px] text-muted-foreground underline underline-offset-2 hover:text-foreground"
             >
               {t("signIn")}
             </Link>
@@ -321,7 +322,7 @@ export function AddressSection({
           placeholder={t("emailAddress")}
         />
         {hasAccountEmail && (
-          <p className="text-xs text-gray-500 mt-1.5">
+          <p className="text-xs text-muted-foreground mt-1.5">
             {t("usingAccountEmail")}
           </p>
         )}
@@ -330,11 +331,11 @@ export function AddressSection({
       {/* Delivery section */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-bold text-gray-900">
+          <h2 className="text-lg font-bold text-foreground">
             {t("shippingAddress")}
           </h2>
           {saving && (
-            <span className="flex items-center gap-1.5 text-xs text-gray-400">
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Loader2 className="h-3 w-3 animate-spin" />
               {tc("saving")}
             </span>

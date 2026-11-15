@@ -29,14 +29,14 @@ export function DeliveryMethodSection({
 
   return (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 mb-3">
+      <h2 className="text-lg font-bold text-foreground mb-3">
         {t("shippingMethod")}
       </h2>
 
       {errors && errors.length > 0 && (
-        <div className="rounded-sm border border-red-300 bg-red-50 px-4 py-3 mb-3">
+        <div className="rounded-sm border border-destructive/50 bg-destructive/10 px-4 py-3 mb-3">
           {errors.map((error, index) => (
-            <p key={index} className="text-sm text-red-700">
+            <p key={index} className="text-sm text-destructive">
               {error}
             </p>
           ))}
@@ -44,7 +44,7 @@ export function DeliveryMethodSection({
       )}
 
       {fulfillments.length === 0 ? (
-        <div className="rounded-sm bg-gray-100 px-4 py-3.5 text-sm text-gray-500">
+        <div className="rounded-sm bg-muted px-4 py-3.5 text-sm text-muted-foreground">
           {t("enterShippingAddressForMethods")}
         </div>
       ) : (
@@ -56,7 +56,7 @@ export function DeliveryMethodSection({
             return (
               <div key={fulfillment.id}>
                 {fulfillments.length > 1 && (
-                  <p className="text-xs font-medium text-gray-500 mb-2">
+                  <p className="text-xs font-medium text-muted-foreground mb-2">
                     {t("shipmentOf", {
                       current: index + 1,
                       total: fulfillments.length,
@@ -85,17 +85,17 @@ export function DeliveryMethodSection({
                       key={rate.id}
                       className={`flex items-center justify-between px-4 py-3.5 cursor-pointer transition-colors ${
                         rate.selected
-                          ? "bg-blue-50"
-                          : "bg-white hover:bg-gray-50"
+                          ? "bg-primary/10"
+                          : "bg-card hover:bg-muted"
                       } ${rateIndex > 0 ? "border-t" : ""}`}
                     >
                       <div className="flex items-center gap-3">
                         <RadioGroupItem value={rate.id} />
-                        <span className="text-sm text-gray-900">
+                        <span className="text-sm text-foreground">
                           {rate.name}
                         </span>
                       </div>
-                      <span className="text-sm text-gray-900">
+                      <span className="text-sm text-foreground">
                         {formatMoney(rate.cost, currency)}
                       </span>
                     </label>

@@ -129,7 +129,7 @@ export function PayPalPaymentForm({
   if (!PayPalSDK) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+        <div className="w-5 h-5 border-2 border-border border-t-foreground rounded-full animate-spin" />
       </div>
     );
   }
@@ -191,7 +191,7 @@ export function PayPalPaymentForm({
       </PayPalScriptProvider>
 
       {approvedForUI && (
-        <p className="text-sm text-green-600 mt-2 text-center">
+        <p className="text-sm text-success mt-2 text-center">
           {t("paypalApproved")}
         </p>
       )}

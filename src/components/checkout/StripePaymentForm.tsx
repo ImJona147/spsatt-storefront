@@ -8,6 +8,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { CircleAlert } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { stripePromise } from "@/lib/utils/stripe";
 
@@ -23,11 +24,26 @@ interface StripePaymentFormProps {
 
 function StripePaymentFormInner({
   onReady,
+  appearanceTheme,
 }: {
   onReady: (handle: StripePaymentFormHandle) => void;
+  appearanceTheme: "stripe" | "night";
 }) {
   const stripe = useStripe();
   const elements = useElements();
+
+  useEffect(() => {
+    elements?.update({
+      appearance: {
+        theme: appearanceTheme,
+        variables: {
+          fontFamily: "Inter, system-ui, sans-serif",
+          fontSizeBase: "14px",
+          borderRadius: "6px",
+        },
+      },
+    });
+  }, [appearanceTheme, elements]);
   const [error, setError] = useState<string | null>(null);
 
   const confirmPayment = useCallback(
@@ -90,19 +106,20 @@ export function StripePaymentForm({
   clientSecret,
   onReady,
 }: StripePaymentFormProps) {
+  const { resolvedTheme } = useTheme();
+  const appearanceTheme = resolvedTheme === "dark" ? "night" : "stripe";
+
   return (
     <Elements
       stripe={stripePromise}
       options={{
         clientSecret,
         appearance: {
-          theme: "stripe",
+          theme: appearanceTheme,
           variables: {
             fontFamily: "Inter, system-ui, sans-serif",
             fontSizeBase: "14px",
-            colorPrimary: "#171717",
             borderRadius: "6px",
-            focusBoxShadow: "0 0 0 1px #171717",
           },
           rules: {
             ".Input": {
@@ -114,7 +131,10 @@ export function StripePaymentForm({
         },
       }}
     >
-      <StripePaymentFormInner onReady={onReady} />
+      <StripePaymentFormInner
+        onReady={onReady}
+        appearanceTheme={appearanceTheme}
+      />
     </Elements>
   );
 }
