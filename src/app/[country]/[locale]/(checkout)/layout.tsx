@@ -30,6 +30,7 @@ function CheckoutHeader() {
           alt={storeName}
           width={90}
           height={32}
+          className="h-8 w-auto max-w-full object-contain"
           fetchPriority="high"
           loading="eager"
         />
