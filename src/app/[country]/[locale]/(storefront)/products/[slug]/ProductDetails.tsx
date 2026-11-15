@@ -224,7 +224,7 @@ export function ProductDetails({
                     <span className="text-base text-muted-foreground line-through tabular-nums">
                       {strikethroughPrice}
                     </span>
-                    <span className="inline-flex items-center rounded-md bg-primary px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-primary-foreground">
+                    <span className="inline-flex items-center rounded-md bg-primary px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-white">
                       {discountPercent !== null
                         ? `${t("sale")} ${discountPercent}%`
                         : t("sale")}

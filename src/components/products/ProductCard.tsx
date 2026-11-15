@@ -70,7 +70,7 @@ export const ProductCard = memo(function ProductCard({
           fetchPriority={fetchPriority}
         />
         {onSale && (
-          <span className="absolute top-2 left-2 bg-destructive text-destructive-foreground text-xs font-medium px-2 py-1 rounded">
+          <span className="absolute top-2 left-2 rounded bg-destructive px-2 py-1 text-xs font-medium text-white">
             {t("sale")}
           </span>
         )}
