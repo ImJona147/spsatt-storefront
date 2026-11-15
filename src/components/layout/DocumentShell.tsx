@@ -2,19 +2,10 @@ import { GoogleTagManager } from "@next/third-parties/google";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Suspense } from "react";
+import { ScrollPositionRestoration } from "@/components/layout/ScrollPositionRestoration";
 import { localeDirection } from "@/i18n/locales";
 
 const gtmId = process.env.GTM_ID;
-const spreeApiOrigin = (() => {
-  try {
-    return process.env.SPREE_API_URL
-      ? new URL(process.env.SPREE_API_URL).origin
-      : undefined;
-  } catch {
-    return undefined;
-  }
-})();
-
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -30,19 +21,11 @@ interface DocumentShellProps {
 export function DocumentShell({ children, locale }: DocumentShellProps) {
   return (
     <html lang={locale} dir={localeDirection(locale)} suppressHydrationWarning>
-      {/* biome-ignore lint/style/noHeadElement: this shell is used only by Next.js root layouts */}
-      <head>
-        {spreeApiOrigin && (
-          <>
-            <link rel="preconnect" href={spreeApiOrigin} />
-            <link rel="dns-prefetch" href={spreeApiOrigin} />
-          </>
-        )}
-      </head>
       {gtmId && <GoogleTagManager gtmId={gtmId} />}
       <body
         className={`${inter.variable} antialiased min-h-screen flex flex-col overflow-y-scroll scroll-smooth  [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-background [&::-webkit-scrollbar-thumb]:rounded-md [&::-webkit-scrollbar-thumb]:bg-primary`}
       >
+        <ScrollPositionRestoration />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

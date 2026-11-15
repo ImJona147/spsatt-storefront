@@ -40,7 +40,7 @@ export function DeferredMap({
           observer.disconnect();
         }
       },
-      { rootMargin: "300px 0px" },
+      { rootMargin: "0px" },
     );
 
     observer.observe(node);

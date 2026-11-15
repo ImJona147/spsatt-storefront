@@ -1,6 +1,7 @@
 import { ArrowUpRight, Clock, Mail, MapPin, Phone } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { SectionHeading } from "@/components/home/SectionHeading";
+import { DeferredMap } from "@/components/home/DeferredMap";
 import { Button } from "@/components/ui/button";
 import {
   BUSINESS_ADDRESS,
@@ -112,11 +113,10 @@ export async function ContactSection({ locale }: ContactSectionProps) {
           </div>
 
           <div className="order-1 overflow-hidden rounded-2xl border border-border bg-card shadow-sm lg:order-2">
-            <iframe
+            <DeferredMap
               title={t("contactMapLabel")}
               src={BUSINESS_MAP_EMBED_URL}
-              loading="lazy"
-              className="h-64 w-full border-0 sm:h-80 lg:h-104"
+              className="h-64 w-full sm:h-80 lg:h-104"
             />
             <a
               href={BUSINESS_MAPS_URL}
