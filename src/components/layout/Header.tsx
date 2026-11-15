@@ -62,8 +62,8 @@ export async function Header({
           <Image
             src="/spsatt.svg"
             alt={store.name}
-            width={90}
-            height={32}
+            width={1216}
+            height={791}
             className="h-8 w-auto max-w-full object-contain"
             fetchPriority="high"
             loading="eager"
