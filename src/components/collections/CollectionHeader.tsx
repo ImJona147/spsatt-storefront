@@ -26,7 +26,9 @@ export async function CollectionHeader({
 
   return (
     <div
-      className="relative flex min-h-[22rem] flex-col justify-end overflow-hidden bg-muted bg-cover bg-center sm:min-h-[26rem]"
+      className={`relative flex flex-col justify-end overflow-hidden bg-muted bg-center ${
+        hasImage ? "min-h-[350px]" : "pt-4"
+      }`}
       style={
         hasImage
           ? { backgroundImage: `url(${collection.image_url})` }
