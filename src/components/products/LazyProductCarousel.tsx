@@ -1,22 +1,46 @@
 import dynamic from "next/dynamic";
 import { ProductCardSkeleton } from "@/components/products/ProductCardSkeleton";
+import type { ProductCarouselProps } from "@/components/products/ProductCarousel";
 
-/** Carousel grid placeholder; matches the Swiper breakpoints. */
-export function ProductCarouselSkeleton(): React.JSX.Element {
+export function ProductCarouselSkeleton({
+  compactCards = false,
+}: {
+  compactCards?: boolean;
+}): React.JSX.Element {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {[...Array(4)].map((_, i) => (
-        <ProductCardSkeleton key={i} />
+    <div
+      aria-hidden="true"
+      className={`grid grid-flow-col auto-cols-[100%] overflow-hidden sm:auto-cols-[calc((100%-24px)/2)] md:auto-cols-[calc((100%-48px)/3)] lg:auto-cols-[calc((100%-72px)/4)] gap-6 ${compactCards ? "carousel-skeleton-compact" : ""}`}
+    >
+      {[0, 1, 2, 3].map((index) => (
+        <div key={index} className="p-1">
+          <ProductCardSkeleton compact={compactCards} />
+        </div>
       ))}
     </div>
   );
 }
 
-/** Swiper is client-only and heavy, so the carousel loads on demand. */
-export const LazyProductCarousel = dynamic(
+const StandardCarousel = dynamic(
   () =>
-    import("@/components/products/ProductCarousel").then((mod) => ({
-      default: mod.ProductCarousel,
-    })),
-  { loading: () => <ProductCarouselSkeleton /> },
+    import("@/components/products/ProductCarousel").then(
+      (mod) => mod.ProductCarousel,
+    ),
+  {
+    loading: () => <ProductCarouselSkeleton />,
+  },
 );
+const CompactCarousel = dynamic(
+  () =>
+    import("@/components/products/ProductCarousel").then(
+      (mod) => mod.ProductCarousel,
+    ),
+  {
+    loading: () => <ProductCarouselSkeleton compactCards />,
+  },
+);
+
+export function LazyProductCarousel(props: ProductCarouselProps) {
+  const Carousel = props.compactCards ? CompactCarousel : StandardCarousel;
+  return <Carousel {...props} />;
+}

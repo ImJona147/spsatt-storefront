@@ -3,10 +3,7 @@ import { ProductListingSkeleton } from "@/components/products/ProductListingSkel
 export default function SellerLoading(): React.JSX.Element {
   return (
     <div className="pb-8">
-      <div
-        aria-hidden="true"
-        className="animate-pulse motion-reduce:animate-none"
-      >
+      <div aria-hidden="true" className="loading-placeholder">
         <div className="h-48 bg-muted sm:h-64" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mt-4 h-4 w-32 rounded bg-muted" />

@@ -2,7 +2,7 @@ export default function ProductLoading(): React.JSX.Element {
   return (
     <div
       aria-hidden="true"
-      className="container mx-auto animate-pulse px-4 py-6 motion-reduce:animate-none sm:px-6 sm:py-8 lg:px-8 lg:pb-12"
+      className="container mx-auto loading-placeholder px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:pb-12"
     >
       <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,30rem)] lg:gap-12">
         <div className="mx-auto flex w-full flex-col-reverse gap-3 lg:mx-0 lg:flex-row">

@@ -13,7 +13,7 @@ import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ProductCard } from "@/components/products/ProductCard";
 
-interface ProductCarouselProps {
+export interface ProductCarouselProps {
   products: Product[];
   basePath: string;
   /** Optional currency used for analytics in each ProductCard. */
@@ -124,13 +124,15 @@ export function ProductCarousel({
         modules={[Autoplay, Navigation]}
         spaceBetween={compactCards ? 8 : 24}
         slidesPerView={compactCards ? 2 : 1}
-        speed={reducedMotion ? 0 : 600}
+        speed={reducedMotion ? 0 : 280}
         loop={loop}
         rewind={rewind}
+        onFocusCapture={() => setAutoplayPaused(true)}
         autoplay={{
           delay: 5000,
           pauseOnMouseEnter: true,
           disableOnInteraction: false,
+          stopOnLastSlide: !canWrap,
         }}
         navigation={{
           addIcons: false,
@@ -169,7 +171,7 @@ export function ProductCarousel({
           </SwiperSlide>
         ))}
       </SwiperComponent>
-      {compactCards && !isLocked && !reducedMotion && (
+      {!isLocked && !reducedMotion && (
         <button
           type="button"
           aria-label={t(autoplayPaused ? "carouselPlay" : "carouselPause")}

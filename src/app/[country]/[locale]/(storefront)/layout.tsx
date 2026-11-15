@@ -32,7 +32,7 @@ function MobileNavigationFallback() {
   return (
     <div
       aria-hidden="true"
-      className="size-10 rounded-md bg-muted animate-pulse motion-reduce:animate-none"
+      className="size-10 rounded-md bg-muted loading-placeholder"
     />
   );
 }
@@ -40,7 +40,7 @@ function MobileNavigationFallback() {
 function FooterCategoryLinksFallback() {
   return (
     <li aria-hidden="true">
-      <span className="block h-4 w-24 rounded bg-muted/10 animate-pulse motion-reduce:animate-none" />
+      <span className="block h-4 w-24 rounded bg-muted/10 loading-placeholder" />
     </li>
   );
 }

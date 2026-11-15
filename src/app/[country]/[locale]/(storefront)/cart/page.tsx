@@ -56,7 +56,7 @@ export default function CartPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 sm:px-6 lg:px-8  py-8">
-        <div className="animate-pulse">
+        <div className="loading-placeholder">
           <div className="h-8 bg-muted rounded w-32 mb-8"></div>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (

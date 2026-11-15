@@ -28,7 +28,6 @@ export function ProductImage({
   ...rest
 }: ProductImageProps): React.JSX.Element {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
-  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
 
   if (!src || failedSrc === src) {
     return (
@@ -47,13 +46,12 @@ export function ProductImage({
         onError?.(e);
       }}
       onLoad={(e) => {
-        setLoadedSrc(src);
         onLoad?.(e);
       }}
       className={cn(
         className,
-        "transition-opacity duration-200 ease-out motion-reduce:transition-none",
-        loadedSrc === src ? "opacity-100" : "opacity-0",
+        "transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none",
+        "product-image-reveal",
       )}
       fetchPriority={fetchPriority}
       loading={fetchPriority === "high" ? "eager" : undefined}

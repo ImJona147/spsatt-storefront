@@ -148,8 +148,14 @@ export function InfiniteProductList({
         className="h-20 flex items-center justify-center mt-8"
       >
         {isPending && (
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Loader2 className="animate-spin h-5 w-5" />
+          <div
+            role="status"
+            className="flex items-center gap-2 text-muted-foreground"
+          >
+            <Loader2
+              aria-hidden="true"
+              className="motion-safe:animate-spin h-5 w-5"
+            />
             {t("loadingMore")}
           </div>
         )}

@@ -5,11 +5,14 @@
  */
 export function FilterBarSkeleton() {
   return (
-    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border">
-      <div className="h-9 w-20 bg-muted rounded-lg animate-pulse" />
-      <div className="h-9 w-16 bg-muted rounded-lg animate-pulse" />
-      <div className="h-9 w-24 bg-muted rounded-lg animate-pulse" />
-      <div className="ml-auto h-9 w-16 bg-muted rounded-lg animate-pulse" />
+    <div
+      aria-hidden="true"
+      className="loading-placeholder flex items-center gap-3 mb-4 pb-4 border-b border-border"
+    >
+      <div className="h-9 w-20 bg-muted rounded-lg" />
+      <div className="h-9 w-16 bg-muted rounded-lg" />
+      <div className="hidden sm:block h-9 w-24 bg-muted rounded-lg" />
+      <div className="ml-auto h-9 w-16 bg-muted rounded-lg" />
     </div>
   );
 }

@@ -97,7 +97,7 @@ export default function AccountPage() {
   if (authLoading) {
     return (
       <div className="mx-auto max-w-md px-4 py-10 sm:px-6 sm:py-14">
-        <div className="animate-pulse space-y-3">
+        <div className="loading-placeholder space-y-3">
           <div className="mx-auto h-8 w-1/2 rounded bg-muted" />
           <div className="mx-auto h-4 w-3/4 rounded bg-muted" />
           <div className="h-48 rounded bg-muted" />

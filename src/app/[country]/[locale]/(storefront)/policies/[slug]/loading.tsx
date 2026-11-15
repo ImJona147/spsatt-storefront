@@ -12,7 +12,7 @@ export default function PolicyLoading() {
       className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 md:py-12 lg:px-8"
     >
       <span className="sr-only">{t("loading")}</span>
-      <div aria-hidden="true" className="animate-pulse space-y-4">
+      <div aria-hidden="true" className="loading-placeholder space-y-4">
         <div className="h-4 w-32 rounded bg-muted" />
         <div className="h-8 w-2/3 max-w-sm rounded bg-muted" />
         <div className="h-4 w-48 rounded bg-muted" />
