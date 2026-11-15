@@ -32,6 +32,14 @@ vi.mock("@/lib/data/storefront-settings", () => ({
 vi.mock("@/components/maintenance/MaintenanceContent", () => ({
   MaintenanceContent: () => null,
 }));
+vi.mock("@/lib/data/store", () => ({
+  getStore: async () => ({
+    id: "store-1",
+    name: "Example Store",
+    seo_title: null,
+    meta_description: null,
+  }),
+}));
 vi.mock("@/lib/store", () => ({
   getDefaultCountry: () => "us",
   getDefaultLocale: () => "en",

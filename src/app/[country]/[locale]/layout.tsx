@@ -31,11 +31,12 @@ import {
   REQUEST_SEARCH_HEADER,
 } from "@/i18n/routing";
 import { getStorefrontMarkets } from "@/lib/data/markets";
+import { getStore } from "@/lib/data/store";
 import { getMaintenanceStatus } from "@/lib/data/storefront-settings";
 import { generateStoreMetadata } from "@/lib/metadata/store";
 import { storeViewport } from "@/lib/metadata/viewport";
 import { buildOrganizationJsonLd } from "@/lib/seo";
-import { getDefaultCountry, getDefaultLocale, getStoreName } from "@/lib/store";
+import { getDefaultCountry, getDefaultLocale } from "@/lib/store";
 
 interface CountryLocaleLayoutProps {
   children: React.ReactNode;
@@ -95,7 +96,9 @@ export async function generateMetadata({
   });
   return {
     ...metadata,
-    title: { absolute: `${t("tab")} | ${getStoreName()}` },
+    title: {
+      absolute: `${t("tab")} | ${metadata.applicationName ?? "SPSATT"}`,
+    },
     robots: { index: false, follow: false },
   };
 }
@@ -138,9 +141,12 @@ export async function CountryLocaleLayoutContent({
   // requested country/locale pair has not been validated yet; forwarding it to
   // the Store API can fail before we get the Market data needed to redirect an
   // unsupported pair (for example /pl/pl when Poland's Market supports de).
-  const markets = await getStorefrontMarkets()
-    .then((res) => res.data)
-    .catch(() => null);
+  const [markets, store] = await Promise.all([
+    getStorefrontMarkets()
+      .then((res) => res.data)
+      .catch(() => null),
+    getStore(requestedLocale),
+  ]);
 
   const renderStorefront = async (
     availableMarkets: NonNullable<typeof markets>,
@@ -154,6 +160,7 @@ export async function CountryLocaleLayoutContent({
           locale={requestedLocale}
           markets={availableMarkets}
           messages={messages}
+          storeName={store.name}
         >
           {children}
         </CountryLocaleProviders>
@@ -212,6 +219,7 @@ interface CountryLocaleProvidersProps {
   locale: Locale;
   markets: Market[];
   messages: IntlMessages;
+  storeName: string;
 }
 
 export function CountryLocaleProviders({
@@ -220,6 +228,7 @@ export function CountryLocaleProviders({
   locale,
   markets,
   messages,
+  storeName,
 }: CountryLocaleProvidersProps) {
   return (
     <NextIntlClientProvider messages={messages} locale={locale}>
@@ -227,10 +236,11 @@ export function CountryLocaleProviders({
         initialCountry={country}
         initialLocale={locale}
         initialMarkets={markets}
+        storeName={storeName}
       >
         <AuthProvider>
           <CartProvider>
-            <JsonLd data={buildOrganizationJsonLd()} />
+            <JsonLd data={buildOrganizationJsonLd(storeName)} />
             {children}
             <CartDrawer />
             <Toaster />

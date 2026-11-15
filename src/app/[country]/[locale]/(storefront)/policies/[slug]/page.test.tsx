@@ -5,12 +5,25 @@ import { buildLocalizedAlternates } from "@/lib/metadata/alternates";
 import { generateMetadata } from "./page";
 
 vi.mock("next-intl/server", () => ({
-  getTranslations: vi.fn(),
+  getTranslations: vi
+    .fn()
+    .mockResolvedValue((key: string) =>
+      key === "privacyPolicy" ? "Privacy Policy" : key,
+    ),
 }));
 
 vi.mock("@/lib/data/policies", () => ({
   cachedGetPolicy: vi.fn(),
   getPolicy: vi.fn(),
+}));
+
+vi.mock("@/lib/data/store", () => ({
+  getStore: vi.fn().mockResolvedValue({
+    id: "store-1",
+    name: "Example Store",
+    seo_title: null,
+    meta_description: null,
+  }),
 }));
 
 vi.mock("@/lib/metadata/alternates", () => ({
@@ -30,7 +43,6 @@ const policy = {
 describe("policy metadata", () => {
   beforeEach(() => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://store.example/");
-    vi.stubEnv("NEXT_PUBLIC_STORE_NAME", "Example Store");
     vi.mocked(getPolicy).mockResolvedValue(policy);
     vi.mocked(buildLocalizedAlternates).mockResolvedValue({
       canonical: "https://store.example/us/en/policies/privacy-policy",
@@ -60,7 +72,7 @@ describe("policy metadata", () => {
 
     expect(metadata).toMatchObject({
       title: "Privacy Policy",
-      description: "Privacy Policy — Example Store",
+      description: "Privacy Policy. Example Store.",
       alternates: {
         canonical: canonicalUrl,
         languages: {
@@ -71,7 +83,7 @@ describe("policy metadata", () => {
       },
       openGraph: {
         title: "Privacy Policy",
-        description: "Privacy Policy — Example Store",
+        description: "Privacy Policy. Example Store.",
         url: canonicalUrl,
       },
     });

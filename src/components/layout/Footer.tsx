@@ -11,12 +11,9 @@ import {
   buildWhatsAppUrl,
 } from "@/lib/constants/business";
 import { POLICY_LINKS } from "@/lib/constants/policies";
+import { getStore } from "@/lib/data/store";
 import { isMarketplaceEnabled, isWholesaleEnabled } from "@/lib/spree";
-import { getStoreDescription, getStoreName } from "@/lib/store";
 import { CurrentYear } from "./CurrentYear";
-
-const storeName = getStoreName();
-const storeDescription = getStoreDescription();
 
 interface FooterProps {
   basePath: string;
@@ -46,8 +43,11 @@ export function FooterCategoryLinks({
 }
 
 export async function Footer({ basePath, locale, categoryLinks }: FooterProps) {
-  const t = await getTranslations({ locale, namespace: "footer" });
-  const tp = await getTranslations({ locale, namespace: "policies" });
+  const [t, tp, { name: storeName }] = await Promise.all([
+    getTranslations({ locale, namespace: "footer" }),
+    getTranslations({ locale, namespace: "policies" }),
+    getStore(locale),
+  ]);
   const wholesaleEnabled = isWholesaleEnabled();
   const marketplaceEnabled = isMarketplaceEnabled();
 
@@ -60,7 +60,7 @@ export async function Footer({ basePath, locale, categoryLinks }: FooterProps) {
               {storeName}
             </span>
             <p className="mt-4 max-w-md text-sm text-primary-foreground/95">
-              {t("description") || storeDescription}
+              {t("description")}
             </p>
             <ul className="mt-5 space-y-2.5 text-sm text-primary-foreground/95">
               <li>
