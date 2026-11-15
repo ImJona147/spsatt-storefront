@@ -1,10 +1,28 @@
+import type { Store } from "@spree/sdk";
 import type { Metadata } from "next";
-import {
-  getStoreMetaDescription,
-  getStoreName,
-  getStoreSeoTitle,
-  getStoreUrl,
-} from "@/lib/store";
+import { getTranslations } from "next-intl/server";
+import { getStore, storeSeoTitle } from "@/lib/data/store";
+import { SOCIAL_IMAGE } from "@/lib/seo";
+import { getStoreUrl } from "@/lib/store";
+
+/**
+ * The store's meta description from the Store API, falling back to the
+ * storefront's translated tagline so pages always carry a description.
+ */
+export async function storeMetaDescription(
+  store: Store,
+  locale: string,
+): Promise<string> {
+  if (store.meta_description) return store.meta_description;
+  if (process.env.STORE_META_DESCRIPTION) {
+    return process.env.STORE_META_DESCRIPTION;
+  }
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: "footer",
+  });
+  return t("description");
+}
 
 export function normalizeOpenGraphLocale(locale: string): string {
   const parts = locale.split(/[-_]/);
@@ -21,9 +39,10 @@ interface StoreMetadataParams {
 export async function generateStoreMetadata({
   locale,
 }: StoreMetadataParams): Promise<Metadata> {
-  const storeName = getStoreSeoTitle();
+  const store = await getStore(locale);
+  const seoTitle = storeSeoTitle(store);
   const storeUrl = getStoreUrl();
-  const metaDescription = getStoreMetaDescription();
+  const metaDescription = await storeMetaDescription(store, locale);
   const metaKeywords = process.env.STORE_META_KEYWORDS;
   const twitter = process.env.STORE_TWITTER;
 
@@ -39,16 +58,17 @@ export async function generateStoreMetadata({
   return {
     ...metadataBaseSpread,
     title: {
-      template: `%s | ${getStoreName()}`,
-      default: storeName,
+      template: `%s | ${store.name}`,
+      default: seoTitle,
     },
     description: metaDescription,
-    applicationName: getStoreName(),
+    applicationName: store.name,
     ...(metaKeywords ? { keywords: metaKeywords } : {}),
     openGraph: {
-      siteName: getStoreName(),
+      siteName: store.name,
       locale: normalizeOpenGraphLocale(locale),
       type: "website",
+      images: [SOCIAL_IMAGE],
     },
     twitter: {
       card: "summary_large_image",

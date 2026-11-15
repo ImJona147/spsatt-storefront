@@ -10,10 +10,8 @@ import { RegionPreferences } from "@/components/layout/RegionPreferences";
 import { SearchToggle } from "@/components/layout/SearchToggle";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Button } from "@/components/ui/button";
+import { getStore } from "@/lib/data/store";
 import { isMarketplaceEnabled, isWholesaleEnabled } from "@/lib/spree";
-import { getStoreName } from "@/lib/store";
-
-const storeName = getStoreName();
 
 interface HeaderProps {
   basePath: string;
@@ -48,7 +46,10 @@ export async function Header({
   locale,
   mobileNavigation,
 }: HeaderProps) {
-  const t = await getTranslations({ locale, namespace: "header" });
+  const [t, store] = await Promise.all([
+    getTranslations({ locale, namespace: "header" }),
+    getStore(locale),
+  ]);
   const wholesaleEnabled = isWholesaleEnabled();
   const marketplaceEnabled = isMarketplaceEnabled();
 
@@ -60,7 +61,7 @@ export async function Header({
         <Link href={basePath || "/"} className="flex items-center min-w-0">
           <Image
             src="/spsatt.svg"
-            alt={storeName}
+            alt={store.name}
             width={90}
             height={32}
             className="h-20 w-20 max-w-full object-contain "

@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { SignalNotFound } from "@/components/not-found/SignalNotFound";
 import { POLICY_LINKS } from "@/lib/constants/policies";
 import { cachedGetPolicy, getPolicy } from "@/lib/data/policies";
+import { getStore } from "@/lib/data/store";
 import {
   buildLocalizedAlternates,
   translationFingerprint,
@@ -12,7 +13,7 @@ import {
 import { normalizeOpenGraphLocale } from "@/lib/metadata/store";
 import { enhancePolicyHtml } from "@/lib/policy-html";
 import { SOCIAL_IMAGE } from "@/lib/seo";
-import { getStoreName, getStoreUrl } from "@/lib/store";
+import { getStoreUrl } from "@/lib/store";
 
 interface PolicyPageProps {
   params: Promise<{
@@ -26,9 +27,10 @@ export async function generateMetadata({
   params,
 }: PolicyPageProps): Promise<Metadata> {
   const { country, locale, slug } = await params;
-  const policy = await getPolicy(slug, { country, locale });
-
-  const storeName = getStoreName();
+  const [policy, store] = await Promise.all([
+    getPolicy(slug, { country, locale }),
+    getStore(locale),
+  ]);
 
   if (!policy) {
     const t = await getTranslations({
@@ -48,7 +50,7 @@ export async function generateMetadata({
   });
   const link = POLICY_LINKS.find((link) => link.slug === policy.slug);
   const policyName = link ? t(link.nameKey) : policy.name;
-  const description = `${policyName}. ${storeName}.`;
+  const description = `${policyName}. ${store.name}.`;
   const storeUrl = getStoreUrl();
   const localizedAlternates = storeUrl
     ? await buildLocalizedAlternates({
@@ -84,7 +86,7 @@ export async function generateMetadata({
       title: policyName,
       description,
       ...(localizedAlternates ? { url: localizedAlternates.canonical } : {}),
-      siteName: getStoreName(),
+      siteName: store.name,
       locale: normalizeOpenGraphLocale(locale),
       type: "website",
       images: [SOCIAL_IMAGE],

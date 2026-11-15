@@ -1,6 +1,6 @@
 import type { Category, Media, Product } from "@spree/sdk";
 import { productCustomField, validGtin } from "@/lib/product-identifiers";
-import { ensureProtocol, getStoreName, getStoreUrl } from "@/lib/store";
+import { ensureProtocol, getStoreUrl } from "@/lib/store";
 
 /**
  * Alt text for the social sharing image (public/opengraph-image.png).
@@ -43,7 +43,10 @@ export function buildProductJsonLd(
     url: canonicalUrl,
     brand: {
       "@type": "Brand",
-      name: productCustomField(product, ["brand", "marca"]) || getStoreName(),
+      name:
+        productCustomField(product, ["brand", "marca"]) ||
+        process.env.NEXT_PUBLIC_STORE_NAME ||
+        "SPSATT",
     },
   };
 
@@ -155,8 +158,9 @@ export function buildBreadcrumbJsonLd(
  * store's public address data.
  * https://schema.org/LocalBusiness
  */
-export function buildOrganizationJsonLd(): Record<string, unknown> {
-  const storeName = getStoreName();
+export function buildOrganizationJsonLd(
+  storeName: string,
+): Record<string, unknown> {
   const storeUrl = getStoreUrl();
   const logoUrl = process.env.STORE_LOGO_URL;
   const facebook = process.env.STORE_FACEBOOK;
