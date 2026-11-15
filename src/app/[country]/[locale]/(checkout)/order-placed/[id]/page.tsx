@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleCheckBig, Package } from "lucide-react";
+import { CircleCheckBig, MessageCircle, Package } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -13,6 +13,7 @@ import { ProductImage } from "@/components/ui/product-image";
 import { useCheckout } from "@/contexts/CheckoutContext";
 import { useFormatMoney } from "@/hooks/useFormatMoney";
 import { trackPurchase } from "@/lib/analytics/gtm";
+import { buildWhatsAppUrl } from "@/lib/constants/business";
 import { getCompletedOrder } from "@/lib/data/checkout";
 import { getCachedCompletedOrder } from "@/lib/utils/completed-order-cache";
 import { extractBasePath } from "@/lib/utils/path";
@@ -103,10 +104,10 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
   if (loading) {
     return (
       <div className="animate-pulse space-y-6 py-12">
-        <div className="h-12 w-12 bg-gray-200 rounded-lg mx-auto" />
-        <div className="h-8 bg-gray-200 rounded w-1/2 mx-auto" />
-        <div className="h-4 bg-gray-200 rounded w-1/3 mx-auto" />
-        <div className="h-64 bg-gray-200 rounded mt-8" />
+        <div className="h-12 w-12 bg-muted rounded-lg mx-auto" />
+        <div className="h-8 bg-muted rounded w-1/2 mx-auto" />
+        <div className="h-4 bg-muted rounded w-1/3 mx-auto" />
+        <div className="h-64 bg-muted rounded mt-8" />
       </div>
     );
   }
@@ -114,7 +115,7 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
   if (error || !purchase) {
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl font-bold text-foreground mb-4">
           {t(error || "orderNotFound")}
         </h1>
         <Button asChild>
@@ -128,32 +129,112 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
     purchase.billing_address?.full_name ||
     purchase.shipping_address?.full_name ||
     "";
+  const paymentStatusLabels = {
+    none: t("paymentStatusNone"),
+    authorized: t("paymentStatusAuthorized"),
+    partially_paid: t("paymentStatusPartiallyPaid"),
+    paid: t("paymentStatusPaid"),
+    partially_refunded: t("paymentStatusPartiallyRefunded"),
+    refunded: t("paymentStatusRefunded"),
+    overcharged: t("paymentStatusOvercharged"),
+    voided: t("paymentStatusVoided"),
+  };
+  const paymentStatusLabel = purchase.payment_status
+    ? paymentStatusLabels[purchase.payment_status]
+    : paymentStatusLabels.none;
+  const whatsappItems = purchase.segments.flatMap((segment) => segment.items);
+  const whatsappMessage = [
+    t("whatsappMessageIntro"),
+    t("whatsappMessageOrder", { number: purchase.number }),
+    customerName ? t("whatsappMessageCustomer", { name: customerName }) : null,
+    purchase.email
+      ? t("whatsappMessageEmail", { email: purchase.email })
+      : null,
+    t("whatsappMessagePaymentStatus", { status: paymentStatusLabel }),
+    t("whatsappMessageTotal", {
+      total: formatMoney(purchase.totals.total, purchase.currency),
+    }),
+    t("whatsappMessageItems"),
+    ...whatsappItems.slice(0, 10).map((item) =>
+      t("whatsappMessageItem", {
+        quantity: item.quantity,
+        name: item.name,
+        options: item.options_text ? ` (${item.options_text})` : "",
+      }),
+    ),
+    whatsappItems.length > 10
+      ? t("whatsappMessageMoreItems", { count: whatsappItems.length - 10 })
+      : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
+  const whatsappUrl = buildWhatsAppUrl(whatsappMessage);
 
   return (
     <div className="py-8 max-w-2xl mx-auto">
       {/* Success Header */}
       <div className="text-center mb-10">
-        <CircleCheckBig className="w-16 h-16 text-green-500 mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <CircleCheckBig className="w-16 h-16 text-primary mx-auto mb-4" />
+        <h1 className="text-2xl font-bold text-foreground mb-2">
           {customerName
             ? t("thanksForOrder", { name: customerName.split(" ")[0] })
             : t("thanksForOrderAnonymous")}
         </h1>
-        <p className="text-gray-500">
+        <p className="text-muted-foreground">
           {t("orderNumber", { number: purchase.number })}
         </p>
-        <p className="text-sm text-gray-400 mt-2">{t("emailConfirmation")}</p>
+        <p className="text-sm text-muted-foreground mt-2">
+          {t("emailConfirmation")}
+        </p>
         {purchase.split && (
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             {t("splitDeliveries", { count: purchase.segments.length })}
           </p>
         )}
       </div>
 
+      <section
+        aria-labelledby="payment-follow-up-title"
+        className="mb-6 rounded-xl border border-primary/25 bg-primary/5 p-5 sm:p-6"
+      >
+        <div className="flex items-start gap-3">
+          <CircleCheckBig
+            aria-hidden
+            className="mt-0.5 size-5 shrink-0 text-primary"
+          />
+          <div className="min-w-0 flex-1">
+            <h2
+              id="payment-follow-up-title"
+              className="text-base font-semibold text-foreground"
+            >
+              {purchase.payment_status === "paid"
+                ? t("paymentCompleted")
+                : t("orderReceived")}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("whatsappVerificationNote")}
+            </p>
+            <p className="mt-3 text-sm text-foreground">
+              <span className="font-medium">{t("paymentStatusLabel")}:</span>{" "}
+              {paymentStatusLabel}
+            </p>
+            <Button asChild className="mt-4 w-full sm:w-auto">
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                <MessageCircle aria-hidden className="size-4" />
+                {t("whatsappButton")}
+              </a>
+            </Button>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {t("whatsappOpenNotice")}
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Order Items */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">
+      <div className="bg-card rounded-xl border border-border overflow-hidden mb-6">
+        <div className="px-6 py-4 border-b border-border">
+          <h2 className="text-lg font-medium text-foreground">
             {t("orderItems")}
           </h2>
         </div>
@@ -163,20 +244,22 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
         {purchase.segments.map((segment, index) => (
           <div key={segment.id}>
             {purchase.split && (
-              <div className="px-6 py-3 bg-gray-50 border-y border-gray-200 flex items-baseline justify-between gap-4">
-                <h3 className="text-sm font-semibold text-gray-900">
+              <div className="px-6 py-3 bg-muted border-y border-border flex items-baseline justify-between gap-4">
+                <h3 className="text-sm font-semibold text-foreground">
                   {t("deliveryOf", {
                     index: index + 1,
                     count: purchase.segments.length,
                   })}
                 </h3>
-                <span className="text-xs text-gray-500">{segment.number}</span>
+                <span className="text-xs text-muted-foreground">
+                  {segment.number}
+                </span>
               </div>
             )}
-            <ul className="divide-y divide-gray-200">
+            <ul className="divide-y divide-border">
               {segment.items.map((item) => (
                 <li key={item.id} className="px-6 py-4 flex gap-4">
-                  <div className="relative w-14 h-14 bg-gray-100 rounded-xl flex-shrink-0 overflow-hidden">
+                  <div className="relative w-14 h-14 bg-muted rounded-xl flex-shrink-0 overflow-hidden">
                     <ProductImage
                       src={item.thumbnail_url}
                       alt={item.name}
@@ -186,19 +269,19 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-gray-900">
+                    <h3 className="text-sm font-medium text-foreground">
                       {item.name}
                     </h3>
                     {item.options_text && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         {item.options_text}
                       </p>
                     )}
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       {t("qty", { quantity: item.quantity })}
                     </p>
                   </div>
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="text-sm font-medium text-foreground">
                     {formatMoney(lineItemAmount(item), item.currency)}
                   </div>
                 </li>
@@ -208,18 +291,18 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
         ))}
 
         {/* Totals */}
-        <div className="px-6 py-4 border-t border-gray-200">
+        <div className="px-6 py-4 border-t border-border">
           <OrderTotals order={purchase.totals} />
         </div>
       </div>
 
       {/* Shipping & Payment */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
+      <div className="bg-card rounded-xl border border-border overflow-hidden mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-border">
           {/* Shipping Method */}
           {purchase.fulfillments.length > 0 && (
             <div className="px-6 py-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">
+              <h3 className="text-sm font-semibold text-foreground mb-3">
                 {t("shippingMethod")}
               </h3>
               {purchase.fulfillments.map((fulfillment) => (
@@ -227,13 +310,13 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
                   key={fulfillment.id}
                   className="flex items-start gap-3 mb-2 last:mb-0"
                 >
-                  <Package className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                  <Package className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-foreground">
                       {fulfillment.delivery_method?.name ||
                         t("standardShipping")}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {formatMoney(fulfillment.cost, purchase.currency)}
                     </p>
                   </div>
@@ -245,7 +328,7 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
           {/* Payment Information */}
           {purchase.payments.length > 0 && (
             <div className="px-6 py-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">
+              <h3 className="text-sm font-semibold text-foreground mb-3">
                 {t("payment")}
               </h3>
               {purchase.payments
@@ -265,11 +348,11 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
       </div>
 
       {/* Contact & Addresses */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
+      <div className="bg-card rounded-xl border border-border overflow-hidden mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border">
           {purchase.shipping_address && (
             <div className="px-6 py-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">
+              <h3 className="text-sm font-semibold text-foreground mb-2">
                 {t("shippingAddress")}
               </h3>
               <AddressBlock address={purchase.shipping_address} />
@@ -278,7 +361,7 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
 
           {purchase.billing_address && (
             <div className="px-6 py-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">
+              <h3 className="text-sm font-semibold text-foreground mb-2">
                 {t("billingAddress")}
               </h3>
               <AddressBlock address={purchase.billing_address} />
@@ -287,10 +370,10 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
         </div>
 
         {purchase.email && (
-          <div className="px-6 py-3 border-t border-gray-200">
-            <p className="text-sm text-gray-500">
+          <div className="px-6 py-3 border-t border-border">
+            <p className="text-sm text-muted-foreground">
               {t("confirmationSentTo")}{" "}
-              <span className="font-medium text-gray-700">
+              <span className="font-medium text-foreground/90">
                 {purchase.email}
               </span>
             </p>

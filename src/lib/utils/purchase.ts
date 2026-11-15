@@ -41,6 +41,8 @@ export interface PurchaseSegment {
 export interface Purchase {
   /** The number the customer was given — the group's when the checkout split. */
   number: string;
+  /** Payment status calculated by Spree from the order's payment records. */
+  payment_status: CompletedPurchase["payment_status"];
   /** When the checkout was placed. */
   completed_at: string | null;
   email: string | null;
@@ -87,6 +89,7 @@ export function toPurchase(result: CompletedPurchase): Purchase {
 
   return {
     number: result.number,
+    payment_status: result.payment_status,
     completed_at: result.completed_at,
     email: result.email,
     currency: result.currency,
