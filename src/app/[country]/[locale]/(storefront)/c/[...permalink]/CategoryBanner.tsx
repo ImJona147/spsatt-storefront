@@ -21,7 +21,9 @@ export async function CategoryBanner({
   return (
     <>
       <div
-        className="flex flex-col justify-end min-h-[350px] bg-muted bg-center"
+        className={`flex flex-col justify-end bg-muted bg-center ${
+          category.image_url ? "min-h-[350px]" : "pt-4"
+        }`}
         style={
           category.image_url
             ? { backgroundImage: `url(${category.image_url})` }
