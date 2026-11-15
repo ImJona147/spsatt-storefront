@@ -46,7 +46,7 @@ export function FilterDropdown({
         >
           <span>{label}</span>
           {hasActive && (
-            <span className="flex items-center justify-center w-5 h-5 text-xs bg-primary text-white rounded-lg">
+            <span className="flex h-5 w-5 items-center justify-center rounded-lg bg-primary text-xs text-primary-foreground">
               {badgeCount}
             </span>
           )}

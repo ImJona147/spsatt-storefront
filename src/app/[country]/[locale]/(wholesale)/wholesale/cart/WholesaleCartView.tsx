@@ -38,10 +38,10 @@ export function WholesaleCartView() {
     return (
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="animate-pulse">
-          <div className="mb-8 h-8 w-32 rounded bg-slate-200" />
+          <div className="mb-8 h-8 w-32 rounded bg-muted" />
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 rounded bg-slate-200" />
+              <div key={i} className="h-24 rounded bg-muted" />
             ))}
           </div>
         </div>
@@ -54,15 +54,17 @@ export function WholesaleCartView() {
       <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="text-center">
           <EmptyIllustration />
-          <h1 className="mt-4 text-2xl font-bold text-slate-900">
+          <h1 className="mt-4 text-2xl font-bold text-foreground">
             {t("emptyCart")}
           </h1>
-          <p className="mt-2 text-slate-500">{tw("cart.emptyDescription")}</p>
+          <p className="mt-2 text-muted-foreground">
+            {tw("cart.emptyDescription")}
+          </p>
           <div className="mt-6">
             <Button
               size="lg"
               asChild
-              className="bg-slate-900 hover:bg-slate-800"
+              className="bg-primary hover:bg-primary/90"
             >
               <Link href={wholesaleBase}>{tw("cart.browseCatalog")}</Link>
             </Button>
@@ -74,16 +76,16 @@ export function WholesaleCartView() {
 
   return (
     <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="mb-8 text-3xl font-bold text-slate-900">
+      <h1 className="mb-8 text-3xl font-bold text-foreground">
         {tw("cart.title")}
       </h1>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <div className="divide-y rounded-xl border border-slate-200 bg-white">
+          <div className="divide-y rounded-xl border border-border bg-card">
             {cart.items.map((item) => (
               <div key={item.id} className="flex gap-6 p-6">
-                <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-slate-100">
+                <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
                   <ProductImage
                     src={item.thumbnail_url}
                     alt={item.name}
@@ -94,15 +96,15 @@ export function WholesaleCartView() {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-lg font-medium text-slate-900">
+                  <h3 className="truncate text-lg font-medium text-foreground">
                     {item.name}
                   </h3>
                   {item.options_text && (
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       {item.options_text}
                     </p>
                   )}
-                  <p className="mt-2 text-lg font-semibold text-slate-900">
+                  <p className="mt-2 text-lg font-semibold text-foreground">
                     {formatMoney(item.price, item.currency, {
                       unitPrice: true,
                     }) || "—"}
@@ -144,15 +146,15 @@ export function WholesaleCartView() {
         </div>
 
         <div className="lg:col-span-1">
-          <div className="sticky top-24 rounded-xl border border-slate-200 bg-white p-6">
-            <h2 className="text-lg font-medium text-slate-900">
+          <div className="sticky top-24 rounded-xl border border-border bg-card p-6">
+            <h2 className="text-lg font-medium text-foreground">
               {tc("orderSummary")}
             </h2>
 
             <dl className="mt-6 space-y-4">
               <div className="flex justify-between">
-                <dt className="text-slate-500">{tc("subtotal")}</dt>
-                <dd className="text-slate-900">
+                <dt className="text-muted-foreground">{tc("subtotal")}</dt>
+                <dd className="text-foreground">
                   {formatMoney(cart.item_total, cart.currency) || "—"}
                 </dd>
               </div>
@@ -164,17 +166,17 @@ export function WholesaleCartView() {
               )}
               {cart.tax_total && parseFloat(cart.tax_total) > 0 && (
                 <div className="flex justify-between">
-                  <dt className="text-slate-500">{tc("tax")}</dt>
-                  <dd className="text-slate-900">
+                  <dt className="text-muted-foreground">{tc("tax")}</dt>
+                  <dd className="text-foreground">
                     {formatMoney(cart.tax_total, cart.currency)}
                   </dd>
                 </div>
               )}
               <div className="flex justify-between border-t pt-4">
-                <dt className="text-lg font-medium text-slate-900">
+                <dt className="text-lg font-medium text-foreground">
                   {tc("total")}
                 </dt>
-                <dd className="text-lg font-bold text-slate-900">
+                <dd className="text-lg font-bold text-foreground">
                   {formatMoney(cart.total, cart.currency) || "—"}
                 </dd>
               </div>
@@ -184,7 +186,7 @@ export function WholesaleCartView() {
               <Button
                 size="lg"
                 asChild
-                className="w-full bg-slate-900 hover:bg-slate-800"
+                className="w-full bg-primary hover:bg-primary/90"
               >
                 <Link href={`${storeBase}/checkout/${cart.id}`}>
                   {t("proceedToCheckout")}

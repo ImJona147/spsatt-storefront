@@ -101,7 +101,7 @@ export default function WholesaleApplyPage() {
             <CardDescription>{t("apply.receivedDescription")}</CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Button asChild className="bg-slate-900 hover:bg-slate-800">
+            <Button asChild className="bg-primary hover:bg-primary/90">
               <Link href={wholesaleBase}>{t("apply.goToPortal")}</Link>
             </Button>
           </CardContent>
@@ -114,8 +114,8 @@ export default function WholesaleApplyPage() {
     <div className="mx-auto max-w-xl px-4 py-16 sm:px-6 lg:px-8">
       <Card>
         <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-            <Building2 className="h-6 w-6 text-slate-700" />
+          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+            <Building2 className="h-6 w-6 text-foreground" />
           </div>
           <CardTitle>{t("apply.title")}</CardTitle>
           <CardDescription>{t("apply.description")}</CardDescription>
@@ -235,7 +235,7 @@ export default function WholesaleApplyPage() {
               type="submit"
               disabled={submitting}
               size="lg"
-              className="w-full bg-slate-900 hover:bg-slate-800"
+              className="w-full bg-primary hover:bg-primary/90"
             >
               {submitting ? tr("creatingAccount") : t("apply.submit")}
             </Button>
@@ -247,7 +247,7 @@ export default function WholesaleApplyPage() {
             {t("apply.alreadyMember")}{" "}
             <Link
               href={wholesaleSignInHref(storeBase)}
-              className="font-medium text-slate-900 hover:underline"
+              className="font-medium text-foreground hover:underline"
             >
               {t("signInWall.submit")}
             </Link>

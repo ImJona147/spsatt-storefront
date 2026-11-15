@@ -147,18 +147,18 @@ export function SkuCombobox({
       />
 
       {caption && (
-        <p className="mt-1 truncate text-xs text-slate-500">{caption}</p>
+        <p className="mt-1 truncate text-xs text-muted-foreground">{caption}</p>
       )}
 
       {showDropdown && (
         <div
-          className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg"
+          className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-border bg-card shadow-lg"
           onMouseDown={() => {
             if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
           }}
         >
           {loading ? (
-            <p className="flex items-center justify-center gap-2 p-3 text-sm text-slate-500">
+            <p className="flex items-center justify-center gap-2 p-3 text-sm text-muted-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
               {t("quickOrder.searching")}
             </p>
@@ -180,23 +180,23 @@ export function SkuCombobox({
                     type="button"
                     tabIndex={-1}
                     onClick={() => handleSelect(suggestion)}
-                    className={`flex w-full items-start justify-between gap-3 px-3 py-2 text-left transition-colors hover:bg-slate-50 ${
-                      index === selectedIndex ? "bg-slate-50" : ""
+                    className={`flex w-full items-start justify-between gap-3 px-3 py-2 text-left transition-colors hover:bg-accent ${
+                      index === selectedIndex ? "bg-background" : ""
                     }`}
                   >
                     <span className="min-w-0">
-                      <span className="block truncate text-sm font-medium text-slate-900">
+                      <span className="block truncate text-sm font-medium text-foreground">
                         {suggestion.productName}
                         {suggestion.optionsText
                           ? ` — ${suggestion.optionsText}`
                           : ""}
                       </span>
-                      <span className="block truncate font-mono text-xs text-slate-500">
+                      <span className="block truncate font-mono text-xs text-muted-foreground">
                         {suggestion.sku}
                       </span>
                     </span>
                     {suggestion.displayPrice && (
-                      <span className="shrink-0 text-sm font-medium text-slate-900">
+                      <span className="shrink-0 text-sm font-medium text-foreground">
                         {suggestion.displayPrice}
                       </span>
                     )}
@@ -205,7 +205,7 @@ export function SkuCombobox({
               ))}
             </ul>
           ) : (
-            <p className="p-3 text-sm text-slate-500">
+            <p className="p-3 text-sm text-muted-foreground">
               {t("quickOrder.noResults")}
             </p>
           )}

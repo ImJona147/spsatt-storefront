@@ -236,7 +236,7 @@ export const FilterBar = memo(function FilterBar({
           <SlidersHorizontal className="w-4 h-4" />
           <span>{t("filters")}</span>
           {hasActiveFilters && (
-            <span className="flex items-center justify-center w-5 h-5 text-xs bg-primary text-white rounded-lg">
+            <span className="flex h-5 w-5 items-center justify-center rounded-lg bg-primary text-xs text-primary-foreground">
               {totalActiveFilters}
             </span>
           )}

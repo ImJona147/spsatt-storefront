@@ -43,7 +43,7 @@ export function WholesaleHeader({
   const wholesaleBase = `${basePath}/wholesale`;
 
   return (
-    <header className="border-b border-slate-700 bg-slate-900 text-slate-100">
+    <header className="border-b border-border bg-card text-card-foreground">
       <div className="container mx-auto flex flex-wrap items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <Link
           href={wholesaleBase}
@@ -56,7 +56,7 @@ export function WholesaleHeader({
         </Link>
 
         <nav className="hidden items-center gap-4 text-sm md:flex">
-          <Link href={wholesaleBase} className="hover:text-white">
+          <Link href={wholesaleBase} className="hover:text-foreground">
             {t("nav.catalog")}
           </Link>
           {/* Quick Order is an ordering surface — hidden from guests, who are
@@ -64,7 +64,7 @@ export function WholesaleHeader({
           {authenticated && (
             <Link
               href={`${wholesaleBase}/quick-order`}
-              className="hover:text-white"
+              className="hover:text-foreground"
             >
               {t("nav.quickOrder")}
             </Link>
@@ -73,7 +73,7 @@ export function WholesaleHeader({
 
         <div className="ml-auto flex items-center gap-2">
           {authenticated && customerName && (
-            <span className="hidden text-sm text-slate-300 sm:inline">
+            <span className="hidden text-sm text-muted-foreground sm:inline">
               {customerName}
             </span>
           )}
@@ -82,7 +82,7 @@ export function WholesaleHeader({
             asChild
             variant="ghost"
             size="sm"
-            className="text-slate-200 hover:bg-slate-800 hover:text-white"
+            className="text-muted-foreground hover:bg-accent hover:text-foreground"
           >
             <Link href={basePath}>
               <ArrowLeft className="h-4 w-4" />
@@ -96,12 +96,12 @@ export function WholesaleHeader({
                 asChild
                 variant="ghost"
                 size="sm"
-                className="relative text-slate-200 hover:bg-slate-800 hover:text-white"
+                className="relative text-muted-foreground hover:bg-accent hover:text-foreground"
               >
                 <Link href={`${wholesaleBase}/cart`} aria-label={t("nav.cart")}>
                   <ShoppingCart className="h-5 w-5" />
                   {itemCount > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-xs font-semibold text-slate-900">
+                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-card px-1 text-xs font-semibold text-foreground">
                       {itemCount}
                     </span>
                   )}
@@ -112,7 +112,7 @@ export function WholesaleHeader({
                 variant="ghost"
                 size="sm"
                 onClick={() => logout()}
-                className="text-slate-200 hover:bg-slate-800 hover:text-white"
+                className="text-muted-foreground hover:bg-accent hover:text-foreground"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline">{t("nav.signOut")}</span>
@@ -123,7 +123,7 @@ export function WholesaleHeader({
               asChild
               variant="secondary"
               size="sm"
-              className="bg-white text-slate-900 hover:bg-slate-100"
+              className="bg-card text-foreground hover:bg-muted"
             >
               <Link href={signInHref ?? wholesaleSignInHref(basePath)}>
                 {t("nav.signIn")}
