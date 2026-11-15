@@ -10,6 +10,11 @@ const api = vi.hoisted(() => ({
   categoriesList: vi.fn(),
   collectionsList: vi.fn(),
   sellersList: vi.fn(),
+  portfolioList: vi.fn(),
+}));
+
+vi.mock("@/lib/data/portfolio", () => ({
+  getPortfolioCategories: api.portfolioList,
 }));
 
 const marketplace = vi.hoisted(() => ({ enabled: false }));
@@ -142,6 +147,7 @@ describe("localized sitemap generation", () => {
     vi.resetModules();
     vi.clearAllMocks();
     marketplace.enabled = false;
+    api.portfolioList.mockResolvedValue([]);
   });
 
   it("lists collections after categories, then sellers when the marketplace is enabled", async () => {
@@ -168,12 +174,37 @@ describe("localized sitemap generation", () => {
       "https://store.example/us/en",
       "https://store.example/us/en/products",
       "https://store.example/us/en/collections",
+      "https://store.example/us/en/portafolio",
       "https://store.example/us/en/sellers",
       "https://store.example/us/en/products/p-0",
       "https://store.example/us/en/c/c-0",
       "https://store.example/us/en/collections/col-0",
       "https://store.example/us/en/sellers/s-0",
       "https://store.example/us/en/sellers/s-1",
+    ]);
+  });
+
+  it("includes only active portfolio categories and deduplicates their URLs", async () => {
+    api.marketsList.mockResolvedValue({ data: marketCountries("US") });
+    mockCatalog(0, 0);
+    api.portfolioList.mockResolvedValue([
+      { slug: "reconocimientos", active: true },
+      { slug: "reconocimientos", active: true },
+      { slug: "retirada", active: false },
+    ]);
+    const { default: sitemap } = await import("@/app/sitemap");
+
+    const entries = await sitemap({ id: Promise.resolve("0") });
+
+    expect(
+      entries.filter((entry) => entry.url.includes("/portafolio")),
+    ).toEqual([
+      expect.objectContaining({
+        url: "https://store.example/us/en/portafolio",
+      }),
+      expect.objectContaining({
+        url: "https://store.example/us/en/portafolio/reconocimientos",
+      }),
     ]);
   });
 
@@ -225,7 +256,7 @@ describe("localized sitemap generation", () => {
   });
 
   it("keeps product positions when an optional count fails only during discovery", async () => {
-    // Two locales of 3 static pages + 4,990 products fill 9,986 positions;
+    // Two locales of 4 static pages + 4,990 products fill 9,988 positions;
     // their 40 collections push the total past one 10,000-URL chunk.
     api.marketsList.mockResolvedValue({ data: marketCountries("US", "CA") });
     mockCatalog(4_990, 0, 20);
@@ -281,7 +312,7 @@ describe("localized sitemap generation", () => {
 
     const entries = await sitemap({ id: Promise.resolve("0") });
 
-    expect(entries).toHaveLength(12);
+    expect(entries).toHaveLength(14);
     expect(entries.map((entry) => entry.url)).toEqual(
       expect.arrayContaining([
         "https://store.example/us/en/products/p-0",
@@ -325,9 +356,9 @@ describe("localized sitemap generation", () => {
       .map(([params]) => params.page);
 
     expect(entries).toHaveLength(10_000);
-    expect(entries[0]?.url).toBe("https://store.example/us/en/products/p-9997");
+    expect(entries[0]?.url).toBe("https://store.example/us/en/products/p-9996");
     expect(entries.at(-1)?.url).toBe(
-      "https://store.example/us/en/products/p-19996",
+      "https://store.example/us/en/products/p-19995",
     );
     expect(Math.min(...loadedPages)).toBe(100);
     expect(Math.max(...loadedPages)).toBe(200);
@@ -377,7 +408,7 @@ describe("localized sitemap generation", () => {
     expect(urls).not.toContain(
       "https://store.example/as/en/products/us-product-0",
     );
-    expect(entries).toHaveLength(8);
+    expect(entries).toHaveLength(10);
     expect(
       api.productsList.mock.calls.filter(([params]) => params.limit === 1),
     ).toHaveLength(2);

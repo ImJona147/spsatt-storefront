@@ -1,4 +1,5 @@
 import type { Category, Media, Product } from "@spree/sdk";
+import { productCustomField, validGtin } from "@/lib/product-identifiers";
 import { ensureProtocol, getStoreName, getStoreUrl } from "@/lib/store";
 
 /**
@@ -42,7 +43,7 @@ export function buildProductJsonLd(
     url: canonicalUrl,
     brand: {
       "@type": "Brand",
-      name: getStoreName(),
+      name: productCustomField(product, ["brand", "marca"]) || getStoreName(),
     },
   };
 
@@ -53,6 +54,21 @@ export function buildProductJsonLd(
   if (product.default_variant?.sku) {
     schema.sku = product.default_variant.sku;
   }
+
+  const gtin = productCustomField(product, [
+    "gtin",
+    "ean",
+    "upc",
+    "isbn",
+    "barcode",
+  ]);
+  if (validGtin(gtin)) schema[`gtin${gtin.length}`] = gtin;
+  const mpn = productCustomField(product, [
+    "mpn",
+    "manufacturer part",
+    "numero de parte",
+  ]);
+  if (mpn) schema.mpn = mpn;
 
   const imageUrls = (product.media || [])
     .map((img: Media) => img.original_url || img.large_url)

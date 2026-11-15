@@ -5,6 +5,7 @@ import {
   buildLocalizedAlternates,
   translationFingerprint,
 } from "@/lib/metadata/alternates";
+import { brandedTitle } from "@/lib/metadata/title";
 import { getStoreUrl } from "@/lib/store";
 
 export interface CategoryMetadataParams {
@@ -30,7 +31,7 @@ export async function generateCategoryMetadata({
     return { title: "Categoria no encontrada" };
   }
 
-  const title = category.meta_title || category.name;
+  const title = brandedTitle(category.meta_title || category.name);
   const description =
     category.meta_description ||
     category.description ||
@@ -59,7 +60,7 @@ export async function generateCategoryMetadata({
     : undefined;
 
   return {
-    title,
+    title: { absolute: title },
     description,
     ...(category.meta_keywords ? { keywords: category.meta_keywords } : {}),
     ...(localizedAlternates

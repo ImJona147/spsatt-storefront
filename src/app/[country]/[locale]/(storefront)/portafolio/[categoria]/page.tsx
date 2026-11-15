@@ -1,3 +1,8 @@
+import { MessageCircle } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { PortfolioGallery } from "@/components/portfolio/PortfolioGallery";
 import {
@@ -6,11 +11,8 @@ import {
 } from "@/lib/constants/business";
 import { getPortfolioCategories } from "@/lib/data/portfolio";
 import { resolveCategoryPage, toMedia } from "@/lib/portfolio";
-import { MessageCircle } from "lucide-react";
-import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { buildCanonicalUrl } from "@/lib/seo";
+import { getStoreUrl } from "@/lib/store";
 
 interface PortfolioCategoryPageProps {
   params: Promise<{ country: string; locale: string; categoria: string }>;
@@ -42,7 +44,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: PortfolioCategoryPageProps): Promise<Metadata> {
-  const { locale, categoria } = await params;
+  const { country, locale, categoria } = await params;
   const t = await getTranslations({
     locale: locale as Locale,
     namespace: "home",
@@ -56,8 +58,19 @@ export async function generateMetadata({
   }
 
   const category = resolveCategoryPage(categoria, categories);
-  if (!category) return {};
+  if (!category) return { robots: { index: false, follow: false } };
+  const storeUrl = getStoreUrl();
   return {
+    ...(storeUrl
+      ? {
+          alternates: {
+            canonical: buildCanonicalUrl(
+              storeUrl,
+              `/${country}/${locale}/portafolio/${categoria}`,
+            ),
+          },
+        }
+      : {}),
     title: category.name,
     description: t("portfolioLead"),
   };
@@ -99,7 +112,7 @@ export default async function PortfolioCategoryPage({
         <span className="text-sm text-muted-foreground">{title}</span>
       </nav>
 
-      <SectionHeading eyebrow={t("portfolioEyebrow")} title={title} />
+      <SectionHeading as="h1" eyebrow={t("portfolioEyebrow")} title={title} />
 
       <div className="mt-10">
         {category.photoUrls.length > 0 ? (

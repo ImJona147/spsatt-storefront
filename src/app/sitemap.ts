@@ -5,7 +5,9 @@ import {
   getMarketLocaleTargets,
   type MarketLocaleTarget,
 } from "@/i18n/markets";
+import { getPortfolioCategories } from "@/lib/data/portfolio";
 import {
+  type SitemapResource as CatalogResource,
   getSitemapCategoryPage,
   getSitemapCollectionPage,
   getSitemapMarkets,
@@ -15,13 +17,13 @@ import {
   type SitemapCategory,
   type SitemapCollection,
   type SitemapProduct,
-  type SitemapResource,
   type SitemapSeller,
 } from "@/lib/data/sitemap";
 import { isMarketplaceEnabled } from "@/lib/spree";
 import { getDefaultCountry, getDefaultLocale, getStoreUrl } from "@/lib/store";
 
 type CountryLocale = MarketLocaleTarget;
+type SitemapResource = CatalogResource | "portfolio";
 
 interface LocaleOptions {
   locale: string;
@@ -107,7 +109,29 @@ const RESOURCES: Record<SitemapResource, ResourceSource> = {
     loadPage: async (...args) =>
       (await getSitemapSellerPage(...args)).map(sellerEntry),
   },
+  portfolio: {
+    enabled: () => true,
+    optional: true,
+    loadPage: async (_marketId, page, limit) =>
+      (await portfolioEntries()).slice((page - 1) * limit, page * limit),
+  },
 };
+
+async function portfolioEntries(): Promise<SitemapEntry[]> {
+  const categories = await getPortfolioCategories();
+  return Array.from(
+    new Set(
+      categories
+        .filter((category) => category.active)
+        .map((category) => category.slug || String(category.id)),
+    ),
+    (slug) => ({
+      url: `/portafolio/${encodeURIComponent(slug)}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    }),
+  );
+}
 
 const RESOURCE_ORDER = Object.keys(RESOURCES) as SitemapResource[];
 
@@ -397,6 +421,11 @@ function staticEntries(basePath: string): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.6,
     },
+    {
+      url: `${basePath}/portafolio`,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
     ...(isMarketplaceEnabled()
       ? [
           {
@@ -481,11 +510,10 @@ async function buildLocaleCatalog(
     RESOURCE_ORDER.map(async (resource) => {
       const source = RESOURCES[resource];
       if (!source.enabled()) return 0;
-      const count = getSitemapResourceCount(
-        resource,
-        target.marketId,
-        localeOptions,
-      );
+      const count =
+        resource === "portfolio"
+          ? portfolioEntries().then((entries) => entries.length)
+          : getSitemapResourceCount(resource, target.marketId, localeOptions);
       // An optional extra that fails to count drops only its own pages,
       // never the products and categories alongside it.
       return source.optional

@@ -5,6 +5,8 @@ import { getTranslations } from "next-intl/server";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { getPortfolioCategories } from "@/lib/data/portfolio";
 import { resolveIndexCategories } from "@/lib/portfolio";
+import { buildCanonicalUrl } from "@/lib/seo";
+import { getStoreUrl } from "@/lib/store";
 
 interface PortfolioPageProps {
   params: Promise<{ country: string; locale: string }>;
@@ -13,12 +15,23 @@ interface PortfolioPageProps {
 export async function generateMetadata({
   params,
 }: PortfolioPageProps): Promise<Metadata> {
-  const { locale } = await params;
+  const { country, locale } = await params;
   const t = await getTranslations({
     locale: locale as Locale,
     namespace: "home",
   });
+  const storeUrl = getStoreUrl();
   return {
+    ...(storeUrl
+      ? {
+          alternates: {
+            canonical: buildCanonicalUrl(
+              storeUrl,
+              `/${country}/${locale}/portafolio`,
+            ),
+          },
+        }
+      : {}),
     title: t("portfolioTitle"),
     description: t("portfolioLead"),
   };
@@ -42,6 +55,7 @@ export default async function PortfolioIndexPage({
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
       <SectionHeading
+        as="h1"
         eyebrow={t("portfolioEyebrow")}
         title={t("portfolioTitle")}
         lead={t("portfolioLead")}

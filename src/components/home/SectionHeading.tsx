@@ -4,6 +4,7 @@ interface SectionHeadingProps {
   lead?: string;
   align?: "left" | "center";
   id?: string;
+  as?: "h1" | "h2";
 }
 
 /**
@@ -16,6 +17,7 @@ export function SectionHeading({
   lead,
   align = "left",
   id,
+  as: Heading = "h2",
 }: SectionHeadingProps) {
   const centered = align === "center";
 
@@ -29,12 +31,12 @@ export function SectionHeading({
         <span aria-hidden className="h-px w-8 bg-primary" />
         {eyebrow}
       </p>
-      <h2
+      <Heading
         id={id}
         className="mt-4 text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl lg:text-4xl"
       >
         {title}
-      </h2>
+      </Heading>
       {lead && (
         <p className="mt-4 text-base leading-7 text-foreground/70">{lead}</p>
       )}

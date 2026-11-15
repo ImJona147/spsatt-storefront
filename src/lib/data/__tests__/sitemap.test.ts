@@ -26,6 +26,8 @@ vi.mock("next/cache", () => ({
 
 import {
   getSitemapCategoryPage,
+  getSitemapMarkets,
+  getSitemapProductPage,
   getSitemapResourceCount,
 } from "@/lib/data/sitemap";
 
@@ -71,5 +73,55 @@ describe("sitemap data cache", () => {
       { page: 2, limit: 100, parent_id_not_null: true },
       { country: "us", locale: "de" },
     );
+  });
+
+  it("does not turn an unavailable catalog into a cached zero count", async () => {
+    const unavailable = new Error("API unavailable");
+    api.productsList.mockRejectedValue(unavailable);
+
+    await expect(
+      getSitemapResourceCount("products", "market-1", {
+        country: "mx",
+        locale: "es",
+      }),
+    ).rejects.toBe(unavailable);
+  });
+
+  it("does not cache failed product pages as empty pages", async () => {
+    const unavailable = new Error("API unavailable");
+    api.productsList.mockRejectedValue(unavailable);
+
+    await expect(
+      getSitemapProductPage("market-1", 1, 100, {
+        country: "mx",
+        locale: "es",
+      }),
+    ).rejects.toBe(unavailable);
+  });
+
+  it("does not replace an unavailable market list with a fallback catalog", async () => {
+    const unavailable = new Error("API unavailable");
+    api.marketsList.mockRejectedValue(unavailable);
+
+    await expect(
+      getSitemapMarkets({ country: "mx", locale: "es" }),
+    ).rejects.toBe(unavailable);
+  });
+
+  it.each([
+    undefined,
+    -1,
+    NaN,
+    Infinity,
+    1.5,
+  ])("rejects an invalid catalog count: %s", async (count) => {
+    api.productsList.mockResolvedValue({ data: [], meta: { count } });
+
+    await expect(
+      getSitemapResourceCount("products", "market-1", {
+        country: "mx",
+        locale: "es",
+      }),
+    ).rejects.toThrow("invalid count for products");
   });
 });

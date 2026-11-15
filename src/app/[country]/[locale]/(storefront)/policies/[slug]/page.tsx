@@ -38,10 +38,17 @@ export async function generateMetadata({
     return {
       title: t("policyNotFound"),
       description: t("noContent"),
+      robots: { index: false, follow: false },
     };
   }
 
-  const description = `${policy.name} — ${storeName}`;
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: "policies",
+  });
+  const link = POLICY_LINKS.find((link) => link.slug === policy.slug);
+  const policyName = link ? t(link.nameKey) : policy.name;
+  const description = `${policyName}. ${storeName}.`;
   const storeUrl = getStoreUrl();
   const localizedAlternates = storeUrl
     ? await buildLocalizedAlternates({
@@ -63,7 +70,7 @@ export async function generateMetadata({
     : undefined;
 
   return {
-    title: policy.name,
+    title: policyName,
     description,
     ...(localizedAlternates
       ? {
@@ -74,7 +81,7 @@ export async function generateMetadata({
         }
       : {}),
     openGraph: {
-      title: policy.name,
+      title: policyName,
       description,
       ...(localizedAlternates ? { url: localizedAlternates.canonical } : {}),
       siteName: getStoreName(),
@@ -103,6 +110,8 @@ export default async function PolicyPage({
     );
   }
 
+  const link = POLICY_LINKS.find((link) => link.slug === policy.slug);
+  const policyName = link ? t(link.nameKey) : policy.name;
   const basePath = `/${country}/${locale}`;
   const bodyHtml = policy.body_html
     ? enhancePolicyHtml(policy.body_html)
@@ -121,12 +130,12 @@ export default async function PolicyPage({
         <span className="mx-2 text-muted-foreground" aria-hidden="true">
           /
         </span>
-        <span className="text-muted-foreground">{policy.name}</span>
+        <span className="text-muted-foreground">{policyName}</span>
       </nav>
 
       <header className="mt-5">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-          {policy.name}
+          {policyName}
         </h1>
         {updatedDate && (
           <p className="mt-2 text-sm text-muted-foreground">

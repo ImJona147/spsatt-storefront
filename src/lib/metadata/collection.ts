@@ -10,6 +10,7 @@ import {
   buildLocalizedAlternates,
   translationFingerprint,
 } from "@/lib/metadata/alternates";
+import { brandedTitle } from "@/lib/metadata/title";
 import { getStoreUrl } from "@/lib/store";
 
 export interface CollectionMetadataParams {
@@ -32,7 +33,7 @@ export async function generateCollectionMetadata({
 
   const displayName = collectionName(t, collection);
   const translatedDescription = translatedCollectionDescription(t, collection);
-  const title = collection.meta_title || displayName;
+  const title = brandedTitle(collection.meta_title || displayName);
   const description =
     collection.meta_description ||
     translatedDescription?.slice(0, 160) ||
@@ -66,7 +67,7 @@ export async function generateCollectionMetadata({
     : undefined;
 
   return {
-    title,
+    title: { absolute: title },
     description,
     ...(collection.meta_keywords ? { keywords: collection.meta_keywords } : {}),
     ...(localizedAlternates

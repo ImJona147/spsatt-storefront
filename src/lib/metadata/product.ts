@@ -6,6 +6,7 @@ import {
   translationFingerprint,
 } from "@/lib/metadata/alternates";
 import { normalizeOpenGraphLocale } from "@/lib/metadata/store";
+import { brandedTitle } from "@/lib/metadata/title";
 import { SOCIAL_IMAGE, stripHtml } from "@/lib/seo";
 import { DEFAULT_SURFACE } from "@/lib/spree";
 import { getStoreName, getStoreUrl } from "@/lib/store";
@@ -25,10 +26,13 @@ export async function generateProductMetadata({
   try {
     product = await getCachedProduct(slug, PRODUCT_METADATA_EXPAND);
   } catch {
-    return { title: "Product Not Found" };
+    return {
+      title: "Product Not Found",
+      robots: { index: false, follow: false },
+    };
   }
 
-  const title = product.meta_title || product.name;
+  const title = brandedTitle(product.meta_title || product.name);
   const description = product.meta_description
     ? product.meta_description
     : product.description
@@ -76,7 +80,7 @@ export async function generateProductMetadata({
         : null;
 
   return {
-    title,
+    title: { absolute: title },
     description,
     ...(product.meta_keywords ? { keywords: product.meta_keywords } : {}),
     ...(localizedAlternates
