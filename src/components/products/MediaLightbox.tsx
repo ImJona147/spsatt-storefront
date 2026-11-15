@@ -300,6 +300,7 @@ export function MediaLightbox({
   const src =
     current?.original_url || current?.xlarge_url || current?.large_url || null;
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<number | null>(null);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -322,6 +323,30 @@ export function MediaLightbox({
   const goNext = useCallback(() => {
     onNavigate(activeIndex === images.length - 1 ? 0 : activeIndex + 1);
   }, [activeIndex, images.length, onNavigate]);
+
+  const containTabFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Tab") return;
+    const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    );
+    const stops = [...(focusable ?? [])].filter(
+      (element) => element.getClientRects().length > 0,
+    );
+    const first = stops[0];
+    const last = stops[stops.length - 1];
+    if (!first || !last) {
+      event.preventDefault();
+      closeButtonRef.current?.focus();
+      return;
+    }
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -379,11 +404,13 @@ export function MediaLightbox({
   // underneath the site header (also z-50) instead of above it.
   return createPortal(
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label={t("openImageZoom")}
       data-state={isClosing ? "closing" : "open"}
       className="media-lightbox fixed inset-0 z-[100] flex items-center justify-center bg-background"
+      onKeyDown={containTabFocus}
       onPointerDown={(e) => {
         pressedOnBackdropRef.current = e.target === e.currentTarget;
       }}
