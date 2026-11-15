@@ -30,7 +30,7 @@ export async function SellerHeader({
             src={seller.cover_photo_url}
             alt=""
             fill
-            priority
+            preload
             sizes="100vw"
             className="object-cover"
           />

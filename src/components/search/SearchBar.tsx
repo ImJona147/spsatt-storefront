@@ -346,6 +346,7 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
               alt=""
               fill
               className="object-cover"
+              sizes="32px"
               iconClassName="w-4 h-4"
             />
           </div>
@@ -415,6 +416,7 @@ export function SearchBar({ basePath, autoFocus, onNavigate }: SearchBarProps) {
                               alt={s.item.name}
                               fill
                               className="object-cover"
+                              sizes="40px"
                               iconClassName="w-5 h-5"
                             />
                           </div>

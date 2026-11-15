@@ -1,4 +1,5 @@
 import type { Category, Media, Product } from "@spree/sdk";
+import { BUSINESS_COORDS, BUSINESS_MAPS_URL } from "@/lib/constants/business";
 import { productCustomField, validGtin } from "@/lib/product-identifiers";
 import { ensureProtocol, getStoreUrl } from "@/lib/store";
 
@@ -191,6 +192,12 @@ export function buildOrganizationJsonLd(
       postalCode: "95780",
       addressCountry: "MX",
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: BUSINESS_COORDS.lat,
+      longitude: BUSINESS_COORDS.lng,
+    },
+    hasMap: BUSINESS_MAPS_URL,
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",

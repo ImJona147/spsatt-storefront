@@ -195,7 +195,6 @@ function MediaGalleryInner({
             className="object-contain"
             fetchPriority="high"
             loading="eager"
-            priority
             quality={85}
             sizes="(max-width: 640px) 82vw, (max-width: 1024px) 32rem, 32rem"
             placeholder="blur"
