@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { SpreeError } from "@spree/sdk";
+import { getTranslations } from "next-intl/server";
 import { getCachedProduct, PRODUCT_METADATA_EXPAND } from "@/lib/data/cached";
 import { cachedGetProduct } from "@/lib/data/products";
 import {
@@ -25,9 +27,21 @@ export async function generateProductMetadata({
   let product;
   try {
     product = await getCachedProduct(slug, PRODUCT_METADATA_EXPAND);
-  } catch {
+  } catch (error) {
+    const isMissingProduct =
+      error instanceof SpreeError && error.status === 404;
+    const title = isMissingProduct
+      ? await getTranslations({
+          locale: locale as Locale,
+          namespace: "notFound",
+        }).then((t) => t("productsTitle"))
+      : await getTranslations({
+          locale: locale as Locale,
+          namespace: "common",
+        }).then((t) => t("loadErrorTitle"));
+
     return {
-      title: "Product Not Found",
+      title,
       robots: { index: false, follow: false },
     };
   }
