@@ -1,10 +1,10 @@
 "use client";
 
 import type { Category, Collection } from "@spree/sdk";
-import { ArrowLeft, ChevronRight, X } from "lucide-react";
+import { ArrowLeft, ChevronRight, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { RegionPreferences } from "@/components/layout/RegionPreferences";
 import { Button } from "@/components/ui/button";
@@ -44,8 +44,8 @@ export function MobileMenu({
 }: MobileMenuProps) {
   const t = useTranslations("header");
   const tc = useTranslations("collections");
+  const menuId = useId();
   const [open, setOpen] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const [panelStack, setPanelStack] = useState<PanelType[]>([{ kind: "main" }]);
   // animatedIndex trails panelStack — new panels mount off-screen, then animate in
   const [animatedIndex, setAnimatedIndex] = useState(0);
@@ -100,76 +100,54 @@ export function MobileMenu({
 
   // Shared link style
   const linkClass =
-    "text-left text-foreground hover:text-foreground hover:bg-accent rounded-lg px-3 py-2.5 text-base transition-colors";
+    "group flex min-h-11 items-center rounded-xl px-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
   // Shared button style for items with children (chevron)
   const categoryButtonClass =
-    "flex items-center justify-between w-full text-left text-foreground hover:text-foreground hover:bg-accent rounded-lg px-3 py-2.5 text-base transition-colors";
+    "group flex min-h-11 w-full items-center justify-between rounded-xl px-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      {/* Animated hamburger / X button — two-phase animation matching Lottie reference */}
       <Button
-        variant="ghost"
+        variant="outline"
         size="icon-lg"
-        onClick={() => {
-          if (!hasInteracted) setHasInteracted(true);
-          setOpen(!open);
-        }}
+        onClick={() => setOpen(!open)}
         aria-label={open ? t("closeMenu") : t("openMenu")}
-        className="relative z-[60] cursor-pointer"
+        aria-expanded={open}
+        aria-controls={menuId}
+        className="relative z-[60] size-11 rounded-xl border-border bg-background shadow-sm transition-[background-color,transform,box-shadow] hover:bg-accent hover:shadow-md active:scale-95 motion-reduce:transition-none"
       >
-        <div className="relative w-5 h-5">
-          {/* Top line: phase 1 translates to center, phase 2 rotates 45° */}
-          <span
-            className={`absolute left-0 right-0 h-0.5 bg-current rounded-full top-[2px] ${
-              hasInteracted
-                ? open
-                  ? "animate-hamburger-top-open"
-                  : "animate-hamburger-top-close"
-                : ""
-            }`}
-          />
-          {/* Middle line: fades out in phase 1, fades in after delay on close */}
-          <span
-            className={`absolute left-0 right-0 h-0.5 bg-current rounded-full top-1/2 -translate-y-1/2 ${
-              hasInteracted
-                ? open
-                  ? "animate-hamburger-mid-open"
-                  : "animate-hamburger-mid-close"
-                : ""
-            }`}
-            style={
-              hasInteracted && !open
-                ? { animationDelay: "0.2s", opacity: 0 }
-                : undefined
-            }
-          />
-          {/* Bottom line: phase 1 translates to center, phase 2 rotates -45° */}
-          <span
-            className={`absolute left-0 right-0 h-0.5 bg-current rounded-full bottom-[2px] ${
-              hasInteracted
-                ? open
-                  ? "animate-hamburger-bottom-open"
-                  : "animate-hamburger-bottom-close"
-                : ""
-            }`}
-          />
-        </div>
+        <Menu
+          aria-hidden
+          className={`absolute size-5 transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${
+            open
+              ? "rotate-90 scale-75 opacity-0"
+              : "rotate-0 scale-100 opacity-100"
+          }`}
+        />
+        <X
+          aria-hidden
+          className={`absolute size-5 transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${
+            open
+              ? "rotate-0 scale-100 opacity-100"
+              : "-rotate-90 scale-75 opacity-0"
+          }`}
+        />
       </Button>
 
       <SheetContent
+        id={menuId}
         side="left"
-        className="flex flex-col !gap-0 !rounded-none overflow-hidden max-md:!top-16 max-md:!h-[calc(100%-4rem)] max-md:!w-full max-md:!max-w-none max-md:!border-r-0"
+        className="flex flex-col !gap-0 !rounded-none overflow-hidden border-r border-border bg-background shadow-2xl max-md:!top-16 max-md:!h-[calc(100%-4rem)] max-md:!w-full max-md:!max-w-none max-md:!border-r-0 max-md:!border-t max-md:!border-border sm:!max-w-[25rem]"
         showCloseButton={false}
         overlayClassName="max-md:!top-16 max-md:!bg-transparent"
       >
         <SheetTitle className="sr-only">{t("menu")}</SheetTitle>
         {/* Menu header — changes based on active panel */}
-        <div className="hidden md:flex items-center justify-between px-4 h-16 border-b border-border relative overflow-hidden">
+        <div className="relative flex h-14 shrink-0 items-center justify-between overflow-hidden border-b border-border bg-background px-5 text-foreground">
           {/* "Menu" title — visible when on main panel */}
           <span
-            className={`text-base font-semibold transition-[opacity,transform] duration-300 ease-in-out absolute left-4 ${
+            className={`absolute left-5 text-base font-semibold tracking-tight transition-[opacity,transform] duration-300 ease-in-out ${
               currentPanel.kind === "main"
                 ? "translate-x-0 opacity-100"
                 : "-translate-x-8 opacity-0 pointer-events-none"
@@ -181,7 +159,9 @@ export function MobileMenu({
           <button
             type="button"
             onClick={popPanel}
-            className={`flex items-center gap-2 text-foreground hover:text-foreground text-base font-semibold cursor-pointer transition-all duration-300 ease-in-out absolute left-4 ${
+            tabIndex={currentPanel.kind === "main" ? -1 : 0}
+            aria-hidden={currentPanel.kind === "main"}
+            className={`absolute left-5 flex cursor-pointer items-center gap-2 text-base font-semibold transition-all duration-300 ease-in-out ${
               currentPanel.kind !== "main"
                 ? "translate-x-0 opacity-100"
                 : "translate-x-8 opacity-0 pointer-events-none"
@@ -200,14 +180,15 @@ export function MobileMenu({
             variant="ghost"
             size="icon-sm"
             onClick={() => handleOpenChange(false)}
-            className="cursor-pointer ml-auto"
+            aria-label={t("closeMenu")}
+            className="ml-auto cursor-pointer text-muted-foreground hover:bg-accent hover:text-foreground"
           >
             <X className="size-4" />
           </Button>
         </div>
 
         {/* Sliding panels container */}
-        <div className="relative flex-1 overflow-hidden">
+        <div className="relative min-h-0 flex-1 overflow-hidden">
           {/* Main menu panel */}
           <div
             className={`absolute inset-0 flex flex-col bg-background transition-transform duration-300 ease-in-out ${
@@ -216,21 +197,26 @@ export function MobileMenu({
                 : "-translate-x-full"
             }`}
           >
-            <nav className="flex flex-col gap-1 px-4 flex-1 overflow-y-auto pt-2">
-              <Link
-                href={basePath || "/"}
-                onClick={() => setOpen(false)}
-                className={linkClass}
-              >
-                {t("home")}
-              </Link>
-              <Link
-                href={`${basePath}/products`}
-                onClick={() => setOpen(false)}
-                className={linkClass}
-              >
-                {t("allProducts")}
-              </Link>
+            <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-4">
+              <div className="mb-2 grid grid-cols-2 gap-2 border-b border-border pb-4">
+                <Link
+                  href={basePath || "/"}
+                  onClick={() => setOpen(false)}
+                  className={`${linkClass} bg-muted/60`}
+                >
+                  {t("home")}
+                </Link>
+                <Link
+                  href={`${basePath}/products`}
+                  onClick={() => setOpen(false)}
+                  className={`${linkClass} bg-muted/60`}
+                >
+                  {t("allProducts")}
+                </Link>
+              </div>
+              <p className="px-3.5 pb-1 pt-1 text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                {t("categories")}
+              </p>
               {collections.length > 0 ? (
                 <button
                   type="button"
@@ -238,7 +224,9 @@ export function MobileMenu({
                   className={categoryButtonClass}
                 >
                   <span>{t("collections")}</span>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  <span className="grid size-8 place-items-center rounded-full bg-muted text-muted-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <ChevronRight className="size-4" />
+                  </span>
                 </button>
               ) : (
                 <Link
@@ -267,7 +255,9 @@ export function MobileMenu({
                     className={categoryButtonClass}
                   >
                     <span>{category.name}</span>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    <span className="grid size-8 place-items-center rounded-full bg-muted text-muted-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                      <ChevronRight className="size-4" />
+                    </span>
                   </button>
                 ) : (
                   <Link
@@ -288,7 +278,7 @@ export function MobileMenu({
                 {t("contact")}
               </Link>
               {/* Secondary links — kept out of the category list above. */}
-              <div className="mt-2 pt-2 border-t border-border">
+              <div className="mt-2 border-t border-border pt-2">
                 {wholesaleEnabled && (
                   <Link
                     href={`${basePath}/wholesale`}
@@ -310,7 +300,7 @@ export function MobileMenu({
             </nav>
 
             {/* Footer: centered Region and language control (mobile only) */}
-            <SheetFooter className="lg:hidden items-center border-t border-border pt-4 gap-2">
+            <SheetFooter className="items-center gap-2 border-t border-border pt-4 lg:hidden">
               <RegionPreferences variant="menu" />
             </SheetFooter>
           </div>
@@ -338,20 +328,8 @@ export function MobileMenu({
                 key={`${panel.kind}-${panel.kind === "category" ? panel.category.id : "all"}-${index}`}
                 className={`absolute inset-0 flex flex-col bg-background transition-transform duration-300 ease-in-out ${translateClass}`}
               >
-                {/* Back button (mobile only — desktop uses the global header) */}
-                <div className="md:hidden px-4 py-2 border-b border-border">
-                  <button
-                    type="button"
-                    onClick={popPanel}
-                    className="flex items-center gap-2 text-foreground hover:text-foreground py-2 text-base font-medium"
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                    <span>{title}</span>
-                  </button>
-                </div>
-
                 {/* Children */}
-                <nav className="flex flex-col gap-1 px-4 flex-1 overflow-y-auto pt-2">
+                <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 pt-3">
                   {panel.kind === "collections"
                     ? collections.map((collection) => (
                         <Link

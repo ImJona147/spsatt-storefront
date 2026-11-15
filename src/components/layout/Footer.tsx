@@ -31,10 +31,10 @@ export function FooterCategoryLinks({
   basePath,
 }: FooterCategoryLinksProps) {
   return rootCategories.map((category) => (
-    <li key={category.id}>
+    <li key={category.id} className="min-w-0">
       <Link
         href={`${basePath}/c/${category.permalink}`}
-        className="text-sm text-primary-foreground/95 hover:text-primary-foreground transition-colors"
+        className="inline-flex min-h-9 items-center text-sm leading-5 text-primary-foreground/90 transition-colors hover:text-primary-foreground hover:underline underline-offset-4"
       >
         {category.name}
       </Link>
@@ -50,25 +50,32 @@ export async function Footer({ basePath, locale, categoryLinks }: FooterProps) {
   ]);
   const wholesaleEnabled = isWholesaleEnabled();
   const marketplaceEnabled = isMarketplaceEnabled();
+  const linkClass =
+    "inline-flex min-h-9 items-center text-sm leading-5 text-primary-foreground/90 transition-colors hover:text-primary-foreground hover:underline underline-offset-4";
+  const contactLinkClass =
+    "inline-flex min-h-10 items-center gap-2 text-sm text-primary-foreground transition-colors hover:text-primary-foreground/80";
 
   return (
     <footer className="bg-primary text-primary-foreground">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-5">
-          <div className="md:col-span-2">
-            <span className="text-xl font-bold text-primary-foreground">
+      <div className="container mx-auto px-4 py-8 sm:px-6 sm:py-9 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[minmax(15rem,0.9fr)_minmax(0,1.8fr)] lg:gap-14">
+          <div className="min-w-0">
+            <Link
+              href={basePath || "/"}
+              className="inline-flex text-xl font-semibold tracking-tight text-primary-foreground transition-opacity hover:opacity-85"
+            >
               {storeName}
-            </span>
-            <p className="mt-4 max-w-md text-sm text-primary-foreground/95">
+            </Link>
+            <p className="mt-2 max-w-lg text-sm leading-6 text-primary-foreground/90">
               {t("description")}
             </p>
-            <ul className="mt-5 space-y-2.5 text-sm text-primary-foreground/95">
+            <ul className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
               <li>
                 <a
                   href={buildWhatsAppUrl(BUSINESS_WHATSAPP_MESSAGE)}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 hover:text-primary-foreground transition-colors"
+                  className={contactLinkClass}
                 >
                   <MessageCircle aria-hidden className="size-4" />
                   {t("whatsapp")}
@@ -77,138 +84,116 @@ export async function Footer({ basePath, locale, categoryLinks }: FooterProps) {
               <li>
                 <a
                   href={`tel:${BUSINESS_PHONE_TEL}`}
-                  className="hover:text-primary-foreground transition-colors"
+                  className={contactLinkClass}
                 >
                   {BUSINESS_PHONE_DISPLAY}
                 </a>
               </li>
-              <li className="flex items-start gap-2">
-                <MapPin
-                  aria-hidden
-                  className="mt-0.5 size-4 shrink-0 text-primary-foreground"
-                />
-                {BUSINESS_ADDRESS}
-              </li>
               <li>
                 <Link
                   href={`${basePath}#contact`}
-                  className="font-medium text-primary-foreground hover:underline underline-offset-4 transition-colors"
+                  className={`${contactLinkClass} font-medium underline underline-offset-4`}
                 >
                   {t("contact")}
                 </Link>
               </li>
             </ul>
+            <p className="mt-1 flex items-start gap-2 text-sm leading-5 text-primary-foreground/90">
+              <MapPin aria-hidden className="mt-0.5 size-4 shrink-0" />
+              <span>{BUSINESS_ADDRESS}</span>
+            </p>
           </div>
 
-          <div>
-            <h2 className="text-sm font-semibold text-primary-foreground">
-              {t("shop")}
-            </h2>
-            <ul className="mt-4 space-y-3">
-              <li>
-                <Link
-                  href={`${basePath}/products`}
-                  className="text-sm text-primary-foreground/95 hover:text-primary-foreground transition-colors"
-                >
-                  {t("allProducts")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`${basePath}/portafolio`}
-                  className="text-sm text-primary-foreground/95 hover:text-primary-foreground transition-colors"
-                >
-                  {t("portfolio")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`${basePath}/collections`}
-                  className="text-sm text-primary-foreground/95 hover:text-primary-foreground transition-colors"
-                >
-                  {t("collections")}
-                </Link>
-              </li>
-              {marketplaceEnabled && (
+          <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-[1.35fr_0.8fr_1fr] xl:gap-8">
+            <div className="sm:col-span-2 xl:col-span-1">
+              <h2 className="text-xs font-semibold tracking-wide text-primary-foreground">
+                {t("shop")}
+              </h2>
+              <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-0.5">
+                <li>
+                  <Link href={`${basePath}/products`} className={linkClass}>
+                    {t("allProducts")}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`${basePath}/portafolio`} className={linkClass}>
+                    {t("portfolio")}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`${basePath}/collections`} className={linkClass}>
+                    {t("collections")}
+                  </Link>
+                </li>
+                {marketplaceEnabled && (
+                  <li>
+                    <Link href={`${basePath}/sellers`} className={linkClass}>
+                      {t("sellers")}
+                    </Link>
+                  </li>
+                )}
+                {categoryLinks}
+              </ul>
+            </div>
+
+            <div>
+              <h2 className="text-xs font-semibold tracking-wide text-primary-foreground">
+                {t("account")}
+              </h2>
+              <ul className="mt-2 space-y-0.5">
+                <li>
+                  <Link href={`${basePath}/account`} className={linkClass}>
+                    {t("myAccount")}
+                  </Link>
+                </li>
                 <li>
                   <Link
-                    href={`${basePath}/sellers`}
-                    className="text-sm text-primary-foreground/95 hover:text-primary-foreground transition-colors"
+                    href={`${basePath}/account/orders`}
+                    className={linkClass}
                   >
-                    {t("sellers")}
+                    {t("orderHistory")}
                   </Link>
                 </li>
-              )}
-              {categoryLinks}
-            </ul>
-          </div>
-
-          <div>
-            <h2 className="text-sm font-semibold text-primary-foreground">
-              {t("account")}
-            </h2>
-            <ul className="mt-4 space-y-3">
-              <li>
-                <Link
-                  href={`${basePath}/account`}
-                  className="text-sm text-primary-foreground/95 hover:text-primary-foreground transition-colors"
-                >
-                  {t("myAccount")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`${basePath}/account/orders`}
-                  className="text-sm text-primary-foreground/95 hover:text-primary-foreground transition-colors"
-                >
-                  {t("orderHistory")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`${basePath}/cart`}
-                  className="text-sm text-primary-foreground/95 hover:text-primary-foreground transition-colors"
-                >
-                  {t("cart")}
-                </Link>
-              </li>
-              {wholesaleEnabled && (
                 <li>
-                  <Link
-                    href={`${basePath}/wholesale`}
-                    className="text-sm text-primary-foreground/95 hover:text-primary-foreground transition-colors"
-                  >
-                    {t("wholesale")}
+                  <Link href={`${basePath}/cart`} className={linkClass}>
+                    {t("cart")}
                   </Link>
                 </li>
-              )}
-            </ul>
-          </div>
+                {wholesaleEnabled && (
+                  <li>
+                    <Link href={`${basePath}/wholesale`} className={linkClass}>
+                      {t("wholesale")}
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </div>
 
-          <div>
-            <h2 className="text-sm font-semibold text-primary-foreground">
-              {t("policies")}
-            </h2>
-            <ul className="mt-4 space-y-3">
-              {POLICY_LINKS.map((policy) => (
-                <li key={policy.slug}>
-                  <Link
-                    href={`${basePath}/policies/${policy.slug}`}
-                    className="text-sm text-primary-foreground/95 hover:text-primary-foreground transition-colors"
-                  >
-                    {tp(policy.nameKey)}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div>
+              <h2 className="text-xs font-semibold tracking-wide text-primary-foreground">
+                {t("policies")}
+              </h2>
+              <ul className="mt-2 space-y-0.5">
+                {POLICY_LINKS.map((policy) => (
+                  <li key={policy.slug}>
+                    <Link
+                      href={`${basePath}/policies/${policy.slug}`}
+                      className={linkClass}
+                    >
+                      {tp(policy.nameKey)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
-        <div className="mt-10 pt-8 border-t border-primary-foreground/30 text-xs text-primary-foreground/95 space-y-1.5">
+        <div className="mt-7 flex flex-col items-center justify-center gap-x-6 gap-y-1.5 border-t border-primary-foreground/25 pt-4 text-center text-xs leading-5 text-primary-foreground/85 sm:flex-row sm:flex-wrap">
           <p>
             &copy; <CurrentYear /> {storeName}. {t("rights")}
           </p>
-          <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
             <a
               href="https://spreecommerce.org"
               target="_blank"
