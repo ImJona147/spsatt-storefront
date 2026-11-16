@@ -50,7 +50,9 @@ export default async function PortfolioIndexPage({
   });
   const apiCategories = await getPortfolioCategories();
   const categories = resolveIndexCategories(apiCategories);
-  const firstCoverIndex = categories.findIndex((category) => category.coverUrl);
+  const firstImageIndex = categories.findIndex(
+    (category) => category.photoUrls[0] ?? category.coverUrl,
+  );
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
@@ -66,47 +68,51 @@ export default async function PortfolioIndexPage({
         </p>
       ) : (
         <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category, index) => (
-            <li key={category.slug}>
-              <Link
-                href={`${basePath}/portafolio/${category.slug}`}
-                className="group relative block aspect-4/3 overflow-hidden rounded-xl border border-border"
-              >
-                {category.coverUrl ? (
-                  <>
-                    <Image
-                      src={category.coverUrl}
-                      alt={category.name}
-                      fill
-                      sizes={TILE_SIZES}
-                      loading={index === firstCoverIndex ? "eager" : "lazy"}
-                      fetchPriority={
-                        index === firstCoverIndex ? "high" : undefined
-                      }
-                      className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none"
-                    />
+          {categories.map((category, index) => {
+            const imageUrl = category.coverUrl;
+
+            return (
+              <li key={category.slug}>
+                <Link
+                  href={`${basePath}/portafolio/${category.slug}`}
+                  className="group relative block aspect-video overflow-hidden rounded-xl border border-border bg-muted"
+                >
+                  {imageUrl ? (
+                    <>
+                      <Image
+                        src={imageUrl}
+                        alt=""
+                        fill
+                        sizes={TILE_SIZES}
+                        loading={index === firstImageIndex ? "eager" : "lazy"}
+                        fetchPriority={
+                          index === firstImageIndex ? "high" : undefined
+                        }
+                        className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none"
+                      />
+                      <span
+                        aria-hidden
+                        className="absolute inset-0 bg-linear-to-t from-black/75 via-black/25 to-transparent"
+                      />
+                    </>
+                  ) : (
+                    <span aria-hidden className="absolute inset-0 bg-muted" />
+                  )}
+                  <span className="absolute inset-x-0 bottom-0 p-4">
                     <span
-                      aria-hidden
-                      className="absolute inset-0 bg-linear-to-t from-black/75 via-black/25 to-transparent"
-                    />
-                  </>
-                ) : (
-                  <span aria-hidden className="absolute inset-0 bg-muted" />
-                )}
-                <span className="absolute inset-x-0 bottom-0 p-4">
-                  <span
-                    className={
-                      category.coverUrl
-                        ? "block text-lg font-semibold text-white"
-                        : "block text-lg font-semibold text-foreground"
-                    }
-                  >
-                    {category.name}
+                      className={
+                        imageUrl
+                          ? "block text-lg font-semibold text-white"
+                          : "block text-lg font-semibold text-foreground"
+                      }
+                    >
+                      {category.name}
+                    </span>
                   </span>
-                </span>
-              </Link>
-            </li>
-          ))}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
