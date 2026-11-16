@@ -801,7 +801,7 @@ function CheckoutPageContentInner({
           type="button"
           onClick={validateAndPay}
           disabled={processing}
-          className="w-full mt-8 h-[54px] bg-primary text-primary-foreground text-sm font-bold rounded-sm hover:bg-muted/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+          className="mt-8 flex h-[54px] w-full items-center justify-center gap-2 rounded-sm bg-primary text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 active:bg-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary"
         >
           {processing ? (
             <>

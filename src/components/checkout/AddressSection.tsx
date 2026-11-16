@@ -64,7 +64,8 @@ const REQUIRED_ADDRESS_FIELDS: (keyof AddressFormData)[] = [
 ];
 
 function isAddressComplete(address: AddressFormData): boolean {
-  return REQUIRED_ADDRESS_FIELDS.every((field) => address[field].trim() !== "");
+  return REQUIRED_ADDRESS_FIELDS.every((field) => address[field].trim() !== "") &&
+    (address.country_code !== "MX" || /^.+\s+\d+[\w-]*\s*,\s*[^,]+$/.test(address.address1.trim()));
 }
 
 function buildAutoSaveHash(

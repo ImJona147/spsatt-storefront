@@ -51,6 +51,8 @@ export function AddressFormFields({
   );
   const tc = useTranslations("common");
   const hasStates = states.length > 0;
+  const showMexicanAddressHelp =
+    !address.country_code || address.country_code === "MX";
 
   return (
     <div className="flex flex-col gap-3">
@@ -153,11 +155,36 @@ export function AddressFormFields({
           id={`${idPrefix}-address1`}
           name="address1"
           autoComplete={autoComplete("address-line1")}
+          aria-describedby={
+            showMexicanAddressHelp ? `${idPrefix}-address1-help` : undefined
+          }
           required
           value={address.address1}
           onChange={(e) => onChange("address1", e.target.value)}
-          placeholder={t("address")}
+          placeholder={
+            showMexicanAddressHelp ? "Calle Reforma 123, Centro" : t("address")
+          }
+          pattern={
+            address.country_code === "MX"
+              ? ".+\\s+[0-9]+[A-Za-z0-9-]*\\s*,\\s*[^,]+"
+              : undefined
+          }
+          title={showMexicanAddressHelp ? t("mxAddressParts") : undefined}
         />
+        {showMexicanAddressHelp && (
+          <div
+            id={`${idPrefix}-address1-help`}
+            className="mt-1.5 space-y-0.5 text-xs leading-5 text-muted-foreground"
+          >
+            <p>
+              <span className="font-medium text-foreground">
+                {t("mxAddressExample")}
+              </span>{" "}
+              Calle Reforma 123, Centro
+            </p>
+            <p>{t("mxAddressParts")}</p>
+          </div>
+        )}
       </div>
 
       {/* Apartment */}
@@ -177,6 +204,11 @@ export function AddressFormFields({
           onChange={(e) => onChange("address2", e.target.value)}
           placeholder={t("apartment")}
         />
+        {showMexicanAddressHelp && (
+          <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
+            {t("mxApartmentHelp")}
+          </p>
+        )}
       </div>
 
       {/* City / State / ZIP — 3 columns */}
@@ -270,6 +302,11 @@ export function AddressFormFields({
           />
         </div>
       </div>
+      {showMexicanAddressHelp && (
+        <p className="text-xs leading-5 text-muted-foreground">
+          {t("mxLocationHelp")}
+        </p>
+      )}
 
       {/* Phone */}
       <div>
@@ -289,6 +326,11 @@ export function AddressFormFields({
           onChange={(e) => onChange("phone", e.target.value)}
           placeholder={t("phone")}
         />
+        {showMexicanAddressHelp && (
+          <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
+            {t("mxPhoneHelp")}
+          </p>
+        )}
       </div>
     </div>
   );

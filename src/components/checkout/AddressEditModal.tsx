@@ -99,15 +99,23 @@ export function AddressEditModal({
         if (!open) onClose();
       }}
     >
-      <DialogContent className="sm:max-w-lg p-0 gap-0" showCloseButton={false}>
-        <form onSubmit={handleSubmit}>
-          <div className="px-4 pt-5 pb-4 sm:p-6">
-            <DialogTitle className="text-lg font-medium text-foreground mb-4">
+      <DialogContent
+        className="max-h-[calc(100dvh-2rem)] gap-0 overflow-hidden p-0 sm:max-w-lg"
+        showCloseButton={false}
+      >
+        <form
+          onSubmit={handleSubmit}
+          className="flex max-h-[calc(100dvh-2rem)] min-h-0 flex-col"
+        >
+          <div className="shrink-0 border-b border-border px-4 py-3 sm:px-5">
+            <DialogTitle className="text-lg font-medium text-foreground">
               {modalTitle}
             </DialogTitle>
+          </div>
 
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 sm:px-5">
             {error && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" className="mb-3">
                 <CircleAlert />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
@@ -123,11 +131,20 @@ export function AddressEditModal({
             />
           </div>
 
-          <div className="border-t border-border px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
-            <Button type="submit" disabled={saving}>
+          <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-border px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:flex-row-reverse sm:px-5">
+            <Button
+              type="submit"
+              disabled={saving}
+              className="w-full sm:w-auto"
+            >
               {saving ? tc("saving") : t("saveAddress")}
             </Button>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="w-full sm:w-auto"
+            >
               {tc("cancel")}
             </Button>
           </div>
