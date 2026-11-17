@@ -28,7 +28,7 @@ ARG NODE_VERSION=22-alpine
 
 # ---- base: Node with pnpm (same version as package.json's `packageManager`) ----
 FROM node:${NODE_VERSION} AS base
-RUN npm install -g pnpm@10.33.4
+RUN npm install -g pnpm@12.21.0
 RUN apk add --no-cache libc6-compat
 
 
@@ -39,7 +39,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.cjs ./
 COPY patches/ ./patches/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --no-frozen-lockfile --store-dir /pnpm/store
+    pnpm install --frozen-lockfile --store-dir /pnpm/store
 
 
 # ---- builder: compile the Next.js app ----

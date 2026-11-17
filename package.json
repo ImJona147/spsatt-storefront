@@ -53,18 +53,6 @@
   },
   "name": "nextjs-starter-spree",
   "packageManager": "pnpm@12.21.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@sentry/cli",
-      "@swc/core",
-      "esbuild",
-      "lefthook"
-    ],
-    "patchedDependencies": {
-      "@spree/sdk@6.0.4": "patches/@spree__sdk@6.0.3.patch"
-    }
-  },
   "private": true,
   "scripts": {
     "build": "next build",

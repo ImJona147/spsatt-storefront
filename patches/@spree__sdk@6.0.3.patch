@@ -1,3 +1,4 @@
+diff --git a/dist/index.js b/dist/index.js
 --- a/dist/index.js
 +++ b/dist/index.js
 @@ -1527,21 +1527,25 @@
