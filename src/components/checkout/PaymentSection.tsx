@@ -174,7 +174,9 @@ export function PaymentSection({
     | null
   >(null);
   const initRef = useRef(false);
-  const initDoneRef = useRef(false);
+  // Request ID of a saved-card init still loading cards (pending only while
+  // it matches sessionRequestIdRef; any newer session request supersedes it).
+  const pendingInitRequestIdRef = useRef<number | null>(null);
   const sessionRequestIdRef = useRef(0);
   const completionInFlightRef = useRef(false);
 
@@ -255,6 +257,57 @@ export function PaymentSection({
   const lastTotalRef = useRef<string | null>(null);
   const selectedCardRef = useRef<string | null>(null);
 
+  // Load saved cards (if authenticated), then create the first session for
+  // `method`. Loading cards is async, so the shopper may pick another method
+  // (or something else may start a session) in the meantime; claiming a
+  // request ID up front lets us detect that and drop the stale init instead
+  // of overwriting the newer selection's session.
+  const initSessionWithSavedCards = useCallback(
+    async (method: PaymentMethod) => {
+      const initRequestId = ++sessionRequestIdRef.current;
+      pendingInitRequestIdRef.current = initRequestId;
+      // Record the total now so the total-sync effect doesn't start a
+      // competing session while saved cards are still loading.
+      lastTotalRef.current = cart.total;
+
+      setLoading(true);
+      setGatewayError(null);
+      setSessionExternalData(null);
+      setPaymentSessionId(null);
+      gatewayHandleRef.current = null;
+
+      let cardId: string | null = null;
+
+      if (isAuthenticated) {
+        try {
+          const result = await getCreditCards();
+          const gatewayCards = result.data.filter(
+            (card) => card.gateway_payment_profile_id,
+          );
+          setSavedCards(gatewayCards);
+
+          if (initRequestId !== sessionRequestIdRef.current) return;
+
+          if (gatewayCards.length > 0) {
+            const defaultCard =
+              gatewayCards.find((c) => c.default) || gatewayCards[0];
+            cardId = defaultCard.gateway_payment_profile_id;
+            setSelectedCardId(cardId);
+          }
+        } catch {
+          // Cards failed to load — proceed without saved cards
+        }
+      }
+
+      // Superseded by a newer method selection or session request.
+      if (initRequestId !== sessionRequestIdRef.current) return;
+
+      selectedCardRef.current = cardId;
+      await createSession(cardId, method);
+    },
+    [cart.total, createSession, isAuthenticated],
+  );
+
   // On mount: load saved cards (if authenticated + session method), then create initial session
   useEffect(() => {
     if (initRef.current) return;
@@ -263,50 +316,8 @@ export function PaymentSection({
     if (!isSessionBased) return;
 
     initRef.current = true;
-
-    const init = async () => {
-      try {
-        setLoading(true);
-
-        let initialCardId: string | null = null;
-
-        if (isAuthenticated) {
-          try {
-            const result = await getCreditCards();
-            const gatewayCards = result.data.filter(
-              (card) => card.gateway_payment_profile_id,
-            );
-            setSavedCards(gatewayCards);
-
-            if (gatewayCards.length > 0) {
-              const defaultCard =
-                gatewayCards.find((c) => c.default) || gatewayCards[0];
-              initialCardId = defaultCard.gateway_payment_profile_id;
-              setSelectedCardId(initialCardId);
-            }
-          } catch {
-            // Cards failed to load — proceed without saved cards
-          }
-        }
-
-        selectedCardRef.current = initialCardId;
-        lastTotalRef.current = cart.total;
-
-        await createSession(initialCardId, selectedMethod);
-      } finally {
-        initDoneRef.current = true;
-      }
-    };
-
-    init();
-  }, [
-    selectedMethod,
-    isSessionBased,
-    isAuthenticated,
-    createSession,
-    cart.total,
-    isZeroAmount,
-  ]);
+    initSessionWithSavedCards(selectedMethod);
+  }, [selectedMethod, isSessionBased, initSessionWithSavedCards, isZeroAmount]);
 
   // When the cart total changes, sync the live payment session with the
   // provider in place. Recreating it instead would unmount the gateway form
@@ -314,10 +325,13 @@ export function PaymentSection({
   // whatever the customer already typed — e.g. when a shipping-rate save
   // lands while they enter card details.
   useEffect(() => {
-    // lastTotalRef stays null while init fetches saved cards; acting before
-    // init finishes fires a duplicate createSession without the card.
-    if (!initDoneRef.current) return;
+    if (!initRef.current) return;
     if (!isSessionBased || !selectedMethod) return;
+    // Saved-card init is still loading and will create the session against
+    // the server's current total; recreating it now would supersede the init
+    // and drop the saved default card. Once the session exists this effect
+    // re-runs (paymentSessionId changes) and syncs any difference in place.
+    if (pendingInitRequestIdRef.current === sessionRequestIdRef.current) return;
     if (lastTotalRef.current === cart.total) return;
 
     lastTotalRef.current = cart.total;
@@ -328,6 +342,10 @@ export function PaymentSection({
     }
 
     const method = selectedMethod;
+    // Tie this sync to the session it updates: if the shopper switches
+    // methods (or another session request starts) before it resolves, its
+    // result must not overwrite the newer session.
+    const syncRequestId = sessionRequestIdRef.current;
     const sync = async () => {
       try {
         const result = await updateCheckoutPaymentSession(
@@ -335,6 +353,7 @@ export function PaymentSection({
           paymentSessionId,
           { amount: cart.total ?? undefined },
         );
+        if (syncRequestId !== sessionRequestIdRef.current) return;
         if (!result.success || !result.session) {
           throw new Error("session update rejected");
         }
@@ -353,6 +372,7 @@ export function PaymentSection({
           setPaymentSessionId(result.session.id);
         }
       } catch {
+        if (syncRequestId !== sessionRequestIdRef.current) return;
         // Gateway doesn't support in-place updates — fall back to the
         // destructive recreate rather than paying against a stale amount.
         createSession(selectedCardRef.current, method);
@@ -401,37 +421,7 @@ export function PaymentSection({
       // Reset saved cards state — will be re-initialized
       if (!initRef.current) {
         initRef.current = true;
-        const init = async () => {
-          try {
-            setLoading(true);
-            let cardId: string | null = null;
-
-            if (isAuthenticated) {
-              try {
-                const result = await getCreditCards();
-                const gatewayCards = result.data.filter(
-                  (card) => card.gateway_payment_profile_id,
-                );
-                setSavedCards(gatewayCards);
-                if (gatewayCards.length > 0) {
-                  const defaultCard =
-                    gatewayCards.find((c) => c.default) || gatewayCards[0];
-                  cardId = defaultCard.gateway_payment_profile_id;
-                  setSelectedCardId(cardId);
-                }
-              } catch {
-                // proceed without saved cards
-              }
-            }
-
-            selectedCardRef.current = cardId;
-            lastTotalRef.current = cart.total;
-            await createSession(cardId, newMethod);
-          } finally {
-            initDoneRef.current = true;
-          }
-        };
-        init();
+        initSessionWithSavedCards(newMethod);
       } else {
         createSession(selectedCardRef.current, newMethod);
       }
