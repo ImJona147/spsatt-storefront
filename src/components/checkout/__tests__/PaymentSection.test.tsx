@@ -148,7 +148,7 @@ describe("PaymentSection session management", () => {
 
     rerender(
       <PaymentSection
-        cart={{ ...baseCart, total: "160.00" } as Cart}
+        cart={{ ...baseCart, total: "160.00", amount_due: "160.00" } as Cart}
         countries={[]}
         isAuthenticated
         fetchStates={async () => []}
