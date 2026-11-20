@@ -346,6 +346,7 @@ export function AddressSection({
           <AddressSelector
             groups={addressGroups}
             currentAddress={shipAddress}
+            selectedSavedAddressId={selectedSavedAddressId}
             countries={countries}
             states={shipStates}
             loadingStates={isPendingShip}
