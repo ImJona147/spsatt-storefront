@@ -25,7 +25,10 @@ vi.mock("@/lib/spree", () => ({
   getAccessToken: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock("@/lib/data/products", () => ({ getProductFilters }));
+vi.mock("@/lib/data/products", () => ({
+  getProductFilters,
+  applyCampaignProducts: async (response: unknown) => response,
+}));
 
 vi.mock("next/cache", () => ({
   cacheLife: vi.fn(),

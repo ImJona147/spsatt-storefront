@@ -1,4 +1,5 @@
 import type { Price, Product } from "@spree/sdk";
+import { strikethroughAmount } from "@/lib/utils/price";
 
 export function campaignPrice(
   price: Price | null | undefined,
@@ -22,7 +23,8 @@ export function campaignPrice(
   const [whole, fraction = ""] = price.amount.split(".");
   const base = BigInt(`${whole}${fraction}`);
   const factor = BigInt(100_000_000) - BigInt(Math.round(percent * 1_000_000));
-  const denominator = BigInt(10) ** BigInt(fraction.length) * BigInt(100_000_000);
+  const denominator =
+    BigInt(10) ** BigInt(fraction.length) * BigInt(100_000_000);
   const numerator = base * factor * BigInt(10) ** BigInt(digits);
   const units = (numerator + denominator / BigInt(2)) / denominator;
   const raw = units.toString().padStart(digits + 1, "0");
@@ -32,15 +34,28 @@ export function campaignPrice(
   return { ...price, amount };
 }
 
-export function withCampaignPrice(product: Product, percent: number): Product {
+export function hasCatalogSale(
+  product: Pick<Product, "price" | "original_price">,
+): boolean {
+  const marked = product as Product & { catalog_sale?: boolean };
+  if (marked.catalog_sale !== undefined) return marked.catalog_sale;
+  return strikethroughAmount(product.price, product.original_price) !== null;
+}
+
+export function withCampaignPrice(
+  product: Product,
+  percent: number,
+): Product & { catalog_sale?: boolean } {
   if (!percent || !product.price) return product;
   return {
     ...product,
+    catalog_sale: hasCatalogSale(product),
     original_price: product.original_price ?? product.price,
     price: campaignPrice(product.price, percent) ?? product.price,
     default_variant: product.default_variant
       ? {
           ...product.default_variant,
+          ...{ catalog_sale: hasCatalogSale(product.default_variant) },
           original_price:
             product.default_variant.original_price ??
             product.default_variant.price,
@@ -51,6 +66,7 @@ export function withCampaignPrice(product: Product, percent: number): Product {
       : product.default_variant,
     variants: product.variants?.map((variant) => ({
       ...variant,
+      ...{ catalog_sale: hasCatalogSale(variant) },
       original_price: variant.original_price ?? variant.price,
       price: campaignPrice(variant.price, percent) ?? variant.price,
     })),

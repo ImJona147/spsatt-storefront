@@ -50,7 +50,10 @@ export function Summary({ cart }: SummaryProps) {
               )}
             </div>
             <div className="text-sm text-foreground">
-              {formatMoney(lineItemAmount(item), item.currency)}
+              {formatMoney(
+                item.discounted_amount ?? lineItemAmount(item),
+                item.currency,
+              )}
             </div>
           </div>
         ))}

@@ -10,7 +10,7 @@ import {
   SpreeError,
 } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
-import { getProductFilters } from "@/lib/data/products";
+import { applyCampaignProducts, getProductFilters } from "@/lib/data/products";
 import { getAccessToken, getClient, getLocaleOptions } from "@/lib/spree";
 
 type LocaleOptions = { locale?: string; country?: string };
@@ -92,7 +92,7 @@ export async function getCollection(
  * own products endpoint so that, with no `sort`, the merchant's chosen
  * ordering (`sort_order`, including a manual arrangement) applies.
  */
-export async function cachedListCollectionProducts(
+async function cachedCatalogCollectionProducts(
   collectionId: string,
   params: ProductListParams | undefined,
   options: LocaleOptions,
@@ -127,4 +127,10 @@ export async function getCollectionFilters(
   params: Record<string, unknown>,
 ): Promise<ProductFiltersResponse> {
   return getProductFilters({ ...params, collection_id: collectionId });
+}
+
+export async function cachedListCollectionProducts(
+  ...args: Parameters<typeof cachedCatalogCollectionProducts>
+) {
+  return applyCampaignProducts(await cachedCatalogCollectionProducts(...args));
 }

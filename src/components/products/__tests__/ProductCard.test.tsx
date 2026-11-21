@@ -96,10 +96,10 @@ describe("ProductCard", () => {
     expect(link).toHaveAttribute("href", "/us/en/products/classic-t-shirt");
   });
 
-  it("shows discount percentage when on sale", () => {
+  it("shows Oferta label for a catalog sale", () => {
     render(<ProductCard product={saleProduct} basePath="/us/en" />);
 
-    expect(screen.getByText("−40%")).toBeInTheDocument();
+    expect(screen.getByText("sale")).toBeInTheDocument();
   });
 
   it("shows strikethrough price when on sale", () => {

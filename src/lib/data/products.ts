@@ -1,6 +1,6 @@
 "use server";
 
-import type { ProductListParams } from "@spree/sdk";
+import type { Product, ProductListParams } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
 import { connection } from "next/server";
 import { cache } from "react";
@@ -166,4 +166,18 @@ export async function cachedGetProduct(
     args[3] === "dtc" ? currentCampaignPercent() : Promise.resolve(0),
   ]);
   return withCampaignPrice(product, percent);
+}
+
+export async function applyCampaignProducts<T extends { data: Product[] }>(
+  response: T,
+): Promise<T> {
+  const percent = await currentCampaignPercent();
+  return percent
+    ? {
+        ...response,
+        data: response.data.map((product) =>
+          withCampaignPrice(product, percent),
+        ),
+      }
+    : response;
 }

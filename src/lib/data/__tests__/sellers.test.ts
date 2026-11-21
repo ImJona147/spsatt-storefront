@@ -1,6 +1,10 @@
 import { SpreeError } from "@spree/sdk";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("@/lib/data/products", () => ({
+  applyCampaignProducts: async (response: unknown) => response,
+}));
+
 const listSellers = vi.fn();
 const getSellerFromApi = vi.fn();
 const listProducts = vi.fn();

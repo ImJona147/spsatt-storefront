@@ -2,6 +2,7 @@
 
 import type { CategoryListParams, ProductListParams } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
+import { applyCampaignProducts } from "@/lib/data/products";
 import { withTransient404Retry } from "@/lib/data/transient-404";
 import { getAccessToken, getClient, getLocaleOptions } from "@/lib/spree";
 
@@ -71,5 +72,7 @@ export async function getCategoryProducts(
 ) {
   const options = await getLocaleOptions();
   const userToken = await getAccessToken();
-  return cachedListCategoryProducts(categoryId, params, options, userToken);
+  return applyCampaignProducts(
+    await cachedListCategoryProducts(categoryId, params, options, userToken),
+  );
 }

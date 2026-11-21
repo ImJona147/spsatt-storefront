@@ -21,6 +21,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useFormatMoney } from "@/hooks/useFormatMoney";
 import { trackRemoveFromCart, trackViewCart } from "@/lib/analytics/gtm";
 import { extractBasePath } from "@/lib/utils/path";
+import { discountedUnitPrice } from "@/lib/utils/price";
 
 const ExpressCheckoutButton = dynamic(
   () =>
@@ -216,16 +217,24 @@ export function CartDrawer() {
                                 )}
                               </span>
                               <span className="text-red-600">
-                                {formatMoney(item.price, item.currency, {
-                                  unitPrice: true,
-                                })}
+                                {formatMoney(
+                                  discountedUnitPrice(item),
+                                  item.currency,
+                                  {
+                                    unitPrice: true,
+                                  },
+                                )}
                               </span>
                             </>
                           ) : (
                             <span className="text-foreground">
-                              {formatMoney(item.price, item.currency, {
-                                unitPrice: true,
-                              })}
+                              {formatMoney(
+                                discountedUnitPrice(item),
+                                item.currency,
+                                {
+                                  unitPrice: true,
+                                },
+                              )}
                             </span>
                           )}
                         </div>

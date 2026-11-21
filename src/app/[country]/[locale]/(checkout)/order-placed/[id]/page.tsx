@@ -282,7 +282,10 @@ export default function OrderPlacedPage({ params }: OrderPlacedPageProps) {
                     </p>
                   </div>
                   <div className="text-sm font-medium text-foreground">
-                    {formatMoney(lineItemAmount(item), item.currency)}
+                    {formatMoney(
+                      item.discounted_amount ?? lineItemAmount(item),
+                      item.currency,
+                    )}
                   </div>
                 </li>
               ))}

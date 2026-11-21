@@ -22,7 +22,9 @@ vi.mock("next/cache", () => ({
   cacheTag: vi.fn(),
 }));
 
-import { cachedGetProduct } from "../products";
+import type { Product } from "@spree/sdk";
+import { getCurrentBanners } from "@/lib/data/storefront-banners";
+import { applyCampaignProducts, cachedGetProduct } from "../products";
 
 function notFoundError() {
   return new SpreeError(
@@ -90,4 +92,24 @@ describe("cachedGetProduct transient 404 retry", () => {
     ).rejects.toMatchObject({ status: 500 });
     expect(mockGet).toHaveBeenCalledTimes(1);
   });
+});
+
+it("applies campaign prices to every product in a listing while preserving pagination", async () => {
+  vi.mocked(getCurrentBanners).mockResolvedValueOnce([
+    { discount_percent: 15 },
+  ] as Awaited<ReturnType<typeof getCurrentBanners>>);
+  const response = {
+    data: [
+      { id: "one", price: { amount: "800.00", currency: "MXN" } },
+      { id: "two", price: { amount: "200.00", currency: "MXN" } },
+    ] as Product[],
+    meta: { page: 2 },
+  };
+  const result = await applyCampaignProducts(response);
+  expect(result.data.map((product) => product.price.amount)).toEqual([
+    "680.00",
+    "170.00",
+  ]);
+  expect(result.meta).toEqual({ page: 2 });
+  expect(response.data[0].price.amount).toBe("800.00");
 });

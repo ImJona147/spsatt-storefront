@@ -35,3 +35,14 @@ export function lineItemAmount(item: {
 }): string | null {
   return item.price ? multiplyMoney(item.price, item.quantity) : null;
 }
+
+/** Unit price after the discounts already calculated by Spree. */
+export function discountedUnitPrice(item: {
+  price: string | null;
+  quantity: number;
+  discounted_amount?: string | null;
+}): string | null {
+  if (item.price === null || !item.discounted_amount || item.quantity <= 0)
+    return item.price;
+  return (Number(item.discounted_amount) / item.quantity).toFixed(4);
+}

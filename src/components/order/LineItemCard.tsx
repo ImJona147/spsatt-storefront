@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ProductImage } from "@/components/ui/product-image";
 import { useFormatMoney } from "@/hooks/useFormatMoney";
-import { lineItemAmount } from "@/lib/utils/price";
+import { discountedUnitPrice, lineItemAmount } from "@/lib/utils/price";
 
 interface LineItemCardProps {
   item: Order["items"][number];
@@ -38,7 +38,9 @@ export function LineItemCard({ item, basePath }: LineItemCardProps) {
           {item.name}
         </Link>
         <div className="mt-1 text-sm text-foreground">
-          {formatMoney(item.price, item.currency, { unitPrice: true })}
+          {formatMoney(discountedUnitPrice(item), item.currency, {
+            unitPrice: true,
+          })}
         </div>
         {item.options_text && (
           <p className="mt-1 text-xs text-muted-foreground">
@@ -57,7 +59,10 @@ export function LineItemCard({ item, basePath }: LineItemCardProps) {
       </div>
 
       <div className="shrink-0 text-sm font-medium text-foreground">
-        {formatMoney(lineItemAmount(item), item.currency)}
+        {formatMoney(
+          item.discounted_amount ?? lineItemAmount(item),
+          item.currency,
+        )}
       </div>
     </div>
   );

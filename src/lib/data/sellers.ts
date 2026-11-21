@@ -10,6 +10,7 @@ import {
   SpreeError,
 } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
+import { applyCampaignProducts } from "@/lib/data/products";
 import { getAccessToken, getClient, getLocaleOptions } from "@/lib/spree";
 
 type LocaleOptions = { locale?: string; country?: string };
@@ -120,5 +121,7 @@ export async function getSellerProducts(
 ): Promise<PaginatedResponse<Product>> {
   const options = await getLocaleOptions();
   const userToken = await getAccessToken();
-  return cachedListSellerProducts(sellerId, params, options, userToken);
+  return applyCampaignProducts(
+    await cachedListSellerProducts(sellerId, params, options, userToken),
+  );
 }

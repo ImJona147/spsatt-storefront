@@ -18,6 +18,7 @@ import { useStore } from "@/contexts/StoreContext";
 import { useFormatMoney } from "@/hooks/useFormatMoney";
 import { trackAddToCart, trackViewItem } from "@/lib/analytics/gtm";
 import { cn } from "@/lib/utils";
+import { hasCatalogSale } from "@/lib/utils/campaign-price";
 import { strikethroughAmount } from "@/lib/utils/price";
 
 interface ProductDetailsProps {
@@ -100,12 +101,6 @@ export function ProductDetails({
     price && struckAmount
       ? formatMoney(struckAmount, price.currency, { unitPrice: true })
       : null;
-  // Real discount from the backend amounts; shown only when both are numeric.
-  const discountPercent =
-    onSale && price && struckAmount
-      ? Math.round((1 - Number(price.amount) / Number(struckAmount)) * 100)
-      : null;
-
   const sku = selectedVariant?.sku ?? product.default_variant?.sku;
 
   // Purchasability
@@ -224,11 +219,11 @@ export function ProductDetails({
                     <span className="text-base text-muted-foreground line-through tabular-nums">
                       {strikethroughPrice}
                     </span>
-                    <span className="inline-flex items-center rounded-md bg-sale px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-sale-foreground">
-                      {discountPercent !== null
-                        ? `${t("sale")} ${discountPercent}%`
-                        : t("sale")}
-                    </span>
+                    {hasCatalogSale(selectedVariant ?? product) && (
+                      <span className="inline-flex items-center rounded-md bg-sale px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-sale-foreground">
+                        {t("sale")}
+                      </span>
+                    )}
                   </>
                 )}
               </div>
