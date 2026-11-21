@@ -8,7 +8,10 @@ import { HiddenPricePrompt } from "@/components/products/HiddenPricePrompt";
 import { ProductImage } from "@/components/ui/product-image";
 import { useFormatMoney } from "@/hooks/useFormatMoney";
 import { trackSelectItem } from "@/lib/analytics/gtm";
-import { hasCatalogSale } from "@/lib/utils/campaign-price";
+import {
+  hasCampaignPromotion,
+  hasCatalogSale,
+} from "@/lib/utils/campaign-price";
 import { strikethroughAmount } from "@/lib/utils/price";
 
 interface ProductCardProps {
@@ -70,9 +73,9 @@ export const ProductCard = memo(function ProductCard({
           iconClassName="w-16 h-16"
           fetchPriority={fetchPriority}
         />
-        {hasCatalogSale(product) && (
+        {(hasCatalogSale(product) || hasCampaignPromotion(product)) && (
           <span className="absolute top-2 left-2 rounded bg-sale px-2 py-1 text-xs font-medium text-sale-foreground">
-            {t("sale")}
+            {hasCatalogSale(product) ? t("sale") : t("promotion")}
           </span>
         )}
       </div>

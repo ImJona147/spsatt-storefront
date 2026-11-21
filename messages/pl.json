@@ -119,7 +119,14 @@
     "contactDescription": "Zadzwoń lub napisz, wycenimy Twoją realizację.",
     "contactCta": "Zadzwoń po wycenę",
     "heroImageAlt": "Warsztat SPSATT z podświetlonymi elementami z neonu i akrylu",
-    "services": ["MDF", "Akryl", "Neon", "Laser", "Druk 3D", "Sublimacja"],
+    "services": [
+      "MDF",
+      "Akryl",
+      "Neon",
+      "Laser",
+      "Druk 3D",
+      "Sublimacja"
+    ],
     "clientsEyebrow": "Klienci",
     "clientsTitle": "Firmy, z którymi współpracowaliśmy",
     "contactDirections": "Wyznacz trasę",
@@ -271,7 +278,8 @@
     "noSearchResults": "Nie znaleziono wyników",
     "metaDescription": "Szyldy, litery przestrzenne, neon, LED, druk cyfrowy i meble reklamowe: poznaj cały katalog produktów SPSATT.",
     "lightboxZoomIn": "Powiększ",
-    "lightboxZoomOut": "Pomniejsz"
+    "lightboxZoomOut": "Pomniejsz",
+    "promotion": "Promocja"
   },
   "navigation": {
     "home": "Strona główna",

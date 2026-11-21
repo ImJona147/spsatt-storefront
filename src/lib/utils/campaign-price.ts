@@ -42,33 +42,60 @@ export function hasCatalogSale(
   return strikethroughAmount(product.price, product.original_price) !== null;
 }
 
+export function hasCampaignPromotion(
+  product: Pick<Product, "price" | "original_price">,
+): boolean {
+  return (
+    !!product.price?.amount &&
+    (product as Product & { campaign_promotion?: boolean })
+      .campaign_promotion === true
+  );
+}
+
 export function withCampaignPrice(
   product: Product,
   percent: number,
-): Product & { catalog_sale?: boolean } {
+): Product & { catalog_sale?: boolean; campaign_promotion?: boolean } {
   if (!percent || !product.price) return product;
+  const excluded = hasCatalogSale(product);
   return {
     ...product,
-    catalog_sale: hasCatalogSale(product),
-    original_price: product.original_price ?? product.price,
-    price: campaignPrice(product.price, percent) ?? product.price,
+    catalog_sale: excluded,
+    campaign_promotion: !excluded,
+    original_price: excluded
+      ? product.original_price
+      : (product.original_price ?? product.price),
+    price: excluded
+      ? product.price
+      : (campaignPrice(product.price, percent) ?? product.price),
     default_variant: product.default_variant
       ? {
           ...product.default_variant,
-          ...{ catalog_sale: hasCatalogSale(product.default_variant) },
+          ...{
+            catalog_sale: hasCatalogSale(product.default_variant),
+            campaign_promotion: !hasCatalogSale(product.default_variant),
+          },
           original_price:
             product.default_variant.original_price ??
             product.default_variant.price,
           price:
-            campaignPrice(product.default_variant.price, percent) ??
+            (hasCatalogSale(product.default_variant)
+              ? product.default_variant.price
+              : campaignPrice(product.default_variant.price, percent)) ??
             product.default_variant.price,
         }
       : product.default_variant,
     variants: product.variants?.map((variant) => ({
       ...variant,
-      ...{ catalog_sale: hasCatalogSale(variant) },
+      ...{
+        catalog_sale: hasCatalogSale(variant),
+        campaign_promotion: !hasCatalogSale(variant),
+      },
       original_price: variant.original_price ?? variant.price,
-      price: campaignPrice(variant.price, percent) ?? variant.price,
+      price:
+        (hasCatalogSale(variant)
+          ? variant.price
+          : campaignPrice(variant.price, percent)) ?? variant.price,
     })),
   };
 }

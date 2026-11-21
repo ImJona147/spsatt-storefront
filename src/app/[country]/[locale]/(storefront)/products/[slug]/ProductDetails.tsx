@@ -18,7 +18,10 @@ import { useStore } from "@/contexts/StoreContext";
 import { useFormatMoney } from "@/hooks/useFormatMoney";
 import { trackAddToCart, trackViewItem } from "@/lib/analytics/gtm";
 import { cn } from "@/lib/utils";
-import { hasCatalogSale } from "@/lib/utils/campaign-price";
+import {
+  hasCampaignPromotion,
+  hasCatalogSale,
+} from "@/lib/utils/campaign-price";
 import { strikethroughAmount } from "@/lib/utils/price";
 
 interface ProductDetailsProps {
@@ -219,9 +222,12 @@ export function ProductDetails({
                     <span className="text-base text-muted-foreground line-through tabular-nums">
                       {strikethroughPrice}
                     </span>
-                    {hasCatalogSale(selectedVariant ?? product) && (
+                    {(hasCatalogSale(selectedVariant ?? product) ||
+                      hasCampaignPromotion(selectedVariant ?? product)) && (
                       <span className="inline-flex items-center rounded-md bg-sale px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-sale-foreground">
-                        {t("sale")}
+                        {hasCatalogSale(selectedVariant ?? product)
+                          ? t("sale")
+                          : t("promotion")}
                       </span>
                     )}
                   </>

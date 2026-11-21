@@ -2,6 +2,7 @@ import type { Price, Product } from "@spree/sdk";
 import { describe, expect, it } from "vitest";
 import {
   campaignPrice,
+  hasCampaignPromotion,
   hasCatalogSale,
   withCampaignPrice,
 } from "./campaign-price";
@@ -35,4 +36,19 @@ it("does not turn a general promotion into a catalog Oferta", () => {
       ),
     ),
   ).toBe(true);
+});
+
+it("excludes clearance products from campaigns and marks only eligible products", () => {
+  const regular = { price, original_price: null } as Product;
+  const clearance = {
+    ...regular,
+    price: { ...price, amount: "500.00", compare_at_amount: "800.00" },
+  };
+  const eligible = withCampaignPrice(regular, 15);
+  const excluded = withCampaignPrice(clearance, 15);
+  expect(eligible.price.amount).toBe("680.00");
+  expect(hasCampaignPromotion(eligible)).toBe(true);
+  expect(excluded.price.amount).toBe("500.00");
+  expect(hasCampaignPromotion(excluded)).toBe(false);
+  expect(hasCatalogSale(excluded)).toBe(true);
 });

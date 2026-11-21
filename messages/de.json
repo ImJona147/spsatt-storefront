@@ -119,7 +119,14 @@
     "contactDescription": "Rufen Sie an oder schreiben Sie uns, wir kalkulieren Ihr Stück.",
     "contactCta": "Anrufen für ein Angebot",
     "heroImageAlt": "SPSATT-Werkstatt mit beleuchteten Neon- und Acrylstücken",
-    "services": ["MDF", "Acryl", "Neon", "Laser", "3D-Druck", "Sublimation"],
+    "services": [
+      "MDF",
+      "Acryl",
+      "Neon",
+      "Laser",
+      "3D-Druck",
+      "Sublimation"
+    ],
     "clientsEyebrow": "Kunden",
     "clientsTitle": "Unternehmen, mit denen wir gearbeitet haben",
     "contactDirections": "Route berechnen",
@@ -271,7 +278,8 @@
     "noSearchResults": "Keine Ergebnisse gefunden",
     "metaDescription": "Buchstaben, Leuchtreklame, Neon, LED, Digitaldruck und Werbemöbel: Entdecken Sie das komplette SPSATT-Sortiment.",
     "lightboxZoomIn": "Vergrößern",
-    "lightboxZoomOut": "Verkleinern"
+    "lightboxZoomOut": "Verkleinern",
+    "promotion": "Aktion"
   },
   "navigation": {
     "home": "Startseite",
