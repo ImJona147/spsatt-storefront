@@ -112,7 +112,7 @@ export function StorefrontBanner({
         )}
         <div
           key={banner.id}
-          className="flex min-w-0 flex-1 flex-wrap items-center justify-center gap-x-5 gap-y-2 py-1 motion-safe:animate-in motion-safe:slide-in-from-right-4 motion-safe:fade-in motion-safe:duration-300"
+          className={`flex min-w-0 flex-1 flex-wrap items-center justify-center gap-x-5 gap-y-2 py-1 ${banner.animation === "none" ? "" : banner.animation === "fade" ? "motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300" : "motion-safe:animate-in motion-safe:slide-in-from-right-4 motion-safe:fade-in motion-safe:duration-300"}`}
         >
           <div className="text-center text-sm">
             <strong className="font-semibold">{banner.title}</strong>

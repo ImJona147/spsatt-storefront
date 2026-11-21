@@ -2,6 +2,12 @@ import { SpreeError } from "@spree/sdk";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockGet = vi.fn();
+vi.mock("next/server", () => ({
+  connection: vi.fn().mockResolvedValue(undefined),
+}));
+vi.mock("@/lib/data/storefront-banners", () => ({
+  getCurrentBanners: vi.fn().mockResolvedValue([]),
+}));
 
 vi.mock("@/lib/spree", () => ({
   getClientForSurface: () => ({ products: { get: mockGet } }),

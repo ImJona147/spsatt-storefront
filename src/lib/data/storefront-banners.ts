@@ -5,6 +5,7 @@ import { getClient } from "@/lib/spree";
 
 export interface StorefrontBanner {
   id: string;
+  animation: "none" | "fade" | "slide";
   sticky: boolean;
   autoplay: boolean;
   discount_percent: number | null;

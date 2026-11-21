@@ -2,6 +2,9 @@
 
 import type { ProductListParams } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
+import { connection } from "next/server";
+import { cache } from "react";
+import { getCurrentBanners } from "@/lib/data/storefront-banners";
 import { withTransient404Retry } from "@/lib/data/transient-404";
 import {
   cacheTagSuffix,
@@ -11,6 +14,7 @@ import {
   getLocaleOptions,
   type Surface,
 } from "@/lib/spree";
+import { withCampaignPrice } from "@/lib/utils/campaign-price";
 
 /**
  * Cached product list fetch. Cache key is derived from all function
@@ -25,7 +29,7 @@ import {
  *   Guest users pass undefined. On the wholesale surface the token is
  *   always present — the channel 401s guests.
  */
-export async function cachedListProducts(
+async function cachedCatalogListProducts(
   params: ProductListParams | undefined,
   options: { locale?: string; country?: string },
   surface: Surface,
@@ -62,7 +66,7 @@ export async function getProducts(
  *   SDK). Authenticated users may see different prices (B2B, loyalty).
  *   Guest users pass undefined, so all guests share one entry.
  */
-export async function cachedGetProduct(
+async function cachedCatalogGetProduct(
   slugOrId: string,
   expand: string[],
   options: { locale?: string; country?: string },
@@ -129,4 +133,37 @@ export async function getProductFilters(
   const options = await getLocaleOptions();
   const userToken = await getAccessToken();
   return cachedGetProductFilters(params, options, surface, userToken);
+}
+
+const currentCampaignPercent = cache(async () => {
+  await connection();
+  const banners = await getCurrentBanners();
+  return Math.max(0, ...banners.map((banner) => banner.discount_percent ?? 0));
+});
+
+export async function cachedListProducts(
+  ...args: Parameters<typeof cachedCatalogListProducts>
+) {
+  const [response, percent] = await Promise.all([
+    cachedCatalogListProducts(...args),
+    args[2] === "dtc" ? currentCampaignPercent() : Promise.resolve(0),
+  ]);
+  return percent
+    ? {
+        ...response,
+        data: response.data.map((product) =>
+          withCampaignPrice(product, percent),
+        ),
+      }
+    : response;
+}
+
+export async function cachedGetProduct(
+  ...args: Parameters<typeof cachedCatalogGetProduct>
+) {
+  const [product, percent] = await Promise.all([
+    cachedCatalogGetProduct(...args),
+    args[3] === "dtc" ? currentCampaignPercent() : Promise.resolve(0),
+  ]);
+  return withCampaignPrice(product, percent);
 }
