@@ -8,7 +8,7 @@ import { MainContent, SkipLink } from "@/components/layout/SkipLink";
 import { StorefrontBanner } from "@/components/layout/StorefrontBanner";
 import { getCategories } from "@/lib/data/categories";
 import { getCollections } from "@/lib/data/collections";
-import { getCurrentBanner } from "@/lib/data/storefront-banners";
+import { getCurrentBanners } from "@/lib/data/storefront-banners";
 import { withTimeout } from "@/lib/utils/with-timeout";
 
 interface StorefrontLayoutProps {
@@ -178,9 +178,9 @@ async function CurrentStorefrontBanner({
   locale: string;
 }) {
   await connection();
-  const banner = await withTimeout(getCurrentBanner(), 2000, null);
-  return banner ? (
-    <StorefrontBanner banner={banner} basePath={basePath} locale={locale} />
+  const banners = await withTimeout(getCurrentBanners(), 2000, []);
+  return banners.length ? (
+    <StorefrontBanner banners={banners} basePath={basePath} locale={locale} />
   ) : null;
 }
 

@@ -4,6 +4,7 @@ import type { Product } from "@spree/sdk";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { memo } from "react";
+import { CampaignBadge } from "@/components/products/CampaignBadge";
 import { HiddenPricePrompt } from "@/components/products/HiddenPricePrompt";
 import { ProductImage } from "@/components/ui/product-image";
 import { useFormatMoney } from "@/hooks/useFormatMoney";
@@ -69,6 +70,7 @@ export const ProductCard = memo(function ProductCard({
           iconClassName="w-16 h-16"
           fetchPriority={fetchPriority}
         />
+        <CampaignBadge />
         {onSale && (
           <span className="absolute top-2 left-2 rounded bg-sale px-2 py-1 text-xs font-medium text-sale-foreground">
             {t("sale")}

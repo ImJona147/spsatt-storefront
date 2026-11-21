@@ -5,6 +5,11 @@ import { getClient } from "@/lib/spree";
 
 export interface StorefrontBanner {
   id: string;
+  sticky: boolean;
+  autoplay: boolean;
+  discount_percent: number | null;
+  secondary_label: string | null;
+  secondary_path: string | null;
   title: string;
   message: string | null;
   link_label: string | null;
@@ -15,13 +20,13 @@ export interface StorefrontBanner {
   updated_at: string;
 }
 
-export async function getCurrentBanner(): Promise<StorefrontBanner | null> {
+export async function getCurrentBanners(): Promise<StorefrontBanner[]> {
   try {
     const response = await getClient().request<
       PaginatedResponse<StorefrontBanner>
-    >("GET", "/storefront_banners", { params: { limit: 1 } });
-    return response.data[0] ?? null;
+    >("GET", "/storefront_banners", { params: { limit: 100 } });
+    return response.data;
   } catch {
-    return null;
+    return [];
   }
 }
