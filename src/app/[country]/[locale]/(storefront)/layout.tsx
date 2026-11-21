@@ -5,8 +5,10 @@ import { cache, Suspense } from "react";
 import { Footer, FooterCategoryLinks } from "@/components/layout/Footer";
 import { Header, HeaderMobileMenu } from "@/components/layout/Header";
 import { MainContent, SkipLink } from "@/components/layout/SkipLink";
+import { StorefrontBanner } from "@/components/layout/StorefrontBanner";
 import { getCategories } from "@/lib/data/categories";
 import { getCollections } from "@/lib/data/collections";
+import { getCurrentBanner } from "@/lib/data/storefront-banners";
 import { withTimeout } from "@/lib/utils/with-timeout";
 
 interface StorefrontLayoutProps {
@@ -168,6 +170,20 @@ async function StorefrontFooterCategoryLinks({
   );
 }
 
+async function CurrentStorefrontBanner({
+  basePath,
+  locale,
+}: {
+  basePath: string;
+  locale: string;
+}) {
+  await connection();
+  const banner = await withTimeout(getCurrentBanner(), 2000, null);
+  return banner ? (
+    <StorefrontBanner banner={banner} basePath={basePath} locale={locale} />
+  ) : null;
+}
+
 export default async function StorefrontLayout({
   children,
   params,
@@ -178,6 +194,9 @@ export default async function StorefrontLayout({
   return (
     <>
       <SkipLink />
+      <Suspense fallback={null}>
+        <CurrentStorefrontBanner basePath={basePath} locale={locale} />
+      </Suspense>
       <Header
         basePath={basePath}
         locale={locale as Locale}
