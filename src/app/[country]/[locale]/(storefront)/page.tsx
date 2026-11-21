@@ -59,7 +59,9 @@ export default async function HomePage({ params }: HomePageProps) {
           currency={currency}
         />
       </Suspense>
-      <PortfolioSection basePath={basePath} locale={locale} />
+      <Suspense fallback={<div aria-hidden="true" className="min-h-96" />}>
+        <PortfolioSection basePath={basePath} locale={locale} />
+      </Suspense>
       <ProcessSection locale={locale} />
       <WhySection locale={locale} />
       <WholesaleSection basePath={basePath} locale={locale} />

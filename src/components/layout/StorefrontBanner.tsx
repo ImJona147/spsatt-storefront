@@ -110,21 +110,80 @@ export function StorefrontBanner({
             <ChevronLeft className="size-4" />
           </button>
         )}
-        <div
-          key={banner.id}
-          className={`flex min-w-0 flex-1 flex-wrap items-center justify-center gap-x-5 gap-y-2 py-1 ${banner.animation === "none" ? "" : banner.animation === "fade" ? "motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300" : "motion-safe:animate-in motion-safe:slide-in-from-right-4 motion-safe:fade-in motion-safe:duration-300"}`}
+        <section
+          className="min-w-0 flex-1 overflow-hidden"
+          aria-label={es ? "Carrusel de avisos" : "Announcement carousel"}
+          aria-roledescription={es ? "carrusel" : "carousel"}
         >
-          <div className="text-center text-sm">
-            <strong className="font-semibold">{banner.title}</strong>
-            {banner.message && (
-              <span className="ml-2 opacity-90">{banner.message}</span>
-            )}
+          <div
+            className={
+              banner.animation === "slide"
+                ? "flex items-stretch transition-transform duration-500 ease-in-out motion-reduce:transition-none"
+                : "grid"
+            }
+            style={
+              banner.animation === "slide"
+                ? {
+                    transform: `translate3d(-${(index % visible.length) * 100}%, 0, 0)`,
+                  }
+                : undefined
+            }
+            aria-live={paused || !banner.autoplay ? "polite" : "off"}
+          >
+            {visible.map((slide, slideIndex) => {
+              const active = slideIndex === index % visible.length;
+              return (
+                <div
+                  key={slide.id}
+                  aria-hidden={!active}
+                  inert={!active}
+                  className={
+                    banner.animation === "slide"
+                      ? "flex w-full shrink-0 flex-wrap items-center justify-center gap-x-5 gap-y-2 px-2 py-2"
+                      : `col-start-1 row-start-1 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 px-2 py-2 ${banner.animation === "fade" ? "transition-opacity duration-500 motion-reduce:transition-none" : ""} ${active ? "opacity-100" : "pointer-events-none opacity-0"}`
+                  }
+                >
+                  <div className="text-center text-sm">
+                    <strong className="font-semibold">{slide.title}</strong>
+                    {slide.message && (
+                      <span className="ml-2 opacity-90">{slide.message}</span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {action(slide.link_path, slide.link_label, true)}
+                    {action(slide.secondary_path, slide.secondary_label, false)}
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <div className="flex flex-wrap justify-center gap-2">
-            {action(banner.link_path, banner.link_label, true)}
-            {action(banner.secondary_path, banner.secondary_label, false)}
-          </div>
-        </div>
+          {visible.length > 1 && (
+            <fieldset
+              className="flex justify-center gap-1"
+              aria-label={es ? "Seleccionar aviso" : "Select announcement"}
+            >
+              {visible.map((slide, slideIndex) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  className="flex size-6 items-center justify-center"
+                  aria-label={`${slideIndex + 1}: ${slide.title}`}
+                  aria-current={
+                    slideIndex === index % visible.length ? "true" : undefined
+                  }
+                  onClick={() => {
+                    setPaused(true);
+                    setIndex(slideIndex);
+                  }}
+                >
+                  <span
+                    className={`h-1 rounded-full bg-current transition-[width,opacity] motion-reduce:transition-none ${slideIndex === index % visible.length ? "w-4 opacity-100" : "w-1 opacity-40"}`}
+                  />
+                </button>
+              ))}
+            </fieldset>
+          )}
+        </section>
         <div className="flex shrink-0 items-center">
           {visible.length > 1 && (
             <>

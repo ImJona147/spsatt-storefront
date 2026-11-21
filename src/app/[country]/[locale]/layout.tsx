@@ -3,12 +3,10 @@ import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
-import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import "../../globals.css";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { DocumentShell } from "@/components/layout/DocumentShell";
-import { MaintenanceContent } from "@/components/maintenance/MaintenanceContent";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -32,7 +30,6 @@ import {
 } from "@/i18n/routing";
 import { getStorefrontMarkets } from "@/lib/data/markets";
 import { getStore } from "@/lib/data/store";
-import { getMaintenanceStatus } from "@/lib/data/storefront-settings";
 import { generateStoreMetadata } from "@/lib/metadata/store";
 import { storeViewport } from "@/lib/metadata/viewport";
 import { buildOrganizationJsonLd } from "@/lib/seo";
@@ -82,25 +79,7 @@ export async function generateMetadata({
 }: CountryLocaleLayoutProps): Promise<Metadata> {
   const { locale } = await params;
   const metadata = await generateStoreMetadata({ locale });
-  // While the switch is on the store must not be indexed and the tab shows
-  // the maintenance title on every route; the render below answers from the
-  // same cached settings entry, so this costs no extra call. Children are not
-  // rendered during maintenance, so no deeper generateMetadata can override
-  // the absolute title.
-  const maintenance = await getMaintenanceStatus();
-  if (!maintenance?.active) return metadata;
-
-  const t = await getTranslations({
-    locale: resolveSupportedLocale(locale) ?? DEFAULT_LOCALE,
-    namespace: "maintenance",
-  });
-  return {
-    ...metadata,
-    title: {
-      absolute: `${t("tab")} | ${metadata.applicationName ?? "SPSATT"}`,
-    },
-    robots: { index: false, follow: false },
-  };
+  return metadata;
 }
 
 /**
@@ -125,17 +104,6 @@ export async function CountryLocaleLayoutContent({
 
   const requestedLocale = resolveSupportedLocale(locale);
   if (!requestedLocale) notFound();
-
-  // Maintenance answers from one cached settings call and skips every other
-  // fetch; the data function fails open, so an outage falls through below.
-  const maintenance = await getMaintenanceStatus();
-  if (maintenance?.active) {
-    return (
-      <DocumentShell locale={requestedLocale}>
-        <MaintenanceContent locale={requestedLocale} status={maintenance} />
-      </DocumentShell>
-    );
-  }
 
   // Fetch Market configuration through a known-valid storefront context. The
   // requested country/locale pair has not been validated yet; forwarding it to

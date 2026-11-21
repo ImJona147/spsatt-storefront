@@ -2,14 +2,14 @@
 
 import type { PaginatedResponse } from "@spree/sdk";
 import { cacheLife, cacheTag } from "next/cache";
+import { connection } from "next/server";
+import { cache } from "react";
 import type { PortfolioCategoryApi } from "@/lib/portfolio";
 import { getClient } from "@/lib/spree";
 
-async function cachedListPortfolioCategories(): Promise<
-  PortfolioCategoryApi[]
-> {
-  "use cache: remote";
-  cacheLife("hours");
+async function cachedPortfolioCategories(): Promise<PortfolioCategoryApi[]> {
+  "use cache";
+  cacheLife({ stale: 0, revalidate: 60, expire: 120 });
   cacheTag("portfolio-categories");
   const response = await getClient().request<
     PaginatedResponse<PortfolioCategoryApi>
@@ -19,13 +19,16 @@ async function cachedListPortfolioCategories(): Promise<
   return response.data;
 }
 
-// Failures are never cached: pages fall back to the static list in
-// @/lib/portfolio instead of breaking.
+const listPortfolioCategories = cache(async () => {
+  await connection();
+  return cachedPortfolioCategories();
+});
+
 export async function getPortfolioCategories(): Promise<
   PortfolioCategoryApi[]
 > {
   try {
-    return await cachedListPortfolioCategories();
+    return await listPortfolioCategories();
   } catch {
     return [];
   }

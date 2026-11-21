@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { PortfolioGallery } from "@/components/portfolio/PortfolioGallery";
 import {
@@ -18,26 +19,7 @@ interface PortfolioCategoryPageProps {
   params: Promise<{ country: string; locale: string; categoria: string }>;
 }
 
-export async function generateStaticParams() {
-  try {
-    const apiCategories = await getPortfolioCategories();
-    const activeCategories = apiCategories.filter(
-      (category) => category.active,
-    );
-
-    if (activeCategories.length > 0) {
-      return activeCategories.map((category) => ({
-        categoria: category.slug || String(category.id),
-      }));
-    }
-  } catch (error) {
-    console.warn(
-      "SPSATT Build: No se pudieron prerrenderizar las categorías del portafolio:",
-      error,
-    );
-  }
-
-  // Fallback obligatorio para Next.js 16 cuando la BD está vacía o falla la red en el build
+export function generateStaticParams() {
   return [{ categoria: "general" }];
 }
 
@@ -76,7 +58,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function PortfolioCategoryPage({
+async function PortfolioCategoryContent({
   params,
 }: PortfolioCategoryPageProps) {
   const { country, locale, categoria } = await params;
@@ -139,5 +121,15 @@ export default async function PortfolioCategoryPage({
         </a>
       </div>
     </div>
+  );
+}
+
+export default function PortfolioCategoryPage(
+  props: PortfolioCategoryPageProps,
+) {
+  return (
+    <Suspense fallback={<div aria-hidden="true" className="min-h-96" />}>
+      <PortfolioCategoryContent {...props} />
+    </Suspense>
   );
 }

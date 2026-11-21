@@ -4,7 +4,6 @@ import { REQUEST_PATHNAME_HEADER, REQUEST_SEARCH_HEADER } from "@/i18n/routing";
 
 const mocks = vi.hoisted(() => ({
   getStorefrontMarkets: vi.fn(),
-  getMaintenanceStatus: vi.fn(),
   headers: vi.fn(),
   notFound: vi.fn(() => {
     throw new Error("not-found");
@@ -25,12 +24,6 @@ vi.mock("next-intl", () => ({
 }));
 vi.mock("@/lib/data/markets", () => ({
   getStorefrontMarkets: mocks.getStorefrontMarkets,
-}));
-vi.mock("@/lib/data/storefront-settings", () => ({
-  getMaintenanceStatus: mocks.getMaintenanceStatus,
-}));
-vi.mock("@/components/maintenance/MaintenanceContent", () => ({
-  MaintenanceContent: () => null,
 }));
 vi.mock("@/lib/data/store", () => ({
   getStore: async () => ({
@@ -70,7 +63,6 @@ vi.mock("@/contexts/StoreContext", () => ({
   StoreProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-import { MaintenanceContent } from "@/components/maintenance/MaintenanceContent";
 import { CountryLocaleLayoutContent, generateMetadata } from "./layout";
 
 function country(iso: string): Country {
@@ -101,7 +93,6 @@ function market(overrides: Partial<Market> = {}): Market {
 describe("CountryLocaleLayout Market fallback", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.getMaintenanceStatus.mockResolvedValue(null);
   });
 
   it("redirects to the Market locale without dropping path or query", async () => {
@@ -188,17 +179,20 @@ describe("CountryLocaleLayout Market fallback", () => {
       "a Market without countries",
       [market({ countries: [], country_codes: [] })],
     ],
-  ])("does not redirect the default route to itself for %s", async (_, markets) => {
-    mocks.getStorefrontMarkets.mockResolvedValue({ data: markets });
+  ])(
+    "does not redirect the default route to itself for %s",
+    async (_, markets) => {
+      mocks.getStorefrontMarkets.mockResolvedValue({ data: markets });
 
-    await expect(
-      CountryLocaleLayoutContent({
-        children: <main />,
-        params: Promise.resolve({ country: "us", locale: "en" }),
-      }),
-    ).resolves.toBeDefined();
-    expect(mocks.redirect).not.toHaveBeenCalled();
-  });
+      await expect(
+        CountryLocaleLayoutContent({
+          children: <main />,
+          params: Promise.resolve({ country: "us", locale: "en" }),
+        }),
+      ).resolves.toBeDefined();
+      expect(mocks.redirect).not.toHaveBeenCalled();
+    },
+  );
 
   it("redirects a non-default route once when no Market target is available", async () => {
     mocks.getStorefrontMarkets.mockResolvedValue({ data: [] });
@@ -218,48 +212,9 @@ describe("CountryLocaleLayout Market fallback", () => {
   });
 });
 
-describe("CountryLocaleLayout maintenance mode", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.getMaintenanceStatus.mockResolvedValue(null);
-  });
-
-  it("renders the maintenance page and skips market data while the switch is on", async () => {
-    mocks.getMaintenanceStatus.mockResolvedValue({
-      active: true,
-      title: "Volvemos pronto",
-      message: "Mantenimiento en curso.",
-    });
-
-    const tree = (await CountryLocaleLayoutContent({
-      children: <main />,
-      params: Promise.resolve({ country: "us", locale: "en" }),
-    })) as React.ReactElement<{ children: React.ReactElement }>;
-
-    expect(tree.props.children.type).toBe(MaintenanceContent);
-    expect(mocks.getStorefrontMarkets).not.toHaveBeenCalled();
-    expect(mocks.redirect).not.toHaveBeenCalled();
-  });
-
-  it("keeps the normal render when the switch is off", async () => {
-    mocks.getMaintenanceStatus.mockResolvedValue(null);
-    mocks.getStorefrontMarkets.mockResolvedValue({ data: [market()] });
-
-    await CountryLocaleLayoutContent({
-      children: <main />,
-      params: Promise.resolve({ country: "us", locale: "en" }),
-    });
-
-    expect(mocks.getMaintenanceStatus).toHaveBeenCalled();
-    expect(mocks.getStorefrontMarkets).toHaveBeenCalled();
-    expect(mocks.redirect).not.toHaveBeenCalled();
-  });
-});
-
 describe("CountryLocaleLayout generateMetadata", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.getMaintenanceStatus.mockResolvedValue(null);
   });
 
   const layoutProps = {
@@ -267,7 +222,7 @@ describe("CountryLocaleLayout generateMetadata", () => {
     params: Promise.resolve({ country: "us", locale: "en" }),
   };
 
-  it("keeps the store metadata while maintenance is off", async () => {
+  it("keeps store metadata indexable", async () => {
     const metadata = await generateMetadata(layoutProps);
 
     expect(metadata.title).toEqual({
@@ -275,20 +230,5 @@ describe("CountryLocaleLayout generateMetadata", () => {
       default: "SPSATT",
     });
     expect(metadata.robots).toEqual({ index: true, follow: true });
-  });
-
-  it("forces the localized maintenance title and noindex while it is on", async () => {
-    mocks.getMaintenanceStatus.mockResolvedValue({
-      active: true,
-      title: "",
-      message: "",
-      endsAt: null,
-    });
-
-    const metadata = await generateMetadata(layoutProps);
-
-    // getTranslations is mocked to the key — real locales resolve "tab".
-    expect(metadata.title).toEqual({ absolute: "tab | SPSATT" });
-    expect(metadata.robots).toEqual({ index: false, follow: false });
   });
 });

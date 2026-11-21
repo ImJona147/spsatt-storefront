@@ -880,20 +880,5 @@
     "logoAlt": "Logo de {name}",
     "pageOutOfRange": "Il n'y a pas de page {page} de vendeurs.",
     "backToFirstPage": "Revenir à la première page"
-  },
-  "maintenance": {
-    "eyebrow": "Maintenance en cours",
-    "title": "Nous revenons bientôt",
-    "message": "Nous effectuons des travaux sur la boutique. Revenez dans quelques minutes.",
-    "tab": "Maintenance",
-    "whatsapp": "Écrivez-nous sur WhatsApp",
-    "themeToggle": "Basculer clair/sombre",
-    "countdown": {
-      "label": "De retour dans",
-      "days": "j",
-      "hours": "h",
-      "minutes": "m",
-      "seconds": "s"
-    }
   }
 }

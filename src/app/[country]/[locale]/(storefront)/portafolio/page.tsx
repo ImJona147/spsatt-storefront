@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 import { SectionHeading } from "@/components/home/SectionHeading";
 import { getPortfolioCategories } from "@/lib/data/portfolio";
 import { resolveIndexCategories } from "@/lib/portfolio";
@@ -39,9 +40,7 @@ export async function generateMetadata({
 
 const TILE_SIZES = "(max-width: 767px) 100vw, (max-width: 1024px) 50vw, 33vw";
 
-export default async function PortfolioIndexPage({
-  params,
-}: PortfolioPageProps) {
+async function PortfolioIndexContent({ params }: PortfolioPageProps) {
   const { country, locale } = await params;
   const basePath = `/${country}/${locale}`;
   const t = await getTranslations({
@@ -116,5 +115,13 @@ export default async function PortfolioIndexPage({
         </ul>
       )}
     </div>
+  );
+}
+
+export default function PortfolioIndexPage(props: PortfolioPageProps) {
+  return (
+    <Suspense fallback={<div aria-hidden="true" className="min-h-96" />}>
+      <PortfolioIndexContent {...props} />
+    </Suspense>
   );
 }

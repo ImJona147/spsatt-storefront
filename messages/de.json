@@ -880,20 +880,5 @@
     "logoAlt": "Logo von {name}",
     "pageOutOfRange": "Es gibt keine Seite {page} mit Verkäufern.",
     "backToFirstPage": "Zurück zur ersten Seite"
-  },
-  "maintenance": {
-    "eyebrow": "Wartung läuft",
-    "title": "Wir sind gleich zurück",
-    "message": "Wir arbeiten gerade am Laden. Schau in ein paar Minuten wieder vorbei.",
-    "tab": "Wartung",
-    "whatsapp": "Schreib uns auf WhatsApp",
-    "themeToggle": "Helles/dunkles Thema umschalten",
-    "countdown": {
-      "label": "Wieder da in",
-      "days": "T",
-      "hours": "Std",
-      "minutes": "Min",
-      "seconds": "s"
-    }
   }
 }
