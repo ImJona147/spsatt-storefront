@@ -81,6 +81,7 @@ function typeSavedAddressWith(extra: Partial<Record<string, string>>): void {
   }
   type("address1", "10 High Street");
   type("city", "Springfield");
+  type("phone", "555-0100");
   type("postal_code", "62701");
 }
 
