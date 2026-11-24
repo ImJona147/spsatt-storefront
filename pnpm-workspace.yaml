@@ -12,4 +12,4 @@ allowBuilds:
   esbuild: true
   lefthook: true
 patchedDependencies:
-  '@spree/sdk@6.0.4': patches/@spree__sdk@6.0.3.patch
+  '@spree/sdk@6.0.6': patches/@spree__sdk@6.0.6.patch
